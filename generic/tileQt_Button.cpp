@@ -42,16 +42,18 @@ static void ButtonElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    QPushButton button(TileQt_QWidget_Widget);
-    *widthPtr   = button.width();
-    *heightPtr  = button.height();
-    *paddingPtr = Ttk_UniformPadding(2);
+    if (qApp == NULL) return;
+    // QPushButton button(TileQt_QWidget_Widget);
+    // *widthPtr   = button.width();
+    // *heightPtr  = button.height();
+    *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void ButtonElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap     pixmap(b.width, b.height);
     QPainter    painter(&pixmap);
     QPushButton button(TileQt_QWidget_Widget);	
@@ -113,7 +115,7 @@ int TileQt_Init_Button(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "Button.button",
+    Ttk_RegisterElement(interp, themePtr, "Button.button",
             &ButtonElementSpec, NULL);
 
     /*

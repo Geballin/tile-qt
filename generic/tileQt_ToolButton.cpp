@@ -43,6 +43,7 @@ static void ToolButtonElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     //QToolButton button(TileQt_QWidget_Widget);
     //*widthPtr   = button.width();
     //*heightPtr  = button.height();
@@ -53,6 +54,7 @@ static void ToolButtonElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap     pixmap(b.width, b.height);
     QPainter    painter(&pixmap);
     QToolButton button(TileQt_QWidget_Widget);	
@@ -118,7 +120,7 @@ int TileQt_Init_ToolButton(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "Toolbutton.border",
+    Ttk_RegisterElement(interp, themePtr, "Toolbutton.border",
             &ToolButtonElementSpec, NULL);
 
     /*

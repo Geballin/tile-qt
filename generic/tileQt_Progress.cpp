@@ -37,6 +37,7 @@ static void ProgressTroughElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -44,37 +45,27 @@ static void ProgressTroughElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     int orient = (int) clientData;
-    QPixmap      pixmap(b.width, b.height);
-    QPainter     painter(&pixmap);
-    QProgressBar widget(1, TileQt_QWidget_Widget);
-    widget.resize(b.width, b.height);
-    //widget.setGeometry(b.x, b.y, b.width, b.height);
-    widget.setProgress(0);
-    widget.setCenterIndicator(false);
-    widget.setPercentageVisible(false);
-
-    QStyle::SFlags sflags = Ttk_StateTableLookup(progress_statemap, state);
+    int width = Tk_Width(tkwin), height = Tk_Height(tkwin);
+    QProgressBar widget(100, NULL);
     if (orient == TTK_ORIENT_HORIZONTAL) {
-      sflags |= QStyle::Style_Horizontal;
-    }
-    
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
-        painter.fillRect(0, 0, b.width, b.height,
-                         QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+      widget.resize(width, height);
     } else {
-        painter.fillRect(0, 0, b.width, b.height,
-                         widget.paletteBackgroundColor());
-                         //qApp->palette().active().background());
+      widget.resize(height, width);
     }
-    // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawControl(QStyle::CE_ProgressBarGroove, &painter, &widget,
-          QRect(0, 0, b.width, b.height),
-          widget.colorGroup(), sflags);
+    widget.setProgress(0);
+    //widget.setCenterIndicator(false);
+    //widget.setPercentageVisible(false);
+    QPixmap pixmap = QPixmap::grabWidget(&widget);
+    if (orient == TTK_ORIENT_VERTICAL) {
+      // Qt does not support vertical progress bars. Rotate it :-)
+      QWMatrix matrix;
+      matrix.rotate(270);
+      pixmap = pixmap.xForm(matrix);
+    }
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
-                                    0, 0, b.width, b.height, b.x, b.x);
+                                    0, 0, width, height, 0, 0);
 }
 
 static Ttk_ElementSpec ProgressTroughElementSpec = {
@@ -96,22 +87,15 @@ static void ProgressBarElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    //int orient = (int) clientData;
-    //QProgressBar widget(TileQt_QWidget_Widget);
-    //if (orient == TTK_ORIENT_HORIZONTAL) {
-    //  *widthPtr   = widget.width();
-    //  *heightPtr  = widget.height();
-    //} else {
-    //  *widthPtr   = widget.height();
-    //  *heightPtr  = widget.width();
-    //}
+    if (qApp == NULL) return;
     int orient = (int) clientData;
+    QProgressBar widget(100, NULL);
     if (orient == TTK_ORIENT_HORIZONTAL) {
-      *heightPtr = qApp->style().pixelMetric(QStyle::PM_ProgressBarChunkWidth)
-                   + 2*ProgressBarInternalPadding;
+      *widthPtr   = widget.sizeHint().width();
+      *heightPtr  = widget.sizeHint().height();
     } else {
-      *widthPtr   = qApp->style().pixelMetric(QStyle::PM_ProgressBarChunkWidth)
-                   + 2*ProgressBarInternalPadding;
+      *widthPtr   = widget.sizeHint().height();
+      *heightPtr  = widget.sizeHint().width();
     }
     *paddingPtr = Ttk_UniformPadding(0);
 }
@@ -120,49 +104,32 @@ static void ProgressBarElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     int orient = (int) clientData;
-    QPixmap      pixmap(b.width, b.height);
-    QPainter     painter(&pixmap);
-    QProgressBar widget(100, TileQt_QWidget_Widget);
-    //widget.resize(b.width, b.height);
-    widget.setProgress(100);
-    widget.setCenterIndicator(false);
-    widget.setPercentageVisible(false);
-
-    QStyle::SFlags sflags = Ttk_StateTableLookup(progress_statemap, state);
+    int width = Tk_Width(tkwin), height = Tk_Height(tkwin);
+    QProgressBar widget(100, NULL);
+    double percentage;
     if (orient == TTK_ORIENT_HORIZONTAL) {
-      sflags |= QStyle::Style_Horizontal;
-    }
-    
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
-        painter.fillRect(0, 0, b.width, b.height,
-                         QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+      widget.resize(width, height);
+      percentage = double(b.width)/double(width);
     } else {
-        painter.fillRect(0, 0, b.width, b.height,
-                         qApp->palette().active().background());
+      widget.resize(height, width);
+      percentage = double(b.height)/double(height);
     }
-    // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    int w, h;
-    qApp->style().drawControl(QStyle::CE_ProgressBarGroove, &painter, &widget,
-          QRect(0, 0, b.width, b.height), widget.colorGroup(), sflags);
-    w = b.width-2*ProgressBarInternalPadding;
-    h = b.height-2*ProgressBarInternalPadding;
-    if (w > ProgressBarInternalPadding && h > ProgressBarInternalPadding) {
-      qApp->style().drawControl(QStyle::CE_ProgressBarContents, &painter,
-            &widget, QRect(ProgressBarInternalPadding,
-            ProgressBarInternalPadding, w, h),
-            widget.colorGroup(), sflags);
+    // Determine the progress value by comparing the width of this box to the
+    // total width of the window...
+    widget.setProgress((int)(percentage*100.0));
+    //widget.setCenterIndicator(false);
+    //widget.setPercentageVisible(false);
+    QPixmap pixmap = QPixmap::grabWidget(&widget);
+    if (orient == TTK_ORIENT_VERTICAL) {
+      // Qt does not support vertical progress bars. Rotate it :-)
+      QWMatrix matrix;
+      matrix.rotate(270);
+      pixmap = pixmap.xForm(matrix);
     }
-    if (orient == TTK_ORIENT_HORIZONTAL) {
-      w = b.width - ProgressBarInternalPadding;
-      h = b.height;
-    } else {
-      w = b.width;
-      h = b.height - ProgressBarInternalPadding;
-    } 
-    TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin, 0, 0, w, h, b.x, b.x);
+    TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
+                                    0, 0, width, height, 0, 0);
 }
 
 static Ttk_ElementSpec ProgressBarElementSpec = {
@@ -178,14 +145,13 @@ static Ttk_ElementSpec ProgressBarElementSpec = {
  */
 
 TTK_BEGIN_LAYOUT(VerticalProgressBarLayout)
-    TTK_GROUP("Vertical.Progress.trough", TTK_FILL_BOTH,
-        TTK_GROUP("Vertical.Progress.padding", TTK_FILL_BOTH,
-	    TTK_NODE("Vertical.Progress.bar", TTK_PACK_TOP)))
+    TTK_GROUP("Vertical.Progressbar.trough", TTK_FILL_BOTH,
+            TTK_NODE("Vertical.Progressbar.pbar", TTK_PACK_TOP))
 TTK_END_LAYOUT
 
 TTK_BEGIN_LAYOUT(HorizontalProgressBarLayout)
-    TTK_GROUP("Horizontal.Progress.trough", TTK_FILL_BOTH,
-	TTK_NODE("Horizontal.Progress.bar", TTK_PACK_LEFT))
+    TTK_GROUP("Horizontal.Progressbar.trough", TTK_FILL_BOTH,
+        TTK_NODE("Horizontal.Progressbar.pbar", TTK_PACK_LEFT))
 TTK_END_LAYOUT
 
 int TileQt_Init_Progress(Tcl_Interp *interp, Ttk_Theme themePtr)
@@ -193,22 +159,23 @@ int TileQt_Init_Progress(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "Horizontal.Progress.trough",
+    Ttk_RegisterElement(interp, themePtr, "Horizontal.Progressbar.trough",
             &ProgressTroughElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
-    Ttk_RegisterElementSpec(themePtr, "Vertical.Progress.trough",
+    Ttk_RegisterElement(interp, themePtr, "Vertical.Progressbar.trough",
             &ProgressTroughElementSpec, (void *) TTK_ORIENT_VERTICAL);
-    Ttk_RegisterElementSpec(themePtr, "Horizontal.Progress.bar",
+
+    Ttk_RegisterElement(interp, themePtr, "Horizontal.Progressbar.pbar",
             &ProgressBarElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
-    Ttk_RegisterElementSpec(themePtr, "Vertical.Progress.bar",
+    Ttk_RegisterElement(interp, themePtr, "Vertical.Progressbar.pbar",
             &ProgressBarElementSpec, (void *) TTK_ORIENT_VERTICAL);
     
     /*
      * Register layouts:
      */
     Ttk_RegisterLayout(themePtr,
-	    "Horizontal.TProgress", HorizontalProgressBarLayout);
+            "Horizontal.TProgressbar", HorizontalProgressBarLayout);
     Ttk_RegisterLayout(themePtr,
-	    "Vertical.TProgress", VerticalProgressBarLayout);
+            "Vertical.TProgressbar", VerticalProgressBarLayout);
 
     return TCL_OK;
 }; /* TileQt_Init_Progress */

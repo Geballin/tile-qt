@@ -42,4 +42,5 @@
 #include <qlistview.h>
 #include <qtextstream.h>
 #include <qdeepcopy.h>
+#include <qstringlist.h> 
 #include <tk.h>

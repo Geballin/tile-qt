@@ -42,21 +42,36 @@ static void ComboboxFieldElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    //QComboBox    widget(TileQt_QWidget_Widget);
-    //*widthPtr   = widget.width();
-    //*heightPtr  = widget.height();
-    *paddingPtr = Ttk_MakePadding(ComboboxHorizontalPadding, 0, 0, 0);
+    if (qApp == NULL) return;
+    // In order to get the correct padding, calculate the difference between the
+    // frame & edit field rectangulars...
+    QRect fr_rc = qApp->style().querySubControlMetrics(QStyle::CC_ComboBox,
+                      TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxFrame);
+    QRect ef_rc = qApp->style().querySubControlMetrics(QStyle::CC_ComboBox,
+                      TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxEditField);
+    *paddingPtr = Ttk_MakePadding(ef_rc.x() - fr_rc.x()           /* left   */,
+                                  ef_rc.y() - fr_rc.y()           /* top    */,
+                     fr_rc.width()  - ef_rc.width()  - ef_rc.x()  /* right  */,
+                     fr_rc.height() - ef_rc.height() - ef_rc.y()  /* bottom */);
 }
 
 static void ComboboxFieldElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    QComboBox    widget(false, 0);
-    widget.setBackgroundOrigin(QWidget::ParentOrigin);
-    widget.setGeometry(b.x, b.y, b.width, b.height);
+    QComboBox*   widget;
+    /* According to the state, select either the read-only or the read-write
+     * widget. */
+    if (state & (TTK_STATE_DISABLED|TTK_STATE_READONLY)) {
+      widget = TileQt_QComboBox_RO_Widget;
+    } else {
+      widget = TileQt_QComboBox_RW_Widget;
+    }
+    widget->setBackgroundOrigin(QWidget::ParentOrigin);
+    widget->resize(b.width, b.height);
     QStyle::SFlags sflags = Ttk_StateTableLookup(combotext_statemap, state);
     QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow|
                               QStyle::SC_ComboBoxEditField;
@@ -72,7 +87,7 @@ static void ComboboxFieldElementDraw(
                          qApp->palette().active().background());
     }
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawComplexControl(QStyle::CC_ComboBox, &painter, &widget,
+    qApp->style().drawComplexControl(QStyle::CC_ComboBox, &painter, widget,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
           scflags, activeflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
@@ -110,34 +125,37 @@ static void ComboboxArrowElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    QComboBox    widget(TileQt_QWidget_Widget);
+    if (qApp == NULL) return;
     QRect rc = qApp->style().querySubControlMetrics(QStyle::CC_ComboBox,
-                           &widget, QStyle::SC_ComboBoxArrow);
+                          TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxArrow);
     *widthPtr = rc.width();
-    *heightPtr = rc.height();
-    *paddingPtr = Ttk_UniformPadding(1);
+    *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void ComboboxArrowElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    QPixmap      pixmap(b.x+b.width, b.y+b.height);
-    QPainter     painter(&pixmap);
-    QComboBox    widget(TileQt_QWidget_Widget, 0);
-    widget.resize(b.x+b.width, b.y+b.height);
-    QStyle::SFlags sflags = Ttk_StateTableLookup(combobox_statemap, state);
-    QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow;
-    QStyle::SCFlags activeflags = QStyle::SC_None;
-    
-    painter.fillRect(0, 0, b.width, b.height,
-                     qApp->palette().active().brush(QColorGroup::Background));
-    // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawComplexControl(QStyle::CC_ComboBox, &painter, &widget,
-          QRect(0, 0, b.x+b.width, b.y+b.height),
-          qApp->palette().active(), sflags, scflags, activeflags);
-    TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
-                                    b.x, b.y, b.width, b.height, b.x, b.y);
+    if (qApp == NULL) return;
+    // There is no need to re-paint the button. It has been paint along with the
+    // field element (ComboboxFieldElementDraw). This is because Qt's Combobox
+    // is a complex widget.
+    // QPixmap      pixmap(b.x+b.width, b.y+b.height);
+    // QPainter     painter(&pixmap);
+    // QComboBox& widget = *TileQt_QComboBox_RO_Widget;
+    // widget.resize(b.x+b.width, b.y+b.height);
+    // QStyle::SFlags sflags = Ttk_StateTableLookup(combobox_statemap, state);
+    // QStyle::SCFlags scflags = QStyle::SC_ComboBoxArrow;
+    // QStyle::SCFlags activeflags = QStyle::SC_None;
+    // 
+    // painter.fillRect(0, 0, b.width, b.height,
+    //                 qApp->palette().active().brush(QColorGroup::Background));
+    // // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
+    // qApp->style().drawComplexControl(QStyle::CC_ComboBox, &painter, &widget,
+    //       QRect(0, 0, b.x+b.width, b.y+b.height),
+    //       qApp->palette().active(), sflags, scflags, activeflags);
+    // TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
+    //                                 b.x, b.y, b.width, b.height, b.x, b.y);
 }
 
 static Ttk_ElementSpec ComboboxArrowElementSpec = {
@@ -157,9 +175,9 @@ int TileQt_Init_Combobox(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "Combobox.field",
+    Ttk_RegisterElement(interp, themePtr, "Combobox.field",
             &ComboboxFieldElementSpec, NULL);
-    Ttk_RegisterElementSpec(themePtr, "Combobox.downarrow",
+    Ttk_RegisterElement(interp, themePtr, "Combobox.downarrow",
             &ComboboxArrowElementSpec, NULL);
     
     /*

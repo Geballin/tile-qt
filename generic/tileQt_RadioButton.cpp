@@ -52,6 +52,7 @@ static void RadioButtonIndicatorElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     *widthPtr  = qApp->style().pixelMetric(QStyle::PM_ExclusiveIndicatorWidth);
     *heightPtr = qApp->style().pixelMetric(QStyle::PM_ExclusiveIndicatorHeight);
     *paddingPtr = Ttk_MakePadding(0, 0, RadioButtonHorizontalPadding, 0);
@@ -61,6 +62,7 @@ static void RadioButtonIndicatorElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QRadioButton button(TileQt_QWidget_Widget);
@@ -104,6 +106,7 @@ static void RadioButtonBorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     QRadioButton button(TileQt_QWidget_Widget);
     *widthPtr   = button.width();
     *heightPtr  = button.height();
@@ -114,6 +117,7 @@ static void RadioButtonBorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QRadioButton button(TileQt_QWidget_Widget);	
@@ -171,9 +175,9 @@ int TileQt_Init_RadioButton(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "Radiobutton.border",
+    Ttk_RegisterElement(interp, themePtr, "Radiobutton.border",
             &RadioButtonBorderElementSpec, NULL);
-    Ttk_RegisterElementSpec(themePtr, "Radiobutton.indicator",
+    Ttk_RegisterElement(interp, themePtr, "Radiobutton.indicator",
             &RadioButtonIndicatorElementSpec, NULL);
     
     /*

@@ -41,55 +41,82 @@ static void ScaleTroughElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    //*heightPtr  = TileQt_QSlider_Widget->sizeHint().height();
-    //*widthPtr   = TileQt_QSlider_Widget->sizeHint().width();
-    *widthPtr = 60;
-    *paddingPtr = Ttk_UniformPadding(4);
+    if (qApp == NULL) return;
+    QSlider* widget = NULL;
+    int orient = (int) clientData;
+    if (orient == TTK_ORIENT_HORIZONTAL) {
+      widget = TileQt_QSlider_Hor_Widget;
+    } else {
+      widget = TileQt_QSlider_Ver_Widget;
+    }
+    widget->setRange(0, 100);
+    widget->setValue(50);
+    *widthPtr   = widget->sizeHint().width();
+    *heightPtr  = widget->sizeHint().height();
+    *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void ScaleTroughElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
+    QSlider* widget = NULL;
     int orient = (int) clientData;
-    QPixmap      pixmap(b.width, b.height);
-    QPainter     painter(&pixmap);
-    TileQt_QSlider_Widget->setBackgroundOrigin(QWidget::ParentOrigin);
-    //TileQt_QSlider_Widget->setGeometry(b.x, b.y, b.width, b.height);
-    TileQt_QSlider_Widget->resize(b.width, b.height);
-    TileQt_QSlider_Widget->setMinValue(0);
-    TileQt_QSlider_Widget->setMaxValue(100);
-    TileQt_QSlider_Widget->setValue(0);
-    //widget.setGeometry(b.x, b.y, b.width, b.height);
-
-    QStyle::SFlags sflags = Ttk_StateTableLookup(scale_statemap, state);
+    int width, height;
+    QRect rc;
     if (orient == TTK_ORIENT_HORIZONTAL) {
-      TileQt_QSlider_Widget->setOrientation(Qt::Horizontal);
-      sflags |= QStyle::Style_Horizontal;
+      widget = TileQt_QSlider_Hor_Widget;
+      widget->resize(b.width, b.height);
+      rc = widget->sliderRect();
+      width = b.width + rc.width(); height = b.height;
     } else {
-      TileQt_QSlider_Widget->setOrientation(Qt::Vertical);
+      widget = TileQt_QSlider_Ver_Widget;
+      widget->resize(b.width, b.height);
+      rc = widget->sliderRect();
+      width = b.width; height = b.height + rc.height();
     }
-    
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
-        painter.fillRect(0, 0, b.width, b.height,
-                         QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
-    } else {
-        painter.fillRect(0, 0, b.width, b.height,
-                         qApp->palette().active().background());
-    }
+    widget->setEnabled(state != TTK_STATE_DISABLED);
+    widget->setBackgroundOrigin(QWidget::ParentOrigin);
+    widget->resize(width, height);
+    widget->setRange(0, 100);
+    widget->setValue(50);
+    //widget->setTickmarks(QSlider::Above);
+    widget->polish();
+    // We cannot use qApp->style().drawComplexControl(QStyle::CC_Slider,...),
+    // as (due to Qt bug ?), it doesn't work...
+    QPixmap pixmap = QPixmap::grabWidget(widget);
 
-    QStyle::SCFlags scflags = QStyle::SC_SliderGroove|
-                              QStyle::SC_SliderTickmarks;
-    QStyle::SCFlags activeflags = QStyle::SC_None;
-    // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawComplexControl(QStyle::CC_Slider, &painter,
-          TileQt_QSlider_Widget,
-          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
-          scflags, activeflags);
-    TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
-                                    0, 0, b.width, b.height, b.x, b.x);
+    // Try to redraw the whole window, to avoid drawing problems...
+    // int bg_width = Tk_Width(tkwin), bg_height = Tk_Height(tkwin);
+    // QPixmap      bg_pixmap(bg_width, bg_height);
+    // QPainter     bg_painter(&bg_pixmap);
+    // if (TileQt_QPixmap_BackgroundTile &&
+    //     !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    //     bg_painter.fillRect(0, 0, bg_width, bg_height,
+    //                         QBrush(QColor(255,255,255),
+    //                         *TileQt_QPixmap_BackgroundTile));
+    // } else {
+    //     bg_painter.fillRect(0, 0, bg_width, bg_height,
+    //                         qApp->palette().active().background());
+    // }
+    // TileQt_CopyQtPixmapOnToDrawable(bg_pixmap, d, tkwin,
+    //                                 0, 0, bg_width, bg_height, 0, 0);
+    rc = widget->sliderRect();
+    // Copy the drawn widget, but skip the rectangle that has the handle.
+    if (orient == TTK_ORIENT_HORIZONTAL) {
+      TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
+                   0, 0, rc.x(), b.height, b.x, b.y);
+      TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
+                   rc.x()+rc.width(), 0, width-(rc.x()+rc.width()),
+                   b.height, rc.x(), b.y);
+    } else {
+      TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
+                   0, 0, b.width, rc.y(), b.x, b.y);
+      TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
+                   0, rc.y()+rc.height(), b.width, height-(rc.y()+rc.height()),
+                   b.x, rc.y());
+    }
 }
 
 static Ttk_ElementSpec ScaleTroughElementSpec = {
@@ -101,6 +128,9 @@ static Ttk_ElementSpec ScaleTroughElementSpec = {
 };
 
 typedef struct {
+    Tcl_Obj *lengthObj;  /* the length of the slider (if a flat style) */
+    Tcl_Obj *widthObj;   /* the width of the slider (height if horizontal) */
+    Tcl_Obj *orientObj;  /* orientation of overall slider */
 } ScaleSliderElement;
 
 static Ttk_ElementOptionSpec ScaleSliderElementOptions[] = {
@@ -111,9 +141,22 @@ static void ScaleSliderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    *widthPtr = *heightPtr =
-        qApp->style().pixelMetric(QStyle::PM_SliderControlThickness,
-                                  TileQt_QSlider_Widget);
+    if (qApp == NULL) return;
+    QSlider* widget = NULL;
+    int orient = (int) clientData;
+    QRect rc;
+    if (orient == TTK_ORIENT_HORIZONTAL) {
+      widget = TileQt_QSlider_Hor_Widget;
+    } else {
+      widget = TileQt_QSlider_Ver_Widget;
+    }
+    widget->setRange(0, 100);
+    widget->setValue(50);
+    widget->resize(widget->sizeHint().width(), widget->sizeHint().height());
+    rc = widget->sliderRect();
+    *widthPtr   = rc.width();
+    *heightPtr  = rc.height();
+
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -121,46 +164,30 @@ static void ScaleSliderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    return;
+    if (qApp == NULL) return;
     int orient = (int) clientData;
-    QPixmap      pixmap(b.width, b.height);
-    QPainter     painter(&pixmap);
-    TileQt_QSlider_Widget->setBackgroundOrigin(QWidget::ParentOrigin);
-    //TileQt_QSlider_Widget->setGeometry(b.x, b.y, b.width, b.height);
-    TileQt_QSlider_Widget->resize(b.width, b.height);
-    TileQt_QSlider_Widget->setMinValue(0);
-    TileQt_QSlider_Widget->setMaxValue(100);
-    TileQt_QSlider_Widget->setValue(0);
-    //widget.setGeometry(b.x, b.y, b.width, b.height);
-
+    QSlider* widget = NULL;
     QStyle::SFlags sflags = Ttk_StateTableLookup(scale_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) {
-      TileQt_QSlider_Widget->setOrientation(Qt::Horizontal);
-      sflags |= QStyle::Style_Horizontal;
+      widget = TileQt_QSlider_Hor_Widget;
     } else {
-      TileQt_QSlider_Widget->setOrientation(Qt::Vertical);
+      widget = TileQt_QSlider_Ver_Widget;
     }
-    
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
-        painter.fillRect(0, 0, b.width, b.height,
-                         QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
-    } else {
-        painter.fillRect(0, 0, b.width, b.height,
-                         qApp->palette().active().background());
-    }
+    widget->setBackgroundOrigin(QWidget::ParentOrigin);
+    widget->setEnabled(state != TTK_STATE_DISABLED);
+    widget->setRange(0, 100);
+    widget->setValue(50);
+    // We cannot use qApp->style().drawComplexControl(QStyle::CC_Slider,...),
+    // as (due to Qt bug ?), it doesn't work...
+    QPixmap pixmap = QPixmap::grabWidget(widget);
 
-    QStyle::SCFlags scflags = QStyle::SC_SliderGroove|QStyle::SC_SliderHandle|
-                              QStyle::SC_SliderTickmarks;
-    QStyle::SCFlags activeflags = QStyle::SC_SliderHandle;
-    // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawComplexControl(QStyle::CC_Slider, &painter,
-          TileQt_QSlider_Widget,
-          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
-          scflags, activeflags);
+    //QStyle::SCFlags activeflags = QStyle::SC_SliderHandle;
+    //qApp->style().drawComplexControl(QStyle::CC_Slider, &painter, widget,
+    //      QRect(0, 0, widget->width(), widget->height()),
+    //      qApp->palette().active(), sflags, scflags, activeflags);
+    QRect rc = widget->sliderRect();
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
-                                    0, 0, b.width, b.height, b.x, b.x);
+                 rc.x(), rc.y(), b.width, b.height, b.x, b.y);
 }
 
 static Ttk_ElementSpec ScaleSliderElementSpec = {
@@ -190,13 +217,13 @@ int TileQt_Init_Scale(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "Horizontal.Scale.trough",
+    Ttk_RegisterElement(interp, themePtr, "Horizontal.Scale.trough",
             &ScaleTroughElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
-    Ttk_RegisterElementSpec(themePtr, "Vertical.Scale.trough",
+    Ttk_RegisterElement(interp, themePtr, "Vertical.Scale.trough",
             &ScaleTroughElementSpec, (void *) TTK_ORIENT_VERTICAL);
-    Ttk_RegisterElementSpec(themePtr, "Horizontal.Scale.slider",
+    Ttk_RegisterElement(interp, themePtr, "Horizontal.Scale.slider",
             &ScaleSliderElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
-    Ttk_RegisterElementSpec(themePtr, "Vertical.Scale.slider",
+    Ttk_RegisterElement(interp, themePtr, "Vertical.Scale.slider",
             &ScaleSliderElementSpec, (void *) TTK_ORIENT_VERTICAL);
     
     /*

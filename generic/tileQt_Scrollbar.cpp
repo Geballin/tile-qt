@@ -40,6 +40,7 @@ static void ScrollbarTroughElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     //int orient = (int) clientData;
     //if (orient == TTK_ORIENT_HORIZONTAL) {
     //  *heightPtr = qApp->style().pixelMetric(QStyle::PM_ScrollBarExtent,
@@ -59,6 +60,7 @@ static void ScrollbarTroughElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     /* We draw the whole scrollbar at once, but without the slider! */
     int orient = (int) clientData;
     int width, height;
@@ -126,6 +128,7 @@ static void ScrollbarThumbElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     int orient = (int) clientData;
     if (orient == TTK_ORIENT_HORIZONTAL) {
       *heightPtr = qApp->style().pixelMetric(QStyle::PM_ScrollBarExtent,
@@ -150,6 +153,7 @@ static void ScrollbarThumbElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     if (state & TTK_STATE_DISABLED) return;
     int orient = (int) clientData;
     //QPixmap      pixmap(b.width, b.height);
@@ -183,6 +187,7 @@ static void ScrollbarUpArrowElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     int orient = (int) clientData;
     if (orient == TTK_ORIENT_HORIZONTAL) {
       TileQt_QScrollBar_Widget->setOrientation(Qt::Horizontal);
@@ -202,6 +207,7 @@ static void ScrollbarUpArrowElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     int orient = (int) clientData;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
@@ -241,6 +247,7 @@ static void ScrollbarDownArrowElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     int orient = (int) clientData;
     if (orient == TTK_ORIENT_HORIZONTAL) {
       TileQt_QScrollBar_Widget->setOrientation(Qt::Horizontal);
@@ -260,6 +267,7 @@ static void ScrollbarDownArrowElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     int orient = (int) clientData;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
@@ -311,23 +319,23 @@ int TileQt_Init_Scrollbar(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "Horizontal.Scrollbar.trough",
+    Ttk_RegisterElement(interp, themePtr, "Horizontal.Scrollbar.trough",
             &ScrollbarTroughElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
-    Ttk_RegisterElementSpec(themePtr, "Vertical.Scrollbar.trough",
+    Ttk_RegisterElement(interp, themePtr, "Vertical.Scrollbar.trough",
             &ScrollbarTroughElementSpec, (void *) TTK_ORIENT_VERTICAL);
-    Ttk_RegisterElementSpec(themePtr, "Horizontal.Scrollbar.leftarrow",
+    Ttk_RegisterElement(interp, themePtr, "Horizontal.Scrollbar.leftarrow",
             &ScrollbarUpArrowElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
-    Ttk_RegisterElementSpec(themePtr, "Vertical.Scrollbar.uparrow",
+    Ttk_RegisterElement(interp, themePtr, "Vertical.Scrollbar.uparrow",
             &ScrollbarUpArrowElementSpec, (void *) TTK_ORIENT_VERTICAL);
-    Ttk_RegisterElementSpec(themePtr, "Horizontal.Scrollbar.rightarrow",
+    Ttk_RegisterElement(interp, themePtr, "Horizontal.Scrollbar.rightarrow",
             &ScrollbarDownArrowElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
-    Ttk_RegisterElementSpec(themePtr, "Vertical.Scrollbar.downarrow",
+    Ttk_RegisterElement(interp, themePtr, "Vertical.Scrollbar.downarrow",
             &ScrollbarDownArrowElementSpec, (void *) TTK_ORIENT_VERTICAL);
-    Ttk_RegisterElementSpec(themePtr, "Horizontal.Scrollbar.thumb",
+    Ttk_RegisterElement(interp, themePtr, "Horizontal.Scrollbar.thumb",
             &ScrollbarThumbElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
-    Ttk_RegisterElementSpec(themePtr, "Vertical.Scrollbar.thumb",
+    Ttk_RegisterElement(interp, themePtr, "Vertical.Scrollbar.thumb",
             &ScrollbarThumbElementSpec, (void *) TTK_ORIENT_VERTICAL);
-    Ttk_RegisterElementSpec(themePtr, "Scrollbar.grip",
+    Ttk_RegisterElement(interp, themePtr, "Scrollbar.grip",
             &ScrollbarTroughElementSpec, NULL);
     
     /*

@@ -42,14 +42,15 @@ static void NotebookTabElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     //PM_TabBarTabOverlap, PM_TabBarTabHSpace, PM_TabBarTabVSpace, PM_TabBarBaseHeight, PM_TabBarBaseOverlap,
     QTab tab;
     QRect rc = tab.rect();
     *widthPtr   = rc.width();
     *heightPtr  = rc.height();
     *paddingPtr = Ttk_UniformPadding(NotebookUniformPadding);
-    int tabOverlap = qApp->style().pixelMetric(QStyle::PM_TabBarTabOverlap,
-                                               TileQt_QTabBar_Widget);
+    //int tabOverlap = qApp->style().pixelMetric(QStyle::PM_TabBarTabOverlap,
+    //                                           TileQt_QTabBar_Widget);
     //*paddingPtr = Ttk_MakePadding(hs, vs, hs, vs);
 }
 
@@ -57,6 +58,7 @@ static void NotebookTabElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     int tabOverlap = qApp->style().pixelMetric(QStyle::PM_TabBarTabOverlap,
                                                TileQt_QTabBar_Widget);
     int tabBaseOverlap = qApp->style().pixelMetric(QStyle::PM_TabBarBaseOverlap,
@@ -68,7 +70,8 @@ static void NotebookTabElementDraw(
     int width = b.width + 1*tabOverlap;
     int height = b.height + tabBaseOverlap + borderWidth;
     int x = (b.x > tabOverlap) ? b.x - tabOverlap: b.x;
-    //x = b.x;
+    // x = b.x;
+    width = b.width; x = b.x;
     QTab* tab = new QTab;
     QTab* tab1 = NULL, *tab2 = NULL;
     if ((state & TTK_STATE_USER1) && (state & TTK_STATE_USER2)) {
@@ -144,6 +147,7 @@ static void NotebookClientElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     *paddingPtr = Ttk_UniformPadding(NotebookClientUniformPadding);
 }
 
@@ -151,6 +155,7 @@ static void NotebookClientElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(notebook_statemap, state);
@@ -187,9 +192,9 @@ int TileQt_Init_Notebook(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "Notebook.tab",
+    Ttk_RegisterElement(interp, themePtr, "Notebook.tab",
                 &NotebookTabElementSpec, NULL);
-    Ttk_RegisterElementSpec(themePtr, "Notebook.client",
+    Ttk_RegisterElement(interp, themePtr, "Notebook.client",
                 &NotebookClientElementSpec, NULL);
     
     /*

@@ -39,6 +39,7 @@ static void LabelframeBorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     *paddingPtr = Ttk_UniformPadding(LabelframeUniformPadding);
 }
 
@@ -46,6 +47,7 @@ static void LabelframeBorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(labelframe_statemap, state);
@@ -91,7 +93,7 @@ int TileQt_Init_Labelframe(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "Labelframe.border",
+    Ttk_RegisterElement(interp, themePtr, "Labelframe.border",
             &LabelframeBorderElementSpec, NULL);
     
     /*

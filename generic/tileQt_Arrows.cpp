@@ -56,6 +56,7 @@ ArrowElementGeometry(
     void *clientData, void *elementRecord,
     Tk_Window tkwin, int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     ArrowElement *arrow = (ArrowElement *) elementRecord;
     int size = 12;
 
@@ -67,6 +68,7 @@ static void
 ArrowElementDraw(void *clientData, void *elementRecord,
     Tk_Window tkwin, Drawable d, Ttk_Box b, unsigned int state)
 {
+    if (qApp == NULL) return;
     ArrowElement *arrow = (ArrowElement *) elementRecord;
     int direction = *(int *)clientData;
     QStyle::SFlags sflags = Ttk_StateTableLookup(arrow_statemap ,state);
@@ -118,15 +120,15 @@ int TileQt_Init_Arrows(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "uparrow",
+    Ttk_RegisterElement(interp, themePtr, "uparrow",
             &ArrowElementSpec, &ArrowElements[0]);
-    Ttk_RegisterElementSpec(themePtr, "downarrow",
+    Ttk_RegisterElement(interp, themePtr, "downarrow",
             &ArrowElementSpec, &ArrowElements[1]);
-    Ttk_RegisterElementSpec(themePtr, "leftarrow",
+    Ttk_RegisterElement(interp, themePtr, "leftarrow",
             &ArrowElementSpec, &ArrowElements[2]);
-    Ttk_RegisterElementSpec(themePtr, "rightarrow",
+    Ttk_RegisterElement(interp, themePtr, "rightarrow",
             &ArrowElementSpec, &ArrowElements[3]);
-    Ttk_RegisterElementSpec(themePtr, "arrow",
+    Ttk_RegisterElement(interp, themePtr, "arrow",
             &ArrowElementSpec, &ArrowElements[0]);
 
     /*

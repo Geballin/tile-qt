@@ -17,12 +17,11 @@
 #define DEFAULT_ARROW_SIZE "15"
 #define MIN_THUMB_SIZE 8
 #define BorderBorderWidth               "0"
-#define RadioButtonHorizontalPadding    4
-#define CheckButtonHorizontalPadding    4
-#define EntryUniformPadding             4
-#define ComboboxHorizontalPadding       4
+#define RadioButtonHorizontalPadding    2
+#define CheckButtonHorizontalPadding    2
+#define EntryUniformPadding             0
+#define ComboboxHorizontalPadding       0
 #define LabelframeUniformPadding        4
 #define NotebookUniformPadding          4
 #define NotebookClientUniformPadding    4
-#define ProgressBarInternalPadding      2
 #define TreeViewUniformPadding          4

@@ -36,30 +36,33 @@ static void BackgroundElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     // int padding = qApp->style().pixelMetric(QStyle::PM_DefaultFrameWidth);
-    *paddingPtr = Ttk_UniformPadding(0);
+    // *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void BackgroundElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    QPixmap      pixmap(b.width, b.height);
+    if (qApp == NULL) return;
+    int width = Tk_Width(tkwin), height = Tk_Height(tkwin);
+    QPixmap      pixmap(width, height);
     QPainter     painter(&pixmap);
     if (TileQt_QPixmap_BackgroundTile &&
         !(TileQt_QPixmap_BackgroundTile->isNull())) {
-        painter.fillRect(0, 0, b.width, b.height,
+        painter.fillRect(0, 0, width, height,
                          QBrush(QColor(255,255,255),
                          *TileQt_QPixmap_BackgroundTile));
     } else {
-        painter.fillRect(0, 0, b.width, b.height,
+        painter.fillRect(0, 0, width, height,
                          qApp->palette().active().background());
     }
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
-                                    0, 0, b.width, b.height, b.x, b.y);
+                                    0, 0, width, height, 0, 0);
 }
 
-static Ttk_ElementSpec BackgroundElementSpec = {
+static Ttk_ElementSpec TileQt_BackgroundElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(BackgroundElement),
     BackgroundElementOptions,
@@ -88,6 +91,7 @@ static void BorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     BorderElement *border = (BorderElement*) elementRecord;
     int borderWidth = 0;
     Tcl_GetIntFromObj(NULL, border->borderWidthObj, &borderWidth);
@@ -98,6 +102,7 @@ static void BorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     BorderElement *border = (BorderElement*) elementRecord;
     int relief = TK_RELIEF_FLAT;
     int borderWidth = 0;
@@ -159,9 +164,9 @@ int TileQt_Init_Background(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "background",
-            &BackgroundElementSpec, NULL);
-    //Ttk_RegisterElementSpec(themePtr, "border",
+    Ttk_RegisterElement(interp, themePtr, "background",
+            &TileQt_BackgroundElementSpec, NULL);
+    //Ttk_RegisterElement(interp, themePtr, "border",
     //        &BorderElementSpec, NULL);
     /*
      * Register layouts:

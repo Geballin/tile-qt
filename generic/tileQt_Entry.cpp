@@ -42,6 +42,7 @@ static void EntryFieldElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     *paddingPtr = Ttk_UniformPadding(EntryUniformPadding);
 }
 
@@ -49,6 +50,7 @@ static void EntryFieldElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(entry_statemap, state);
@@ -79,7 +81,7 @@ int TileQt_Init_Entry(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "Entry.field",
+    Ttk_RegisterElement(interp, themePtr, "Entry.field",
             &EntryFieldElementSpec, NULL);
     
     /*

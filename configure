@@ -309,7 +309,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT CC CFLAGS ac_ct_CC LIBUTIL LIBCOMPAT LIBCRYPT CPP EGREP LIBRESOLV LIB_POLL FRAMEWORK_COREAUDIO LIBSOCKET X_EXTRA_LIBS LIBUCB LIBDL X_PRE_LIBS LIB_X11 LIB_XRENDER LIBSM X_INCLUDES X_LDFLAGS x_includes x_libraries QTE_NORTTI LIB_XEXT LIBPTHREAD USE_THREADS KDE_MT_LDFLAGS KDE_MT_LIBS USER_INCLUDES USER_LDFLAGS LIBZ LIBPNG LIBJPEG qt_libraries qt_includes QT_INCLUDES QT_LDFLAGS PERL MOC UIC UIC_TR LIB_QT LIB_QPE kde_qtver CYGPATH PKG_LIB_FILE PKG_STUB_LIB_FILE PKG_STUB_SOURCES PKG_STUB_OBJECTS PKG_TCL_SOURCES PKG_HEADERS PKG_INCLUDES PKG_LIBS PKG_CFLAGS TCL_VERSION TCL_BIN_DIR TCL_SRC_DIR TCL_LIB_FILE TCL_LIB_FLAG TCL_LIB_SPEC TCL_STUB_LIB_FILE TCL_STUB_LIB_FLAG TCL_STUB_LIB_SPEC TCL_LIBS TCL_DEFS TCL_EXTRA_CFLAGS TCL_LD_FLAGS TCL_SHLIB_LD_LIBS TK_VERSION TK_BIN_DIR TK_SRC_DIR TK_LIB_FILE TK_LIB_FLAG TK_LIB_SPEC TK_STUB_LIB_FILE TK_STUB_LIB_FLAG TK_STUB_LIB_SPEC TK_LIBS TK_XINCLUDES TCL_INCLUDES TK_INCLUDES INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA SET_MAKE RANLIB ac_ct_RANLIB MATH_LIBS TCL_THREADS SHARED_BUILD AR CELIB_DIR LIBOBJS DL_LIBS CFLAGS_DEBUG CFLAGS_OPTIMIZE CFLAGS_WARNING STLIB_LD SHLIB_LD SHLIB_CFLAGS SHLIB_LD_FLAGS SHLIB_LD_LIBS LDFLAGS_DEBUG LDFLAGS_OPTIMIZE LD_LIBRARY_PATH_VAR TCL_DBGX CFLAGS_DEFAULT LDFLAGS_DEFAULT PKG_SOURCES PKG_OBJECTS MAKE_LIB MAKE_SHARED_LIB MAKE_STATIC_LIB MAKE_STUB_LIB RANLIB_STUB TCLSH_PROG WISH_PROG CLEANFILES LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT CC CFLAGS ac_ct_CC LIBUTIL LIBCOMPAT LIBCRYPT CPP EGREP LIBRESOLV LIB_POLL FRAMEWORK_COREAUDIO LIBSOCKET X_EXTRA_LIBS LIBUCB LIBDL X_PRE_LIBS LIB_X11 LIB_XRENDER LIBSM X_INCLUDES X_LDFLAGS x_includes x_libraries QTE_NORTTI LIB_XEXT LIBPTHREAD USE_THREADS KDE_MT_LDFLAGS KDE_MT_LIBS USER_INCLUDES USER_LDFLAGS LIBZ LIBPNG LIBJPEG qt_libraries qt_includes QT_INCLUDES QT_LDFLAGS PERL MOC UIC UIC_TR LIB_QT LIB_QPE kde_qtver CYGPATH PKG_LIB_FILE PKG_STUB_LIB_FILE PKG_STUB_SOURCES PKG_STUB_OBJECTS PKG_TCL_SOURCES PKG_HEADERS PKG_INCLUDES PKG_LIBS PKG_CFLAGS TCL_VERSION TCL_BIN_DIR TCL_SRC_DIR TCL_LIB_FILE TCL_LIB_FLAG TCL_LIB_SPEC TCL_STUB_LIB_FILE TCL_STUB_LIB_FLAG TCL_STUB_LIB_SPEC TCL_LIBS TCL_DEFS TCL_EXTRA_CFLAGS TCL_LD_FLAGS TCL_SHLIB_LD_LIBS TK_VERSION TK_BIN_DIR TK_SRC_DIR TK_LIB_FILE TK_LIB_FLAG TK_LIB_SPEC TK_STUB_LIB_FILE TK_STUB_LIB_FLAG TK_STUB_LIB_SPEC TK_LIBS TK_XINCLUDES TCL_INCLUDES TK_INCLUDES INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA SET_MAKE RANLIB ac_ct_RANLIB MATH_LIBS TCL_THREADS SHARED_BUILD AR LIBOBJS DL_LIBS CFLAGS_DEBUG CFLAGS_OPTIMIZE CFLAGS_WARNING STLIB_LD SHLIB_LD SHLIB_CFLAGS SHLIB_LD_FLAGS SHLIB_LD_LIBS LDFLAGS_DEBUG LDFLAGS_OPTIMIZE LD_LIBRARY_PATH_VAR TCL_DBGX CFLAGS_DEFAULT LDFLAGS_DEFAULT PKG_SOURCES PKG_OBJECTS MAKE_LIB MAKE_SHARED_LIB MAKE_STATIC_LIB MAKE_STUB_LIB RANLIB_STUB TCLSH_PROG WISH_PROG CLEANFILES LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -11299,6 +11299,7 @@ echo "${ECHO_T}file not found" >&6
 
 
 
+    #AC_SUBST(TCL_DBGX)
 
 
 
@@ -16454,11 +16455,10 @@ fi
     ECHO_VERSION='`echo ${PACKAGE_VERSION}`'
     TCL_LIB_VERSIONS_OK=ok
     CFLAGS_DEBUG=-g
+    CFLAGS_OPTIMIZE=-O
     if test "$GCC" = "yes" ; then
-	CFLAGS_OPTIMIZE=-O2
-	CFLAGS_WARNING="-Wall"
+	CFLAGS_WARNING="-Wall -Wno-implicit-int"
     else
-	CFLAGS_OPTIMIZE=-O
 	CFLAGS_WARNING=""
     fi
     TCL_NEEDS_EXP_FILE=0
@@ -16605,27 +16605,20 @@ echo "${ECHO_T}found $CELIB_DIR" >&6
 		    doWince="300,ARM,ARM,Pocket PC 2002"
 		fi
 		eval `echo $doWince | awk -F "," '{ \
-		    if (length($1)) { printf "CEVERSION=\"%s\"\n", $1; \
-		      if ($1 >= 400) { printf "PLATFORM=\"Pocket PC 2003\"\n" } }; \
-		    if (length($2)) { printf "TARGETCPU=\"%s\"\n", toupper($2) }; \
-		    if (length($3)) { printf "ARCH=\"%s\"\n", toupper($3) }; \
-		    if (length($4)) { printf "PLATFORM=\"%s\"\n", $4 }; \
+		    if (length($1)) { printf "CEVERSION=%s\n", $1 }; \
+		    if (length($2)) { printf "TARGETCPU=%s\n", toupper($2) }; \
+		    if (length($3)) { printf "ARCH=%s\n", toupper($3) }; \
+		    if (length($4)) { printf "PLATFORM=%s\n", $4 }; \
 		    }'`
 		OSVERSION=WCE$CEVERSION;
 		if test "x${ARCH}" = "x" ; then
 	            ARCH=$TARGETCPU;  # could be ARM MIPS SH3 X86 X86EM ...
 		fi
-	    	if test "x${WCEROOT}" = "x" ; then
-			WCEROOT="C:/Program Files/Microsoft eMbedded C++ 4.0"
-		    if test ! -d "${WCEROOT}" ; then
-			WCEROOT="C:/Program Files/Microsoft eMbedded Tools"
-		    fi
+		if test "x${WCEROOT}" = "x" ; then
+		    WCEROOT="C:/Program Files/Microsoft eMbedded Tools"
 		fi
 		if test "x${SDKROOT}" = "x" ; then
-		    SDKROOT="C:/Program Files/Windows CE Tools"
-		    if test ! -d "${SDKROOT}" ; then
-			SDKROOT="C:/Windows CE Tools"
-		    fi
+		    SDKROOT="C:/Windows CE Tools"
 		fi
 		# In order to work in the tortured autoconf environment,
 		# we need to ensure that this path has no spaces
@@ -16640,9 +16633,6 @@ echo "$as_me: error: could not find PocketPC SDK or target compiler to enable Wi
 		    doWince="no"
 		else
 		    CEINCLUDE=`cygpath -w -s "${SDKROOT}/${OSVERSION}/${PLATFORM}/include" | sed -e 's!\\\!/!g'`
-		    if test -d "${CEINCLUDE}/${TARGETCPU}" ; then
-			CEINCLUDE="${CEINCLUDE}/${TARGETCPU}"
-		    fi
 		    CELIBPATH=`cygpath -w -s "${SDKROOT}/${OSVERSION}/${PLATFORM}/Lib/${TARGETCPU}" | sed -e 's!\\\!/!g'`
     		fi
 	    fi
@@ -16666,18 +16656,16 @@ echo "$as_me: error: could not find PocketPC SDK or target compiler to enable Wi
 		    export STLIB_LD="${MSSDK}/bin/win64/lib.exe -nologo ${lflags}"
 		    export LINKBIN="${MSSDK}/bin/win64/link.exe ${lflags}"
 		    CFLAGS_DEBUG="-nologo -Zi -Od -W3 ${runtime}d"
-		    CFLAGS_OPTIMIZE="-nologo -O2 -W2 ${runtime}"
+		    CFLAGS_OPTIMIZE="-nologo -O2 -Gs -W2 ${runtime}"
 		elif test "$doWince" != "no" ; then
-		    CEBINROOT="${WCEROOT}/EVC/${OSVERSION}/bin"
 		    if test "${TARGETCPU}" = "X86"; then
-			CC="${CEBINROOT}/cl.exe"
+			CC="${WCEROOT}/EVC/${OSVERSION}/bin/cl.exe -I\"${CELIB_DIR}/inc\" -I\"${CEINCLUDE}\""
 		    else
-			CC="${CEBINROOT}/cl${ARCH}.exe"
+			CC="${WCEROOT}/EVC/${OSVERSION}/bin/cl${TARGETCPU}.exe -I\"${CELIB_DIR}/inc\" -I\"${CEINCLUDE}\""
 		    fi
-		    CC="${CC} -I\"${CELIB_DIR}/inc\" -I\"${CEINCLUDE}\""
 		    RC="${WCEROOT}/Common/EVC/bin/rc.exe"
-		    arch=`echo ${ARCH} | awk '{print tolower($0)}'`
-		    defs="${ARCH} _${ARCH}_ ${arch} PALM_SIZE _MT _DLL _WINDOWS"
+		    cpulower=`echo ${TARGETCPU} | awk '{print tolower($0)}'`
+		    defs="${TARGETCPU} _${TARGETCPU}_ ${cpulower} _${cpulower}_ POCKET_SIZE PALM_SIZE _MT _DLL _WINDOWS"
 		    for i in $defs ; do
 			cat >>confdefs.h <<_ACEOF
 #define $i 1
@@ -16694,17 +16682,15 @@ _ACEOF
 
 		    CFLAGS_DEBUG="-nologo -Zi -Od"
 		    CFLAGS_OPTIMIZE="-nologo -Ox"
-		    lversion=`echo ${CEVERSION} | sed -e 's/\(.\)\(..\)/\1\.\2/'`
-		    lflags="-MACHINE:${ARCH} -LIBPATH:\"${CELIBPATH}\" -subsystem:windowsce,${lversion}"
-		    STLIB_LD="${CEBINROOT}/lib.exe -nologo ${lflags}"
-		    LINKBIN="${CEBINROOT}/link.exe ${lflags}"
-
+		    lflags="-MACHINE:${TARGETCPU} -LIBPATH:\"${CELIBPATH}\" -subsystem:windowsce,3.00"
+		    STLIB_LD="${WCEROOT}/EVC/${OSVERSION}/bin/lib.exe -nologo ${lflags}"
+		    LINKBIN="${WCEROOT}/EVC/${OSVERSION}/bin/link.exe ${lflags}"
 		else
 		    RC="rc"
-		    STLIB_LD="link -lib -nologo"
-    		    LINKBIN="link"
+		    STLIB_LD="lib -nologo"
+    		    LINKBIN="link -link50compat"
 		    CFLAGS_DEBUG="-nologo -Z7 -Od -W3 -WX ${runtime}d"
-		    CFLAGS_OPTIMIZE="-nologo -O2 -W2 ${runtime}"
+		    CFLAGS_OPTIMIZE="-nologo -O2 -Gs -GD -W2 ${runtime}"
 		fi
 	    fi
 
@@ -16712,14 +16698,15 @@ _ACEOF
 		# mingw gcc mode
 		RC="windres"
 		CFLAGS_DEBUG="-g"
-		CFLAGS_OPTIMIZE="-O2 -fomit-frame-pointer"
+		CFLAGS_OPTIMIZE="-O2"
 		SHLIB_LD="$CC -shared"
-		UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
+		UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.a'
 		LDFLAGS_CONSOLE="-wl,--subsystem,console ${lflags}"
 		LDFLAGS_WINDOW="-wl,--subsystem,windows ${lflags}"
 	    else
 		SHLIB_LD="${LINKBIN} -dll -nologo"
-		UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.lib'
+		UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.lib'
+		CFLAGS="$CFLAGS -YX"
 		PATHTYPE=-w
 		# For information on what debugtype is most useful, see:
 		# http://msdn.microsoft.com/library/en-us/dnvc60/html/gendepdebug.asp
@@ -16737,7 +16724,7 @@ _ACEOF
 
 	    SHLIB_LD_LIBS='${LIBS}'
 	    SHLIB_SUFFIX=".dll"
-	    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.dll'
+	    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.dll'
 
 	    TCL_LIB_VERSIONS_OK=nodots
 	    # Bogus to avoid getting this turned off
@@ -16804,7 +16791,7 @@ echo "$as_me: WARNING: \"64bit mode not supported with GCC on $system\"" >&2;}
 		DL_LIBS="-ldl"
 		LD_SEARCH_FLAGS='-L${LIB_RUNTIME_DIR}'
 		TCL_NEEDS_EXP_FILE=1
-		TCL_EXPORT_FILE_SUFFIX='${PACKAGE_VERSION}.exp'
+		TCL_EXPORT_FILE_SUFFIX='${PACKAGE_VERSION}\$\{DBGX\}.exp'
 	    fi
 
 	    # On AIX <=v4 systems, libbsd.a has to be linked in to support
@@ -17146,7 +17133,7 @@ fi
 	    DL_LIBS=""
 	    LDFLAGS="$LDFLAGS -Wl,-D,08000000"
 	    LD_SEARCH_FLAGS='-L${LIB_RUNTIME_DIR}'
-	    SHARED_LIB_SUFFIX='${PACKAGE_VERSION}.a'
+	    SHARED_LIB_SUFFIX='${PACKAGE_VERSION}\$\{DBGX\}.a'
 	    ;;
 	IRIX-5.*)
 	    SHLIB_CFLAGS=""
@@ -17209,7 +17196,7 @@ echo "$as_me: WARNING: 64bit mode not supported by gcc" >&2;}
 	    SHLIB_LD_LIBS='${LIBS}'
 	    SHLIB_SUFFIX=".so"
 
-	    CFLAGS_OPTIMIZE="-O2 -fomit-frame-pointer"
+	    CFLAGS_OPTIMIZE=-O2
 	    # egcs-2.91.66 on Redhat Linux 6.0 generates lots of warnings
 	    # when you inline the string and math operations.  Turn this off to
 	    # get rid of the warnings.
@@ -17735,11 +17722,11 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
   $EGREP "yes" >/dev/null 2>&1; then
   echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
-		    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so'
+		    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so'
 else
   echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
-		    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so.1.0'
+		    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so.1.0'
 
 fi
 rm -f conftest*
@@ -17754,7 +17741,7 @@ else
 		DL_OBJS="tclLoadAout.o"
 		DL_LIBS=""
 		LD_SEARCH_FLAGS='-L${LIB_RUNTIME_DIR}'
-		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
+		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.a'
 
 fi
 
@@ -17762,7 +17749,7 @@ fi
 
 	    # FreeBSD doesn't handle version numbers with dots.
 
-	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
+	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.a'
 	    TCL_LIB_VERSIONS_OK=nodots
 	    ;;
 	OpenBSD-*)
@@ -17790,18 +17777,18 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
   $EGREP "yes" >/dev/null 2>&1; then
   echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
-		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so.1.0'
+		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so.1.0'
 else
   echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
-		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so.1.0'
+		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so.1.0'
 
 fi
 rm -f conftest*
 
 
 	    # OpenBSD doesn't do version numbers with dots.
-	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
+	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.a'
 	    TCL_LIB_VERSIONS_OK=nodots
 	    ;;
 	FreeBSD-*)
@@ -17823,8 +17810,8 @@ rm -f conftest*
 	    case $system in
 	    FreeBSD-3.*)
 	    	# FreeBSD-3 doesn't handle version numbers with dots.
-	    	UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
-	    	SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so'
+	    	UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.a'
+	    	SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so'
 	    	TCL_LIB_VERSIONS_OK=nodots
 		;;
 	    esac
@@ -17977,8 +17964,8 @@ _ACEOF
 	    # requires an extra version number at the end of .so file names.
 	    # So, the library has to have a name like libtcl75.so.1.0
 
-	    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so.1.0'
-	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
+	    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so.1.0'
+	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.a'
 	    TCL_LIB_VERSIONS_OK=nodots
 	    ;;
 	SunOS-5.[0-6]*)
@@ -18434,10 +18421,10 @@ fi;
     fi
 
     if test "$SHARED_LIB_SUFFIX" = "" ; then
-	SHARED_LIB_SUFFIX='${PACKAGE_VERSION}${SHLIB_SUFFIX}'
+	SHARED_LIB_SUFFIX='${PACKAGE_VERSION}\$\{DBGX\}${SHLIB_SUFFIX}'
     fi
     if test "$UNSHARED_LIB_SUFFIX" = "" ; then
-	UNSHARED_LIB_SUFFIX='${PACKAGE_VERSION}.a'
+	UNSHARED_LIB_SUFFIX='${PACKAGE_VERSION}\$\{DBGX\}.a'
     fi
 
 
@@ -18996,7 +18983,11 @@ echo "${ECHO_T}${tcl_cv_type_off64_t}" >&6
 
 
 
-    DBGX=""
+    if test "${TEA_PLATFORM}" = "windows" ; then
+	tcl_dbgx=d
+    else
+	tcl_dbgx=g
+    fi
 
     echo "$as_me:$LINENO: checking for build with symbols" >&5
 echo $ECHO_N "checking for build with symbols... $ECHO_C" >&6
@@ -19010,11 +19001,15 @@ fi;
     if test "$tcl_ok" = "no"; then
 	CFLAGS_DEFAULT="${CFLAGS_OPTIMIZE}"
 	LDFLAGS_DEFAULT="${LDFLAGS_OPTIMIZE}"
+	DBGX=""
+	TCL_DBGX=""
 	echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
     else
 	CFLAGS_DEFAULT="${CFLAGS_DEBUG}"
 	LDFLAGS_DEFAULT="${LDFLAGS_DEBUG}"
+	DBGX=${tcl_dbgx}
+	TCL_DBGX=${tcl_dbgx}
 	if test "$tcl_ok" = "yes"; then
 	    echo "$as_me:$LINENO: result: yes (standard debugging)" >&5
 echo "${ECHO_T}yes (standard debugging)" >&6
@@ -19216,11 +19211,10 @@ fi
     ECHO_VERSION='`echo ${PACKAGE_VERSION}`'
     TCL_LIB_VERSIONS_OK=ok
     CFLAGS_DEBUG=-g
+    CFLAGS_OPTIMIZE=-O
     if test "$GCC" = "yes" ; then
-	CFLAGS_OPTIMIZE=-O2
-	CFLAGS_WARNING="-Wall"
+	CFLAGS_WARNING="-Wall -Wno-implicit-int"
     else
-	CFLAGS_OPTIMIZE=-O
 	CFLAGS_WARNING=""
     fi
     TCL_NEEDS_EXP_FILE=0
@@ -19367,27 +19361,20 @@ echo "${ECHO_T}found $CELIB_DIR" >&6
 		    doWince="300,ARM,ARM,Pocket PC 2002"
 		fi
 		eval `echo $doWince | awk -F "," '{ \
-		    if (length($1)) { printf "CEVERSION=\"%s\"\n", $1; \
-		      if ($1 >= 400) { printf "PLATFORM=\"Pocket PC 2003\"\n" } }; \
-		    if (length($2)) { printf "TARGETCPU=\"%s\"\n", toupper($2) }; \
-		    if (length($3)) { printf "ARCH=\"%s\"\n", toupper($3) }; \
-		    if (length($4)) { printf "PLATFORM=\"%s\"\n", $4 }; \
+		    if (length($1)) { printf "CEVERSION=%s\n", $1 }; \
+		    if (length($2)) { printf "TARGETCPU=%s\n", toupper($2) }; \
+		    if (length($3)) { printf "ARCH=%s\n", toupper($3) }; \
+		    if (length($4)) { printf "PLATFORM=%s\n", $4 }; \
 		    }'`
 		OSVERSION=WCE$CEVERSION;
 		if test "x${ARCH}" = "x" ; then
 	            ARCH=$TARGETCPU;  # could be ARM MIPS SH3 X86 X86EM ...
 		fi
-	    	if test "x${WCEROOT}" = "x" ; then
-			WCEROOT="C:/Program Files/Microsoft eMbedded C++ 4.0"
-		    if test ! -d "${WCEROOT}" ; then
-			WCEROOT="C:/Program Files/Microsoft eMbedded Tools"
-		    fi
+		if test "x${WCEROOT}" = "x" ; then
+		    WCEROOT="C:/Program Files/Microsoft eMbedded Tools"
 		fi
 		if test "x${SDKROOT}" = "x" ; then
-		    SDKROOT="C:/Program Files/Windows CE Tools"
-		    if test ! -d "${SDKROOT}" ; then
-			SDKROOT="C:/Windows CE Tools"
-		    fi
+		    SDKROOT="C:/Windows CE Tools"
 		fi
 		# In order to work in the tortured autoconf environment,
 		# we need to ensure that this path has no spaces
@@ -19402,9 +19389,6 @@ echo "$as_me: error: could not find PocketPC SDK or target compiler to enable Wi
 		    doWince="no"
 		else
 		    CEINCLUDE=`cygpath -w -s "${SDKROOT}/${OSVERSION}/${PLATFORM}/include" | sed -e 's!\\\!/!g'`
-		    if test -d "${CEINCLUDE}/${TARGETCPU}" ; then
-			CEINCLUDE="${CEINCLUDE}/${TARGETCPU}"
-		    fi
 		    CELIBPATH=`cygpath -w -s "${SDKROOT}/${OSVERSION}/${PLATFORM}/Lib/${TARGETCPU}" | sed -e 's!\\\!/!g'`
     		fi
 	    fi
@@ -19428,18 +19412,16 @@ echo "$as_me: error: could not find PocketPC SDK or target compiler to enable Wi
 		    export STLIB_LD="${MSSDK}/bin/win64/lib.exe -nologo ${lflags}"
 		    export LINKBIN="${MSSDK}/bin/win64/link.exe ${lflags}"
 		    CFLAGS_DEBUG="-nologo -Zi -Od -W3 ${runtime}d"
-		    CFLAGS_OPTIMIZE="-nologo -O2 -W2 ${runtime}"
+		    CFLAGS_OPTIMIZE="-nologo -O2 -Gs -W2 ${runtime}"
 		elif test "$doWince" != "no" ; then
-		    CEBINROOT="${WCEROOT}/EVC/${OSVERSION}/bin"
 		    if test "${TARGETCPU}" = "X86"; then
-			CC="${CEBINROOT}/cl.exe"
+			CC="${WCEROOT}/EVC/${OSVERSION}/bin/cl.exe -I\"${CELIB_DIR}/inc\" -I\"${CEINCLUDE}\""
 		    else
-			CC="${CEBINROOT}/cl${ARCH}.exe"
+			CC="${WCEROOT}/EVC/${OSVERSION}/bin/cl${TARGETCPU}.exe -I\"${CELIB_DIR}/inc\" -I\"${CEINCLUDE}\""
 		    fi
-		    CC="${CC} -I\"${CELIB_DIR}/inc\" -I\"${CEINCLUDE}\""
 		    RC="${WCEROOT}/Common/EVC/bin/rc.exe"
-		    arch=`echo ${ARCH} | awk '{print tolower($0)}'`
-		    defs="${ARCH} _${ARCH}_ ${arch} PALM_SIZE _MT _DLL _WINDOWS"
+		    cpulower=`echo ${TARGETCPU} | awk '{print tolower($0)}'`
+		    defs="${TARGETCPU} _${TARGETCPU}_ ${cpulower} _${cpulower}_ POCKET_SIZE PALM_SIZE _MT _DLL _WINDOWS"
 		    for i in $defs ; do
 			cat >>confdefs.h <<_ACEOF
 #define $i 1
@@ -19456,17 +19438,15 @@ _ACEOF
 
 		    CFLAGS_DEBUG="-nologo -Zi -Od"
 		    CFLAGS_OPTIMIZE="-nologo -Ox"
-		    lversion=`echo ${CEVERSION} | sed -e 's/\(.\)\(..\)/\1\.\2/'`
-		    lflags="-MACHINE:${ARCH} -LIBPATH:\"${CELIBPATH}\" -subsystem:windowsce,${lversion}"
-		    STLIB_LD="${CEBINROOT}/lib.exe -nologo ${lflags}"
-		    LINKBIN="${CEBINROOT}/link.exe ${lflags}"
-
+		    lflags="-MACHINE:${TARGETCPU} -LIBPATH:\"${CELIBPATH}\" -subsystem:windowsce,3.00"
+		    STLIB_LD="${WCEROOT}/EVC/${OSVERSION}/bin/lib.exe -nologo ${lflags}"
+		    LINKBIN="${WCEROOT}/EVC/${OSVERSION}/bin/link.exe ${lflags}"
 		else
 		    RC="rc"
-		    STLIB_LD="link -lib -nologo"
-    		    LINKBIN="link"
+		    STLIB_LD="lib -nologo"
+    		    LINKBIN="link -link50compat"
 		    CFLAGS_DEBUG="-nologo -Z7 -Od -W3 -WX ${runtime}d"
-		    CFLAGS_OPTIMIZE="-nologo -O2 -W2 ${runtime}"
+		    CFLAGS_OPTIMIZE="-nologo -O2 -Gs -GD -W2 ${runtime}"
 		fi
 	    fi
 
@@ -19474,14 +19454,15 @@ _ACEOF
 		# mingw gcc mode
 		RC="windres"
 		CFLAGS_DEBUG="-g"
-		CFLAGS_OPTIMIZE="-O2 -fomit-frame-pointer"
+		CFLAGS_OPTIMIZE="-O2"
 		SHLIB_LD="$CC -shared"
-		UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
+		UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.a'
 		LDFLAGS_CONSOLE="-wl,--subsystem,console ${lflags}"
 		LDFLAGS_WINDOW="-wl,--subsystem,windows ${lflags}"
 	    else
 		SHLIB_LD="${LINKBIN} -dll -nologo"
-		UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.lib'
+		UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.lib'
+		CFLAGS="$CFLAGS -YX"
 		PATHTYPE=-w
 		# For information on what debugtype is most useful, see:
 		# http://msdn.microsoft.com/library/en-us/dnvc60/html/gendepdebug.asp
@@ -19499,7 +19480,7 @@ _ACEOF
 
 	    SHLIB_LD_LIBS='${LIBS}'
 	    SHLIB_SUFFIX=".dll"
-	    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.dll'
+	    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.dll'
 
 	    TCL_LIB_VERSIONS_OK=nodots
 	    # Bogus to avoid getting this turned off
@@ -19566,7 +19547,7 @@ echo "$as_me: WARNING: \"64bit mode not supported with GCC on $system\"" >&2;}
 		DL_LIBS="-ldl"
 		LD_SEARCH_FLAGS='-L${LIB_RUNTIME_DIR}'
 		TCL_NEEDS_EXP_FILE=1
-		TCL_EXPORT_FILE_SUFFIX='${PACKAGE_VERSION}.exp'
+		TCL_EXPORT_FILE_SUFFIX='${PACKAGE_VERSION}\$\{DBGX\}.exp'
 	    fi
 
 	    # On AIX <=v4 systems, libbsd.a has to be linked in to support
@@ -19908,7 +19889,7 @@ fi
 	    DL_LIBS=""
 	    LDFLAGS="$LDFLAGS -Wl,-D,08000000"
 	    LD_SEARCH_FLAGS='-L${LIB_RUNTIME_DIR}'
-	    SHARED_LIB_SUFFIX='${PACKAGE_VERSION}.a'
+	    SHARED_LIB_SUFFIX='${PACKAGE_VERSION}\$\{DBGX\}.a'
 	    ;;
 	IRIX-5.*)
 	    SHLIB_CFLAGS=""
@@ -19971,7 +19952,7 @@ echo "$as_me: WARNING: 64bit mode not supported by gcc" >&2;}
 	    SHLIB_LD_LIBS='${LIBS}'
 	    SHLIB_SUFFIX=".so"
 
-	    CFLAGS_OPTIMIZE="-O2 -fomit-frame-pointer"
+	    CFLAGS_OPTIMIZE=-O2
 	    # egcs-2.91.66 on Redhat Linux 6.0 generates lots of warnings
 	    # when you inline the string and math operations.  Turn this off to
 	    # get rid of the warnings.
@@ -20497,11 +20478,11 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
   $EGREP "yes" >/dev/null 2>&1; then
   echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
-		    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so'
+		    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so'
 else
   echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
-		    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so.1.0'
+		    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so.1.0'
 
 fi
 rm -f conftest*
@@ -20516,7 +20497,7 @@ else
 		DL_OBJS="tclLoadAout.o"
 		DL_LIBS=""
 		LD_SEARCH_FLAGS='-L${LIB_RUNTIME_DIR}'
-		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
+		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.a'
 
 fi
 
@@ -20524,7 +20505,7 @@ fi
 
 	    # FreeBSD doesn't handle version numbers with dots.
 
-	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
+	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.a'
 	    TCL_LIB_VERSIONS_OK=nodots
 	    ;;
 	OpenBSD-*)
@@ -20552,18 +20533,18 @@ if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
   $EGREP "yes" >/dev/null 2>&1; then
   echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
-		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so.1.0'
+		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so.1.0'
 else
   echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
-		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so.1.0'
+		SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so.1.0'
 
 fi
 rm -f conftest*
 
 
 	    # OpenBSD doesn't do version numbers with dots.
-	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
+	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.a'
 	    TCL_LIB_VERSIONS_OK=nodots
 	    ;;
 	FreeBSD-*)
@@ -20585,8 +20566,8 @@ rm -f conftest*
 	    case $system in
 	    FreeBSD-3.*)
 	    	# FreeBSD-3 doesn't handle version numbers with dots.
-	    	UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
-	    	SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so'
+	    	UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.a'
+	    	SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so'
 	    	TCL_LIB_VERSIONS_OK=nodots
 		;;
 	    esac
@@ -20739,8 +20720,8 @@ _ACEOF
 	    # requires an extra version number at the end of .so file names.
 	    # So, the library has to have a name like libtcl75.so.1.0
 
-	    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.so.1.0'
-	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}.a'
+	    SHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.so.1.0'
+	    UNSHARED_LIB_SUFFIX='${TCL_TRIM_DOTS}\$\{DBGX\}.a'
 	    TCL_LIB_VERSIONS_OK=nodots
 	    ;;
 	SunOS-5.[0-6]*)
@@ -21196,10 +21177,10 @@ fi;
     fi
 
     if test "$SHARED_LIB_SUFFIX" = "" ; then
-	SHARED_LIB_SUFFIX='${PACKAGE_VERSION}${SHLIB_SUFFIX}'
+	SHARED_LIB_SUFFIX='${PACKAGE_VERSION}\$\{DBGX\}${SHLIB_SUFFIX}'
     fi
     if test "$UNSHARED_LIB_SUFFIX" = "" ; then
-	UNSHARED_LIB_SUFFIX='${PACKAGE_VERSION}.a'
+	UNSHARED_LIB_SUFFIX='${PACKAGE_VERSION}\$\{DBGX\}.a'
     fi
 
 
@@ -22284,8 +22265,8 @@ _ACEOF
 
     #--------------------------------------------------------------------
     # Shared libraries and static libraries have different names.
-    # Use the double eval to make sure any variables in the suffix is
-    # substituted. (@@@ Might not be necessary anymore)
+    # Use the double eval to make sure the ${DBGX} in the suffix is
+    # substituted.
     #--------------------------------------------------------------------
 
     RANLIB_STUB="${RANLIB}"
@@ -23155,7 +23136,6 @@ s,@MATH_LIBS@,$MATH_LIBS,;t t
 s,@TCL_THREADS@,$TCL_THREADS,;t t
 s,@SHARED_BUILD@,$SHARED_BUILD,;t t
 s,@AR@,$AR,;t t
-s,@CELIB_DIR@,$CELIB_DIR,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@DL_LIBS@,$DL_LIBS,;t t
 s,@CFLAGS_DEBUG@,$CFLAGS_DEBUG,;t t

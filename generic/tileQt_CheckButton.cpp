@@ -52,6 +52,7 @@ static void CheckButtonIndicatorElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     *widthPtr  = qApp->style().pixelMetric(QStyle::PM_IndicatorWidth);
     *heightPtr = qApp->style().pixelMetric(QStyle::PM_IndicatorHeight);
     *paddingPtr = Ttk_MakePadding(0, 0, CheckButtonHorizontalPadding, 0);
@@ -61,6 +62,7 @@ static void CheckButtonIndicatorElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QCheckBox    button(TileQt_QWidget_Widget);
@@ -103,6 +105,7 @@ static void CheckButtonBorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     QCheckBox button(TileQt_QWidget_Widget);
     *widthPtr   = button.width();
     *heightPtr  = button.height();
@@ -113,6 +116,7 @@ static void CheckButtonBorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QCheckBox    button(TileQt_QWidget_Widget);	
@@ -169,9 +173,9 @@ int TileQt_Init_CheckButton(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "Checkbutton.border",
+    Ttk_RegisterElement(interp, themePtr, "Checkbutton.border",
             &CheckButtonBorderElementSpec, NULL);
-    Ttk_RegisterElementSpec(themePtr, "Checkbutton.indicator",
+    Ttk_RegisterElement(interp, themePtr, "Checkbutton.indicator",
             &CheckButtonIndicatorElementSpec, NULL);
     
     /*

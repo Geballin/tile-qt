@@ -17,9 +17,12 @@
 
 /* Global Symbols */
 extern QScrollBar*    TileQt_QScrollBar_Widget; 
+extern QComboBox*     TileQt_QComboBox_RW_Widget;
+extern QComboBox*     TileQt_QComboBox_RO_Widget;
 extern QWidget*       TileQt_QWidget_Widget;
 extern QWidget*       TileQt_QWidget_WidgetParent;
-extern QSlider*       TileQt_QSlider_Widget;
+extern QSlider*       TileQt_QSlider_Hor_Widget;
+extern QSlider*       TileQt_QSlider_Ver_Widget;
 extern QTabBar*       TileQt_QTabBar_Widget;
 extern const QPixmap* TileQt_QPixmap_BackgroundTile;
 

@@ -49,6 +49,7 @@ static void TreeViewFieldElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -56,6 +57,7 @@ static void TreeViewFieldElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags =Ttk_StateTableLookup(treeview_field_statemap, state);
@@ -113,6 +115,7 @@ static void TreeViewClientElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -120,6 +123,7 @@ static void TreeViewClientElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags =Ttk_StateTableLookup(treeview_client_statemap,state);
@@ -177,6 +181,7 @@ static void TreeHeadingBorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
+    if (qApp == NULL) return;
     *paddingPtr = Ttk_UniformPadding(TreeViewUniformPadding);
 }
 
@@ -184,6 +189,7 @@ static void TreeHeadingBorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
+    if (qApp == NULL) return;
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(treeheading_border_statemap,
@@ -253,11 +259,11 @@ int TileQt_Init_TreeView(Tcl_Interp *interp, Ttk_Theme themePtr)
     /*
      * Register elements:
      */
-    Ttk_RegisterElementSpec(themePtr, "Treeview.field",
+    Ttk_RegisterElement(interp, themePtr, "Treeview.field",
             &TreeViewFieldElementSpec, NULL);
-    Ttk_RegisterElementSpec(themePtr, "Treeview.client",
+    Ttk_RegisterElement(interp, themePtr, "Treeview.client",
             &TreeViewClientElementSpec, NULL);
-    Ttk_RegisterElementSpec(themePtr, "Treeheading.border",
+    Ttk_RegisterElement(interp, themePtr, "Treeheading.border",
             &TreeHeadingBorderElementSpec, NULL);
     
     /*
