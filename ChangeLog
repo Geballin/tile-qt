@@ -1,3 +1,13 @@
+2005-01-08  Joe English  <jenglish@users.sourceforge.net>
+	* configure.in, Makefile.in, pkgIndex.tcl.in: Generate 
+	pkgIndex.tcl at configure-time instead of build-time.
+	Change pkgIndex.tcl to register ifneeded script for package 
+	"tile::theme::tileqt", instead of "tileqt", so it shows
+	up in the list of available themes.
+	* Makefile.in, configure.in: Replaced automake-legacy 'install' targets.
+	Other misc. cleanup.
+	* configure: Regenerated
+
 2004-11-10  Georgios Petasis  <petasis@iit.demokritos.gr>
 
 	* generic/*.cpp
