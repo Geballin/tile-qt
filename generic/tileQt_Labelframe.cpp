@@ -1,0 +1,103 @@
+/*
+ *  tileQt_Labelframe.cpp
+ * -----------------------
+ *
+ * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
+ * Qt/KDE for drawing.
+ *
+ * Copyright (C) 2004-2005 by:
+ * Georgios Petasis, petasis@iit.demokritos.gr,
+ * Software and Knowledge Engineering Laboratory,
+ * Institute of Informatics and Telecommunications,
+ * National Centre for Scientific Research (NCSR) "Demokritos",
+ * Aghia Paraskevi, 153 10, Athens, Greece.
+ */
+
+#include "tileQt_Utilities.h"
+#include <tk.h>
+#include "tkTheme.h"
+#include "tileQt_WidgetDefaults.h"
+
+/*
+ * Map between Tk/Tile & Qt/KDE state flags.
+ */
+static TTK_StateTable labelframe_statemap[] =
+{
+    {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0 },
+    {QStyle::Style_Enabled,                         0, 0 }
+};
+
+typedef struct {
+} LabelframeBorderElement;
+
+
+static TTK_ElementOptionSpec LabelframeBorderElementOptions[] = {
+    {NULL}
+};
+
+static void LabelframeBorderElementGeometry(
+    void *clientData, void *elementRecord, Tk_Window tkwin,
+    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+{
+    *paddingPtr = TTK_UniformPadding(LabelframeUniformPadding);
+}
+
+static void LabelframeBorderElementDraw(
+    void *clientData, void *elementRecord, Tk_Window tkwin,
+    Drawable d, TTK_Box b, unsigned state)
+{
+    QPixmap      pixmap(b.width, b.height);
+    QPainter     painter(&pixmap);
+    QStyle::SFlags sflags = TTK_StateTableLookup(labelframe_statemap, state);
+    sflags |= QStyle::Style_Sunken;
+    if (TileQt_QPixmap_BackgroundTile &&
+        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+        painter.fillRect(0, 0, b.width, b.height,
+                         QBrush(QColor(255,255,255),
+                         *TileQt_QPixmap_BackgroundTile));
+    } else {
+        painter.fillRect(0, 0, b.width, b.height,
+                         qApp->palette().active().background());
+    }
+    // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
+    qApp->style().drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
+          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
+          QStyleOption(/*lineWidth*/1, /*midLineWidth*/0
+                       /*frameShape*//*frameShadow*/));
+    TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
+                                    0, 0, b.width, b.height, b.x, b.y);
+}
+
+static TTK_ElementSpec LabelframeBorderElementSpec = {
+    TK_STYLE_VERSION_2,
+    sizeof(LabelframeBorderElement),
+    LabelframeBorderElementOptions,
+    LabelframeBorderElementGeometry,
+    LabelframeBorderElementDraw
+};
+
+/*------------------------------------------------------------------------
+ * +++ Widget layout.
+ */
+
+TTK_BEGIN_LAYOUT(LabelframeLayout)
+    /* Note: labelframe widget does its own layout */
+    TTK_NODE("Labelframe.border", TTK_FILL_BOTH)
+    TTK_NODE("Labelframe.text", TTK_FILL_BOTH)
+TTK_END_LAYOUT
+
+int TileQt_Init_Labelframe(Tcl_Interp *interp, TTK_Theme themePtr)
+{
+    /*
+     * Register elements:
+     */
+    TTK_RegisterElementSpec(themePtr, "Labelframe.border",
+            &LabelframeBorderElementSpec, NULL);
+    
+    /*
+     * Register layouts:
+     */
+    TTK_RegisterLayout(themePtr, "TLabelframe", LabelframeLayout);
+
+    return TCL_OK;
+}; /* TileQt_Init_Labelframe */
