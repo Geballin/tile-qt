@@ -21,7 +21,7 @@
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable notebook_statemap[] =
+static Ttk_StateTable notebook_statemap[] =
 {
     {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0},
     {QStyle::Style_Enabled|QStyle::Style_Selected,  TTK_STATE_SELECTED, 0},
@@ -34,28 +34,28 @@ typedef struct {
 } NotebookTabElement;
 
 
-static TTK_ElementOptionSpec NotebookTabElementOptions[] = {
+static Ttk_ElementOptionSpec NotebookTabElementOptions[] = {
     {NULL}
 };
 
 static void NotebookTabElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     //PM_TabBarTabOverlap, PM_TabBarTabHSpace, PM_TabBarTabVSpace, PM_TabBarBaseHeight, PM_TabBarBaseOverlap,
     QTab tab;
     QRect rc = tab.rect();
     *widthPtr   = rc.width();
     *heightPtr  = rc.height();
-    *paddingPtr = TTK_UniformPadding(NotebookUniformPadding);
+    *paddingPtr = Ttk_UniformPadding(NotebookUniformPadding);
     int tabOverlap = qApp->style().pixelMetric(QStyle::PM_TabBarTabOverlap,
                                                TileQt_QTabBar_Widget);
-    //*paddingPtr = TTK_MakePadding(hs, vs, hs, vs);
+    //*paddingPtr = Ttk_MakePadding(hs, vs, hs, vs);
 }
 
 static void NotebookTabElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     int tabOverlap = qApp->style().pixelMetric(QStyle::PM_TabBarTabOverlap,
                                                TileQt_QTabBar_Widget);
@@ -63,7 +63,7 @@ static void NotebookTabElementDraw(
                                                    TileQt_QTabBar_Widget);
     int borderWidth = qApp->style().pixelMetric(QStyle::PM_DefaultFrameWidth,
                                                    TileQt_QTabBar_Widget);
-    QStyle::SFlags sflags = TTK_StateTableLookup(notebook_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(notebook_statemap, state);
     //tabOverlap = 0;
     int width = b.width + 1*tabOverlap;
     int height = b.height + tabBaseOverlap + borderWidth;
@@ -124,7 +124,7 @@ static void NotebookTabElementDraw(
     }
 }
 
-static TTK_ElementSpec NotebookTabElementSpec = {
+static Ttk_ElementSpec NotebookTabElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(NotebookTabElement),
     NotebookTabElementOptions,
@@ -136,24 +136,24 @@ typedef struct {
 } NotebookClientElement;
 
 
-static TTK_ElementOptionSpec NotebookClientElementOptions[] = {
+static Ttk_ElementOptionSpec NotebookClientElementOptions[] = {
     {NULL}
 };
 
 static void NotebookClientElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    *paddingPtr = TTK_UniformPadding(NotebookClientUniformPadding);
+    *paddingPtr = Ttk_UniformPadding(NotebookClientUniformPadding);
 }
 
 static void NotebookClientElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    QStyle::SFlags sflags = TTK_StateTableLookup(notebook_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(notebook_statemap, state);
     if (TileQt_QPixmap_BackgroundTile &&
         !(TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
@@ -170,7 +170,7 @@ static void NotebookClientElementDraw(
                                0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec NotebookClientElementSpec = {
+static Ttk_ElementSpec NotebookClientElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(NotebookClientElement),
     NotebookClientElementOptions,
@@ -182,14 +182,14 @@ static TTK_ElementSpec NotebookClientElementSpec = {
  * +++ Widget layout.
  */
 
-int TileQt_Init_Notebook(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_Notebook(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "Notebook.tab",
+    Ttk_RegisterElementSpec(themePtr, "Notebook.tab",
                 &NotebookTabElementSpec, NULL);
-    TTK_RegisterElementSpec(themePtr, "Notebook.client",
+    Ttk_RegisterElementSpec(themePtr, "Notebook.client",
                 &NotebookClientElementSpec, NULL);
     
     /*

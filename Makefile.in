@@ -3,6 +3,13 @@
 #
 
 #========================================================================
+# IMPORTANT:
+# Change the following variable to point in the directory hosting the file
+# tkTheme.h, from the tile package sources!
+#========================================================================
+TILE_INCLUDES = -I/disk2b/local/sources/tcl/tile/generic/
+
+#========================================================================
 # The names of the source files is defined in the configure script.
 # The object files are used for linking into the final library.
 # This will be used when a dist target is added to the Makefile.
@@ -145,7 +152,7 @@ WISH		= $(TCLSH_ENV) $(WISH_PROG)
 # just a comment
 INCLUDES	= @PKG_INCLUDES@ \
 		  @TCL_INCLUDES@ @TK_INCLUDES@ @TK_XINCLUDES@ \
-                  -I /usr/lib/qt-3.3/include
+                  @QT_INCLUDES@ $(TILE_INCLUDES)
 
 EXTRA_CFLAGS	= @PKG_CFLAGS@
 
@@ -154,7 +161,23 @@ DEFS		= @DEFS@ $(EXTRA_CFLAGS)
 CONFIG_CLEAN_FILES = Makefile
 
 CPPFLAGS	= @CPPFLAGS@
-LIBS		= @PKG_LIBS@ @LIBS@ -L/usr/lib/qt-3.3/lib -lkdecore -lkdeui -lqt-mt -lqt -L/disk2b/local/lib/tile0.6 -ltile0.6
+## The following are needed by KDE/QT configuration
+LIBSOCKET       = @LIBSOCKET@
+LIBZ            = @LIBZ@
+LIBPNG          = @LIBPNG@
+LIB_X11         = @LIB_X11@
+LIBSM           = @LIBSM@
+###################################################
+TILE_VERSION    = $(shell echo \
+   "puts [lindex [lsort [package versions tile]] end]" | $(TCLSH_PROG))
+TILE_LIB_DIR    = $(shell echo \
+   "set ::tile_version [lindex [lsort [package versions tile]] end];\
+    set ::tile_lib [lindex [package ifneeded tile [set ::tile_version]] 1];\
+    puts [file dirname [set ::tile_lib]]" | $(TCLSH_PROG))
+TILE_LIBS       = -L$(TILE_LIB_DIR) -ltile$(TILE_VERSION)
+LIBS		= @PKG_LIBS@ @LIBS@ @QT_LDFLAGS@ @LIB_QT@ \
+                  @KDE_LDFLAGS@ @all_libraries@ \
+                  @LIB_KDECORE@ @LIB_KDEUI@ $(TILE_LIBS)
 AR		= ar
 CFLAGS		= @CFLAGS@
 CC = g++

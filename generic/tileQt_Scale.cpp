@@ -21,7 +21,7 @@
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable scale_statemap[] =
+static Ttk_StateTable scale_statemap[] =
 {
     {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0},
     {QStyle::Style_Enabled|QStyle::Style_Down, 	    TTK_STATE_PRESSED, 0},
@@ -33,23 +33,23 @@ static TTK_StateTable scale_statemap[] =
 typedef struct {
 } ScaleTroughElement;
 
-static TTK_ElementOptionSpec ScaleTroughElementOptions[] = {
+static Ttk_ElementOptionSpec ScaleTroughElementOptions[] = {
     {NULL}
 };
 
 static void ScaleTroughElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     //*heightPtr  = TileQt_QSlider_Widget->sizeHint().height();
     //*widthPtr   = TileQt_QSlider_Widget->sizeHint().width();
     *widthPtr = 60;
-    *paddingPtr = TTK_UniformPadding(4);
+    *paddingPtr = Ttk_UniformPadding(4);
 }
 
 static void ScaleTroughElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     int orient = (int) clientData;
     QPixmap      pixmap(b.width, b.height);
@@ -62,7 +62,7 @@ static void ScaleTroughElementDraw(
     TileQt_QSlider_Widget->setValue(0);
     //widget.setGeometry(b.x, b.y, b.width, b.height);
 
-    QStyle::SFlags sflags = TTK_StateTableLookup(scale_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(scale_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) {
       TileQt_QSlider_Widget->setOrientation(Qt::Horizontal);
       sflags |= QStyle::Style_Horizontal;
@@ -92,7 +92,7 @@ static void ScaleTroughElementDraw(
                                     0, 0, b.width, b.height, b.x, b.x);
 }
 
-static TTK_ElementSpec ScaleTroughElementSpec = {
+static Ttk_ElementSpec ScaleTroughElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(ScaleTroughElement),
     ScaleTroughElementOptions,
@@ -103,23 +103,23 @@ static TTK_ElementSpec ScaleTroughElementSpec = {
 typedef struct {
 } ScaleSliderElement;
 
-static TTK_ElementOptionSpec ScaleSliderElementOptions[] = {
+static Ttk_ElementOptionSpec ScaleSliderElementOptions[] = {
     {NULL}
 };
 
 static void ScaleSliderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     *widthPtr = *heightPtr =
         qApp->style().pixelMetric(QStyle::PM_SliderControlThickness,
                                   TileQt_QSlider_Widget);
-    *paddingPtr = TTK_UniformPadding(0);
+    *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void ScaleSliderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     return;
     int orient = (int) clientData;
@@ -133,7 +133,7 @@ static void ScaleSliderElementDraw(
     TileQt_QSlider_Widget->setValue(0);
     //widget.setGeometry(b.x, b.y, b.width, b.height);
 
-    QStyle::SFlags sflags = TTK_StateTableLookup(scale_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(scale_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) {
       TileQt_QSlider_Widget->setOrientation(Qt::Horizontal);
       sflags |= QStyle::Style_Horizontal;
@@ -163,7 +163,7 @@ static void ScaleSliderElementDraw(
                                     0, 0, b.width, b.height, b.x, b.x);
 }
 
-static TTK_ElementSpec ScaleSliderElementSpec = {
+static Ttk_ElementSpec ScaleSliderElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(ScaleSliderElement),
     ScaleSliderElementOptions,
@@ -185,26 +185,26 @@ TTK_BEGIN_LAYOUT(HorizontalScaleLayout)
 	    TTK_NODE("Horizontal.Scale.slider", TTK_PACK_LEFT) )
 TTK_END_LAYOUT
 
-int TileQt_Init_Scale(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_Scale(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "Horizontal.Scale.trough",
+    Ttk_RegisterElementSpec(themePtr, "Horizontal.Scale.trough",
             &ScaleTroughElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
-    TTK_RegisterElementSpec(themePtr, "Vertical.Scale.trough",
+    Ttk_RegisterElementSpec(themePtr, "Vertical.Scale.trough",
             &ScaleTroughElementSpec, (void *) TTK_ORIENT_VERTICAL);
-    TTK_RegisterElementSpec(themePtr, "Horizontal.Scale.slider",
+    Ttk_RegisterElementSpec(themePtr, "Horizontal.Scale.slider",
             &ScaleSliderElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
-    TTK_RegisterElementSpec(themePtr, "Vertical.Scale.slider",
+    Ttk_RegisterElementSpec(themePtr, "Vertical.Scale.slider",
             &ScaleSliderElementSpec, (void *) TTK_ORIENT_VERTICAL);
     
     /*
      * Register layouts:
      */
-    TTK_RegisterLayout(themePtr,
+    Ttk_RegisterLayout(themePtr,
 	    "Horizontal.TScale", HorizontalScaleLayout);
-    TTK_RegisterLayout(themePtr,
+    Ttk_RegisterLayout(themePtr,
 	    "Vertical.TScale", VerticalScaleLayout);
 
     return TCL_OK;

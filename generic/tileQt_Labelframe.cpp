@@ -21,7 +21,7 @@
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable labelframe_statemap[] =
+static Ttk_StateTable labelframe_statemap[] =
 {
     {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0 },
     {QStyle::Style_Enabled,                         0, 0 }
@@ -31,24 +31,24 @@ typedef struct {
 } LabelframeBorderElement;
 
 
-static TTK_ElementOptionSpec LabelframeBorderElementOptions[] = {
+static Ttk_ElementOptionSpec LabelframeBorderElementOptions[] = {
     {NULL}
 };
 
 static void LabelframeBorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    *paddingPtr = TTK_UniformPadding(LabelframeUniformPadding);
+    *paddingPtr = Ttk_UniformPadding(LabelframeUniformPadding);
 }
 
 static void LabelframeBorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    QStyle::SFlags sflags = TTK_StateTableLookup(labelframe_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(labelframe_statemap, state);
     sflags |= QStyle::Style_Sunken;
     if (TileQt_QPixmap_BackgroundTile &&
         !(TileQt_QPixmap_BackgroundTile->isNull())) {
@@ -68,7 +68,7 @@ static void LabelframeBorderElementDraw(
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec LabelframeBorderElementSpec = {
+static Ttk_ElementSpec LabelframeBorderElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(LabelframeBorderElement),
     LabelframeBorderElementOptions,
@@ -86,18 +86,18 @@ TTK_BEGIN_LAYOUT(LabelframeLayout)
     TTK_NODE("Labelframe.text", TTK_FILL_BOTH)
 TTK_END_LAYOUT
 
-int TileQt_Init_Labelframe(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_Labelframe(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "Labelframe.border",
+    Ttk_RegisterElementSpec(themePtr, "Labelframe.border",
             &LabelframeBorderElementSpec, NULL);
     
     /*
      * Register layouts:
      */
-    TTK_RegisterLayout(themePtr, "TLabelframe", LabelframeLayout);
+    Ttk_RegisterLayout(themePtr, "TLabelframe", LabelframeLayout);
 
     return TCL_OK;
 }; /* TileQt_Init_Labelframe */

@@ -21,7 +21,7 @@
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable entry_statemap[] =
+static Ttk_StateTable entry_statemap[] =
 {
     {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0 },
     {QStyle::Style_Enabled|QStyle::Style_NoChange,  TTK_STATE_READONLY, 0 },
@@ -34,24 +34,24 @@ typedef struct {
 } EntryFieldElement;
 
 
-static TTK_ElementOptionSpec EntryFieldElementOptions[] = {
+static Ttk_ElementOptionSpec EntryFieldElementOptions[] = {
     {NULL}
 };
 
 static void EntryFieldElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    *paddingPtr = TTK_UniformPadding(EntryUniformPadding);
+    *paddingPtr = Ttk_UniformPadding(EntryUniformPadding);
 }
 
 static void EntryFieldElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    QStyle::SFlags sflags = TTK_StateTableLookup(entry_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(entry_statemap, state);
     painter.fillRect(0, 0, b.width, b.height,
                      qApp->palette().active().base());
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
@@ -62,7 +62,7 @@ static void EntryFieldElementDraw(
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec EntryFieldElementSpec = {
+static Ttk_ElementSpec EntryFieldElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(EntryFieldElement),
     EntryFieldElementOptions,
@@ -74,12 +74,12 @@ static TTK_ElementSpec EntryFieldElementSpec = {
  * +++ Widget layout.
  */
 
-int TileQt_Init_Entry(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_Entry(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "Entry.field",
+    Ttk_RegisterElementSpec(themePtr, "Entry.field",
             &EntryFieldElementSpec, NULL);
     
     /*

@@ -21,28 +21,28 @@
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable background_statemap[] =
+static Ttk_StateTable background_statemap[] =
 {
 };
 
 typedef struct {
 } BackgroundElement;
 
-static TTK_ElementOptionSpec BackgroundElementOptions[] = {
+static Ttk_ElementOptionSpec BackgroundElementOptions[] = {
     {NULL}
 };
 
 static void BackgroundElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     // int padding = qApp->style().pixelMetric(QStyle::PM_DefaultFrameWidth);
-    *paddingPtr = TTK_UniformPadding(0);
+    *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void BackgroundElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
@@ -59,7 +59,7 @@ static void BackgroundElementDraw(
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec BackgroundElementSpec = {
+static Ttk_ElementSpec BackgroundElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(BackgroundElement),
     BackgroundElementOptions,
@@ -76,7 +76,7 @@ typedef struct {
     Tcl_Obj 	*reliefObj;
 } BorderElement;
 
-static TTK_ElementOptionSpec BorderElementOptions[] = {
+static Ttk_ElementOptionSpec BorderElementOptions[] = {
     { "-borderwidth", TK_OPTION_PIXELS,
 	Tk_Offset(BorderElement,borderWidthObj), BorderBorderWidth },
     { "-relief", TK_OPTION_RELIEF,
@@ -86,17 +86,17 @@ static TTK_ElementOptionSpec BorderElementOptions[] = {
 
 static void BorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     BorderElement *border = (BorderElement*) elementRecord;
     int borderWidth = 0;
     Tcl_GetIntFromObj(NULL, border->borderWidthObj, &borderWidth);
-    *paddingPtr = TTK_UniformPadding((short)borderWidth+2);
+    *paddingPtr = Ttk_UniformPadding((short)borderWidth+2);
 }
 
 static void BorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     BorderElement *border = (BorderElement*) elementRecord;
     int relief = TK_RELIEF_FLAT;
@@ -141,7 +141,7 @@ static void BorderElementDraw(
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec BorderElementSpec = {
+static Ttk_ElementSpec BorderElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(BorderElement),
     BorderElementOptions,
@@ -154,14 +154,14 @@ static TTK_ElementSpec BorderElementSpec = {
  * +++ Widget layout.
  */
 
-int TileQt_Init_Background(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_Background(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "background",
+    Ttk_RegisterElementSpec(themePtr, "background",
             &BackgroundElementSpec, NULL);
-    //TTK_RegisterElementSpec(themePtr, "border",
+    //Ttk_RegisterElementSpec(themePtr, "border",
     //        &BorderElementSpec, NULL);
     /*
      * Register layouts:

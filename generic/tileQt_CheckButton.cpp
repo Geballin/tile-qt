@@ -21,7 +21,7 @@
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable checkbutton_statemap[] =
+static Ttk_StateTable checkbutton_statemap[] =
 {
     {QStyle::Style_Default|QStyle::Style_On,
                            TTK_STATE_DISABLED|TTK_STATE_SELECTED, 0},
@@ -44,28 +44,28 @@ typedef struct {
 } CheckButtonIndicatorElement;
 
 
-static TTK_ElementOptionSpec CheckButtonIndicatorElementOptions[] = {
+static Ttk_ElementOptionSpec CheckButtonIndicatorElementOptions[] = {
     {NULL}
 };
 
 static void CheckButtonIndicatorElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     *widthPtr  = qApp->style().pixelMetric(QStyle::PM_IndicatorWidth);
     *heightPtr = qApp->style().pixelMetric(QStyle::PM_IndicatorHeight);
-    *paddingPtr = TTK_MakePadding(0, 0, CheckButtonHorizontalPadding, 0);
+    *paddingPtr = Ttk_MakePadding(0, 0, CheckButtonHorizontalPadding, 0);
 }
 
 static void CheckButtonIndicatorElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QCheckBox    button(TileQt_QWidget_Widget);
     button.resize(b.width - CheckButtonHorizontalPadding, b.height);
-    QStyle::SFlags sflags = TTK_StateTableLookup(checkbutton_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(checkbutton_statemap, state);
     if (TileQt_QPixmap_BackgroundTile &&
         !(TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
@@ -83,7 +83,7 @@ static void CheckButtonIndicatorElementDraw(
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec CheckButtonIndicatorElementSpec = {
+static Ttk_ElementSpec CheckButtonIndicatorElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(CheckButtonIndicatorElement),
     CheckButtonIndicatorElementOptions,
@@ -95,23 +95,23 @@ typedef struct {
 } CheckButtonBorderElement;
 
 
-static TTK_ElementOptionSpec CheckButtonBorderElementOptions[] = {
+static Ttk_ElementOptionSpec CheckButtonBorderElementOptions[] = {
     {NULL}
 };
 
 static void CheckButtonBorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     QCheckBox button(TileQt_QWidget_Widget);
     *widthPtr   = button.width();
     *heightPtr  = button.height();
-    *paddingPtr = TTK_MakePadding(0, 0, 0, 0);
+    *paddingPtr = Ttk_MakePadding(0, 0, 0, 0);
 }
 
 static void CheckButtonBorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
@@ -119,7 +119,7 @@ static void CheckButtonBorderElementDraw(
     button.setBackgroundOrigin(QWidget::ParentOrigin);
     button.resize(b.width, b.height);
     //button.setGeometry(b.x, b.y, b.width, b.height);
-    QStyle::SFlags sflags = TTK_StateTableLookup(checkbutton_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(checkbutton_statemap, state);
     if (TileQt_QPixmap_BackgroundTile &&
         !(TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
@@ -144,7 +144,7 @@ static void CheckButtonBorderElementDraw(
                                     b.width/2, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec CheckButtonBorderElementSpec = {
+static Ttk_ElementSpec CheckButtonBorderElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(CheckButtonBorderElement),
     CheckButtonBorderElementOptions,
@@ -164,20 +164,20 @@ TTK_BEGIN_LAYOUT(CheckbuttonLayout)
 		 TTK_NODE("Checkbutton.label", TTK_FILL_BOTH))))
 TTK_END_LAYOUT
 
-int TileQt_Init_CheckButton(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_CheckButton(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "Checkbutton.border",
+    Ttk_RegisterElementSpec(themePtr, "Checkbutton.border",
             &CheckButtonBorderElementSpec, NULL);
-    TTK_RegisterElementSpec(themePtr, "Checkbutton.indicator",
+    Ttk_RegisterElementSpec(themePtr, "Checkbutton.indicator",
             &CheckButtonIndicatorElementSpec, NULL);
     
     /*
      * Register layouts:
      */
-    TTK_RegisterLayout(themePtr, "TCheckbutton", CheckbuttonLayout);
+    Ttk_RegisterLayout(themePtr, "TCheckbutton", CheckbuttonLayout);
     
     return TCL_OK;
 }; /* TileQt_Init_CheckButton */

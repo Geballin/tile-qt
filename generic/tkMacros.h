@@ -56,5 +56,3 @@ typedef struct Tk_FakeWmInfo {
 
 
 #define Tk_RealToplevelWindow(tkwin)	((((Tk_FakeWmInfo *) (((Tk_FakeWin *) (tkwin))->dummy16))->wrapperPtr)->window)
-
-

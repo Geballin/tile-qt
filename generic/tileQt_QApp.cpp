@@ -112,5 +112,3 @@ static int TileQt_ClientMessageHandler(Tk_Window winPtr, XEvent *eventPtr) {
     TileQt_CreateQApp(TileQt_MainInterp);
     return True;
 } /* TileQt_ClientMessageHandler */
-
-

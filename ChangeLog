@@ -1,3 +1,12 @@
+2004-11-10  Georgios Petasis  <petasis@iit.demokritos.gr>
+
+	* generic/*.cpp
+        * generic/*.h: Updated to the new Ttk_* API.
+        
+        * tclconfig/kde-qt.m4: Additions to autoconf macros to locate
+        KDE/QT needed files. (Actually, macros from KDEBASE package were
+        imported; used under the LGPL license.)
+        
 2004-11-10  Joe English  <jenglish@users.sourceforge.net>
 
 	* Initial import from http://www.iit.demokritos.gr/~petasis/Tcl/TileQT/

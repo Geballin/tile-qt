@@ -21,7 +21,7 @@
 /*
  * Pushbuttons (Tk: "Menubutton")
  */
-static TTK_StateTable menubutton_statemap[] =
+static Ttk_StateTable menubutton_statemap[] =
 {
     {QStyle::Style_Default                          , TTK_STATE_DISABLED, 0},
     {QStyle::Style_Enabled | QStyle::Style_Down     , TTK_STATE_PRESSED, 0},
@@ -33,31 +33,31 @@ static TTK_StateTable menubutton_statemap[] =
 typedef struct {
 } MenubuttonDropdownElement;
 
-static TTK_ElementOptionSpec MenubuttonDropdownElementOptions[] = {
+static Ttk_ElementOptionSpec MenubuttonDropdownElementOptions[] = {
     {NULL}
 };
 
 static void MenubuttonDropdownElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     //*widthPtr = qApp->style().pixelMetric(QStyle::PM_MenuButtonIndicator);
     QComboBox    widget(TileQt_QWidget_Widget);
     QRect rc = qApp->style().querySubControlMetrics(QStyle::CC_ComboBox,
                            &widget, QStyle::SC_ComboBoxArrow);
     *widthPtr = rc.width();
-    *paddingPtr = TTK_UniformPadding(0);
+    *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void MenubuttonDropdownElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.x+b.width, b.y+b.height);
     QPainter     painter(&pixmap);
     QComboBox    widget(TileQt_QWidget_Widget, 0);
     widget.resize(b.x+b.width, b.y+b.height);
-    QStyle::SFlags sflags = TTK_StateTableLookup(menubutton_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(menubutton_statemap, state);
     QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow;
     QStyle::SCFlags activeflags = QStyle::SC_None;
     
@@ -71,7 +71,7 @@ static void MenubuttonDropdownElementDraw(
                                     b.x, b.y, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec MenubuttonDropdownElementSpec = {
+static Ttk_ElementSpec MenubuttonDropdownElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(MenubuttonDropdownElement),
     MenubuttonDropdownElementOptions,
@@ -82,30 +82,30 @@ static TTK_ElementSpec MenubuttonDropdownElementSpec = {
 typedef struct {
 } MenubuttonElement;
 
-static TTK_ElementOptionSpec MenubuttonElementOptions[] = {
+static Ttk_ElementOptionSpec MenubuttonElementOptions[] = {
     {NULL}
 };
 
 static void MenubuttonElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     QComboBox    widget(TileQt_QWidget_Widget);
     *widthPtr   = widget.width();
     *heightPtr  = widget.height();
-    *paddingPtr = TTK_UniformPadding(0);
+    *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void MenubuttonElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QComboBox    widget(false, 0);
     widget.setBackgroundOrigin(QWidget::ParentOrigin);
     widget.setGeometry(b.x, b.y, b.width, b.height);
-    QStyle::SFlags sflags = TTK_StateTableLookup(menubutton_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(menubutton_statemap, state);
     QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow|
                               QStyle::SC_ComboBoxEditField;
     QStyle::SCFlags activeflags = QStyle::SC_ComboBoxFrame;
@@ -127,7 +127,7 @@ static void MenubuttonElementDraw(
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec MenubuttonElementSpec = {
+static Ttk_ElementSpec MenubuttonElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(MenubuttonElement),
     MenubuttonElementOptions,
@@ -146,19 +146,19 @@ TTK_BEGIN_LAYOUT(MenubuttonLayout)
 		TTK_NODE("Menubutton.label", TTK_FILL_BOTH)))
 TTK_END_LAYOUT
 
-int TileQt_Init_Menubutton(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_Menubutton(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "Menubutton.dropdown",
+    Ttk_RegisterElementSpec(themePtr, "Menubutton.dropdown",
             &MenubuttonDropdownElementSpec, NULL);
-    TTK_RegisterElementSpec(themePtr, "Menubutton.button",
+    Ttk_RegisterElementSpec(themePtr, "Menubutton.button",
             &MenubuttonElementSpec, NULL);
 
     /*
      * Register layouts:
      */
-    TTK_RegisterLayout(themePtr, "TMenubutton", MenubuttonLayout);
+    Ttk_RegisterLayout(themePtr, "TMenubutton", MenubuttonLayout);
     return TCL_OK;
 }; /* TileQt_Init_Menubutton */

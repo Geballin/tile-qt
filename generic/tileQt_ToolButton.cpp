@@ -21,7 +21,7 @@
 /*
  * Toolbuttons (Tk: "Button")
  */
-static TTK_StateTable toolbutton_statemap[] =
+static Ttk_StateTable toolbutton_statemap[] =
 {
     {QStyle::Style_Default                          , TTK_STATE_DISABLED, 0},
     {QStyle::Style_Enabled | QStyle::Style_Down     , TTK_STATE_SELECTED, 0},
@@ -35,23 +35,23 @@ static TTK_StateTable toolbutton_statemap[] =
 typedef struct {
 } ToolButtonElement;
 
-static TTK_ElementOptionSpec ToolButtonElementOptions[] = {
+static Ttk_ElementOptionSpec ToolButtonElementOptions[] = {
     {NULL}
 };
 
 static void ToolButtonElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     //QToolButton button(TileQt_QWidget_Widget);
     //*widthPtr   = button.width();
     //*heightPtr  = button.height();
-    *paddingPtr = TTK_UniformPadding(2);
+    *paddingPtr = Ttk_UniformPadding(2);
 }
 
 static void ToolButtonElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap     pixmap(b.width, b.height);
     QPainter    painter(&pixmap);
@@ -61,7 +61,7 @@ static void ToolButtonElementDraw(
     // QPoint p = button.backgroundOffset();
     // QPoint pos = button.pos();
     // TileQt_StateInfo(state, tkwin);
-    QStyle::SFlags sflags = TTK_StateTableLookup(toolbutton_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(toolbutton_statemap, state);
     QStyle::SCFlags scflags = QStyle::SC_ToolButton;
     QStyle::SCFlags activeflags = QStyle::SC_None;
     /* Handle buggy styles, that do not check flags but check widget states. */
@@ -77,7 +77,7 @@ static void ToolButtonElementDraw(
         button.setDown(false);
     }
     // printf("state=%d, qt style=%d\n", state,
-    //        TTK_StateTableLookup(toolbutton_statemap, state));
+    //        Ttk_StateTableLookup(toolbutton_statemap, state));
     if (TileQt_QPixmap_BackgroundTile &&
         !(TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
@@ -95,7 +95,7 @@ static void ToolButtonElementDraw(
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec ToolButtonElementSpec = {
+static Ttk_ElementSpec ToolButtonElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(ToolButtonElement),
     ToolButtonElementOptions,
@@ -113,17 +113,17 @@ TTK_BEGIN_LAYOUT(ToolbuttonLayout)
 		TTK_NODE("Toolbutton.label", TTK_FILL_BOTH)))
 TTK_END_LAYOUT
 
-int TileQt_Init_ToolButton(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_ToolButton(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "Toolbutton.border",
+    Ttk_RegisterElementSpec(themePtr, "Toolbutton.border",
             &ToolButtonElementSpec, NULL);
 
     /*
      * Register layouts:
      */
-    TTK_RegisterLayout(themePtr, "TToolbutton", ToolbuttonLayout);
+    Ttk_RegisterLayout(themePtr, "TToolbutton", ToolbuttonLayout);
     return TCL_OK;
 }; /* TileQt_Init_ToolButton */

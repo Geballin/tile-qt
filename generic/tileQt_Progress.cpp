@@ -21,7 +21,7 @@
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable progress_statemap[] =
+static Ttk_StateTable progress_statemap[] =
 {
     {QStyle::Style_Enabled, 0, 0 }
 };
@@ -29,20 +29,20 @@ static TTK_StateTable progress_statemap[] =
 typedef struct {
 } ProgressTroughElement;
 
-static TTK_ElementOptionSpec ProgressTroughElementOptions[] = {
+static Ttk_ElementOptionSpec ProgressTroughElementOptions[] = {
     {NULL}
 };
 
 static void ProgressTroughElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    *paddingPtr = TTK_UniformPadding(0);
+    *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void ProgressTroughElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     int orient = (int) clientData;
     QPixmap      pixmap(b.width, b.height);
@@ -54,7 +54,7 @@ static void ProgressTroughElementDraw(
     widget.setCenterIndicator(false);
     widget.setPercentageVisible(false);
 
-    QStyle::SFlags sflags = TTK_StateTableLookup(progress_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(progress_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) {
       sflags |= QStyle::Style_Horizontal;
     }
@@ -77,7 +77,7 @@ static void ProgressTroughElementDraw(
                                     0, 0, b.width, b.height, b.x, b.x);
 }
 
-static TTK_ElementSpec ProgressTroughElementSpec = {
+static Ttk_ElementSpec ProgressTroughElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(ProgressTroughElement),
     ProgressTroughElementOptions,
@@ -88,13 +88,13 @@ static TTK_ElementSpec ProgressTroughElementSpec = {
 typedef struct {
 } ProgressBarElement;
 
-static TTK_ElementOptionSpec ProgressBarElementOptions[] = {
+static Ttk_ElementOptionSpec ProgressBarElementOptions[] = {
     {NULL}
 };
 
 static void ProgressBarElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     //int orient = (int) clientData;
     //QProgressBar widget(TileQt_QWidget_Widget);
@@ -113,12 +113,12 @@ static void ProgressBarElementGeometry(
       *widthPtr   = qApp->style().pixelMetric(QStyle::PM_ProgressBarChunkWidth)
                    + 2*ProgressBarInternalPadding;
     }
-    *paddingPtr = TTK_UniformPadding(0);
+    *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void ProgressBarElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     int orient = (int) clientData;
     QPixmap      pixmap(b.width, b.height);
@@ -129,7 +129,7 @@ static void ProgressBarElementDraw(
     widget.setCenterIndicator(false);
     widget.setPercentageVisible(false);
 
-    QStyle::SFlags sflags = TTK_StateTableLookup(progress_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(progress_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) {
       sflags |= QStyle::Style_Horizontal;
     }
@@ -165,7 +165,7 @@ static void ProgressBarElementDraw(
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin, 0, 0, w, h, b.x, b.x);
 }
 
-static TTK_ElementSpec ProgressBarElementSpec = {
+static Ttk_ElementSpec ProgressBarElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(ProgressBarElement),
     ProgressBarElementOptions,
@@ -188,26 +188,26 @@ TTK_BEGIN_LAYOUT(HorizontalProgressBarLayout)
 	TTK_NODE("Horizontal.Progress.bar", TTK_PACK_LEFT))
 TTK_END_LAYOUT
 
-int TileQt_Init_Progress(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_Progress(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "Horizontal.Progress.trough",
+    Ttk_RegisterElementSpec(themePtr, "Horizontal.Progress.trough",
             &ProgressTroughElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
-    TTK_RegisterElementSpec(themePtr, "Vertical.Progress.trough",
+    Ttk_RegisterElementSpec(themePtr, "Vertical.Progress.trough",
             &ProgressTroughElementSpec, (void *) TTK_ORIENT_VERTICAL);
-    TTK_RegisterElementSpec(themePtr, "Horizontal.Progress.bar",
+    Ttk_RegisterElementSpec(themePtr, "Horizontal.Progress.bar",
             &ProgressBarElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
-    TTK_RegisterElementSpec(themePtr, "Vertical.Progress.bar",
+    Ttk_RegisterElementSpec(themePtr, "Vertical.Progress.bar",
             &ProgressBarElementSpec, (void *) TTK_ORIENT_VERTICAL);
     
     /*
      * Register layouts:
      */
-    TTK_RegisterLayout(themePtr,
+    Ttk_RegisterLayout(themePtr,
 	    "Horizontal.TProgress", HorizontalProgressBarLayout);
-    TTK_RegisterLayout(themePtr,
+    Ttk_RegisterLayout(themePtr,
 	    "Vertical.TProgress", VerticalProgressBarLayout);
 
     return TCL_OK;

@@ -27,7 +27,7 @@ static char initScript[] =
 extern "C" int DLLEXPORT
 Tileqt_Init(Tcl_Interp *interp)
 {
-    TTK_Theme themePtr;
+    Ttk_Theme themePtr;
     Tk_Window tkwin;
     char tmpScript[1024];
 
@@ -40,7 +40,7 @@ Tileqt_Init(Tcl_Interp *interp)
     tkwin = Tk_MainWindow(interp);
     if (tkwin == NULL) return TCL_ERROR;
 
-    themePtr  = TTK_CreateTheme(interp, "tileqt", NULL);
+    themePtr  = Ttk_CreateTheme(interp, "tileqt", NULL);
     if (!themePtr) return TCL_ERROR;
 
     /*

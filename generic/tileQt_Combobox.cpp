@@ -21,7 +21,7 @@
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable combotext_statemap[] =
+static Ttk_StateTable combotext_statemap[] =
 {
     {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0 },
     {QStyle::Style_Enabled|QStyle::Style_HasFocus,  TTK_STATE_FOCUS, 0 },
@@ -34,30 +34,30 @@ typedef struct {
 } ComboboxFieldElement;
 
 
-static TTK_ElementOptionSpec ComboboxFieldElementOptions[] = {
+static Ttk_ElementOptionSpec ComboboxFieldElementOptions[] = {
     {NULL}
 };
 
 static void ComboboxFieldElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     //QComboBox    widget(TileQt_QWidget_Widget);
     //*widthPtr   = widget.width();
     //*heightPtr  = widget.height();
-    *paddingPtr = TTK_MakePadding(ComboboxHorizontalPadding, 0, 0, 0);
+    *paddingPtr = Ttk_MakePadding(ComboboxHorizontalPadding, 0, 0, 0);
 }
 
 static void ComboboxFieldElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QComboBox    widget(false, 0);
     widget.setBackgroundOrigin(QWidget::ParentOrigin);
     widget.setGeometry(b.x, b.y, b.width, b.height);
-    QStyle::SFlags sflags = TTK_StateTableLookup(combotext_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(combotext_statemap, state);
     QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow|
                               QStyle::SC_ComboBoxEditField;
     QStyle::SCFlags activeflags = QStyle::SC_ComboBoxFrame;
@@ -79,7 +79,7 @@ static void ComboboxFieldElementDraw(
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec ComboboxFieldElementSpec = {
+static Ttk_ElementSpec ComboboxFieldElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(ComboboxFieldElement),
     ComboboxFieldElementOptions,
@@ -90,7 +90,7 @@ static TTK_ElementSpec ComboboxFieldElementSpec = {
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable combobox_statemap[] =
+static Ttk_StateTable combobox_statemap[] =
 {
     {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0 },
     {QStyle::Style_Enabled|QStyle::Style_MouseOver, TTK_STATE_PRESSED, 0 },
@@ -102,31 +102,31 @@ typedef struct {
 } ComboboxArrowElement;
 
 
-static TTK_ElementOptionSpec ComboboxArrowElementOptions[] = {
+static Ttk_ElementOptionSpec ComboboxArrowElementOptions[] = {
     {NULL}
 };
 
 static void ComboboxArrowElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     QComboBox    widget(TileQt_QWidget_Widget);
     QRect rc = qApp->style().querySubControlMetrics(QStyle::CC_ComboBox,
                            &widget, QStyle::SC_ComboBoxArrow);
     *widthPtr = rc.width();
     *heightPtr = rc.height();
-    *paddingPtr = TTK_UniformPadding(1);
+    *paddingPtr = Ttk_UniformPadding(1);
 }
 
 static void ComboboxArrowElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.x+b.width, b.y+b.height);
     QPainter     painter(&pixmap);
     QComboBox    widget(TileQt_QWidget_Widget, 0);
     widget.resize(b.x+b.width, b.y+b.height);
-    QStyle::SFlags sflags = TTK_StateTableLookup(combobox_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(combobox_statemap, state);
     QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow;
     QStyle::SCFlags activeflags = QStyle::SC_None;
     
@@ -140,7 +140,7 @@ static void ComboboxArrowElementDraw(
                                     b.x, b.y, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec ComboboxArrowElementSpec = {
+static Ttk_ElementSpec ComboboxArrowElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(ComboboxArrowElement),
     ComboboxArrowElementOptions,
@@ -152,14 +152,14 @@ static TTK_ElementSpec ComboboxArrowElementSpec = {
  * +++ Widget layout.
  */
 
-int TileQt_Init_Combobox(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_Combobox(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "Combobox.field",
+    Ttk_RegisterElementSpec(themePtr, "Combobox.field",
             &ComboboxFieldElementSpec, NULL);
-    TTK_RegisterElementSpec(themePtr, "Combobox.downarrow",
+    Ttk_RegisterElementSpec(themePtr, "Combobox.downarrow",
             &ComboboxArrowElementSpec, NULL);
     
     /*

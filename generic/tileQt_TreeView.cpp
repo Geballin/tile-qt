@@ -30,7 +30,7 @@
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable treeview_field_statemap[] =
+static Ttk_StateTable treeview_field_statemap[] =
 {
     {QStyle::Style_Enabled|QStyle::Style_Down,      TTK_STATE_PRESSED, 0},
     {QStyle::Style_Enabled,                         TTK_STATE_ACTIVE, 0},
@@ -41,24 +41,24 @@ typedef struct {
 } TreeViewFieldElement;
 
 
-static TTK_ElementOptionSpec TreeViewFieldElementOptions[] = {
+static Ttk_ElementOptionSpec TreeViewFieldElementOptions[] = {
     {NULL}
 };
 
 static void TreeViewFieldElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    *paddingPtr = TTK_UniformPadding(0);
+    *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void TreeViewFieldElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    QStyle::SFlags sflags =TTK_StateTableLookup(treeview_field_statemap, state);
+    QStyle::SFlags sflags =Ttk_StateTableLookup(treeview_field_statemap, state);
     sflags |= QStyle::Style_Horizontal;
     if (TileQt_QPixmap_BackgroundTile &&
         !(TileQt_QPixmap_BackgroundTile->isNull())) {
@@ -79,7 +79,7 @@ static void TreeViewFieldElementDraw(
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec TreeViewFieldElementSpec = {
+static Ttk_ElementSpec TreeViewFieldElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(TreeViewFieldElement),
     TreeViewFieldElementOptions,
@@ -94,7 +94,7 @@ static TTK_ElementSpec TreeViewFieldElementSpec = {
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable treeview_client_statemap[] =
+static Ttk_StateTable treeview_client_statemap[] =
 {
     {QStyle::Style_Enabled|QStyle::Style_Down,      TTK_STATE_PRESSED, 0},
     {QStyle::Style_Enabled,                         TTK_STATE_ACTIVE, 0},
@@ -105,24 +105,24 @@ typedef struct {
 } TreeViewClientElement;
 
 
-static TTK_ElementOptionSpec TreeViewClientElementOptions[] = {
+static Ttk_ElementOptionSpec TreeViewClientElementOptions[] = {
     {NULL}
 };
 
 static void TreeViewClientElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    *paddingPtr = TTK_UniformPadding(0);
+    *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void TreeViewClientElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    QStyle::SFlags sflags =TTK_StateTableLookup(treeview_client_statemap,state);
+    QStyle::SFlags sflags =Ttk_StateTableLookup(treeview_client_statemap,state);
     sflags |= QStyle::Style_Horizontal;
     if (TileQt_QPixmap_BackgroundTile &&
         !(TileQt_QPixmap_BackgroundTile->isNull())) {
@@ -143,7 +143,7 @@ static void TreeViewClientElementDraw(
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec TreeViewClientElementSpec = {
+static Ttk_ElementSpec TreeViewClientElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(TreeViewClientElement),
     TreeViewClientElementOptions,
@@ -158,7 +158,7 @@ static TTK_ElementSpec TreeViewClientElementSpec = {
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable treeheading_border_statemap[] =
+static Ttk_StateTable treeheading_border_statemap[] =
 {
     {QStyle::Style_Enabled|QStyle::Style_Down,      TTK_STATE_PRESSED, 0},
     {QStyle::Style_Enabled,                         TTK_STATE_ACTIVE, 0},
@@ -169,24 +169,24 @@ typedef struct {
 } TreeHeadingBorderElement;
 
 
-static TTK_ElementOptionSpec TreeHeadingBorderElementOptions[] = {
+static Ttk_ElementOptionSpec TreeHeadingBorderElementOptions[] = {
     {NULL}
 };
 
 static void TreeHeadingBorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    *paddingPtr = TTK_UniformPadding(TreeViewUniformPadding);
+    *paddingPtr = Ttk_UniformPadding(TreeViewUniformPadding);
 }
 
 static void TreeHeadingBorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    QStyle::SFlags sflags = TTK_StateTableLookup(treeheading_border_statemap,
+    QStyle::SFlags sflags = Ttk_StateTableLookup(treeheading_border_statemap,
                                                  state);
     sflags |= QStyle::Style_Horizontal;
     if (TileQt_QPixmap_BackgroundTile &&
@@ -205,7 +205,7 @@ static void TreeHeadingBorderElementDraw(
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec TreeHeadingBorderElementSpec = {
+static Ttk_ElementSpec TreeHeadingBorderElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(TreeHeadingBorderElement),
     TreeHeadingBorderElementOptions,
@@ -248,25 +248,25 @@ TTK_BEGIN_LAYOUT(RowLayout)
     TTK_NODE("Treeitem.row", TTK_FILL_BOTH)
 TTK_END_LAYOUT
 
-int TileQt_Init_TreeView(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_TreeView(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "Treeview.field",
+    Ttk_RegisterElementSpec(themePtr, "Treeview.field",
             &TreeViewFieldElementSpec, NULL);
-    TTK_RegisterElementSpec(themePtr, "Treeview.client",
+    Ttk_RegisterElementSpec(themePtr, "Treeview.client",
             &TreeViewClientElementSpec, NULL);
-    TTK_RegisterElementSpec(themePtr, "Treeheading.border",
+    Ttk_RegisterElementSpec(themePtr, "Treeheading.border",
             &TreeHeadingBorderElementSpec, NULL);
     
     /*
      * Register layouts:
      */
-    TTK_RegisterLayout(themePtr, ITEM_LAYOUT, ItemLayout);
-    TTK_RegisterLayout(themePtr, CELL_LAYOUT, CellLayout);
-    TTK_RegisterLayout(themePtr, HEADING_LAYOUT, HeadingLayout);
-    TTK_RegisterLayout(themePtr, ROW_LAYOUT, RowLayout);
+    Ttk_RegisterLayout(themePtr, ITEM_LAYOUT, ItemLayout);
+    Ttk_RegisterLayout(themePtr, CELL_LAYOUT, CellLayout);
+    Ttk_RegisterLayout(themePtr, HEADING_LAYOUT, HeadingLayout);
+    Ttk_RegisterLayout(themePtr, ROW_LAYOUT, RowLayout);
 
     return TCL_OK;
 }; /* TileQt_Init_TreeView */

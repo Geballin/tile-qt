@@ -21,7 +21,7 @@
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
-static TTK_StateTable arrow_statemap[] =
+static Ttk_StateTable arrow_statemap[] =
 {
     { QStyle::Style_Default, TTK_STATE_DISABLED, 0 },
     { QStyle::Style_Enabled | QStyle::Style_Down, TTK_STATE_PRESSED, 0 },
@@ -39,7 +39,7 @@ typedef struct
     Tcl_Obj *reliefObj;
 } ArrowElement;
 
-static TTK_ElementOptionSpec ArrowElementOptions[] =
+static Ttk_ElementOptionSpec ArrowElementOptions[] =
 {
     { "-arrowsize", TK_OPTION_PIXELS, Tk_Offset(ArrowElement,sizeObj),
         DEFAULT_ARROW_SIZE },
@@ -54,7 +54,7 @@ static TTK_ElementOptionSpec ArrowElementOptions[] =
 static void
 ArrowElementGeometry(
     void *clientData, void *elementRecord,
-    Tk_Window tkwin, int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    Tk_Window tkwin, int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     ArrowElement *arrow = (ArrowElement *) elementRecord;
     int size = 12;
@@ -65,12 +65,12 @@ ArrowElementGeometry(
 
 static void
 ArrowElementDraw(void *clientData, void *elementRecord,
-    Tk_Window tkwin, Drawable d, TTK_Box b, unsigned int state)
+    Tk_Window tkwin, Drawable d, Ttk_Box b, unsigned int state)
 {
     ArrowElement *arrow = (ArrowElement *) elementRecord;
     int direction = *(int *)clientData;
-    QStyle::SFlags sflags = TTK_StateTableLookup(arrow_statemap ,state);
-    QStyle::PrimitiveElement element;
+    QStyle::SFlags sflags = Ttk_StateTableLookup(arrow_statemap ,state);
+    QStyle::PrimitiveElement element = QStyle::PE_ArrowUp;
     //if (state == GTK_STATE_INSENSITIVE)
     //        sflags |= QStyle::Style_Off;
     //else if (state == GTK_STATE_PRELIGHT)
@@ -99,7 +99,7 @@ ArrowElementDraw(void *clientData, void *elementRecord,
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec ArrowElementSpec =
+static Ttk_ElementSpec ArrowElementSpec =
 {
     TK_STYLE_VERSION_2,
     sizeof(ArrowElement),
@@ -113,20 +113,20 @@ static TTK_ElementSpec ArrowElementSpec =
  */
 
 
-int TileQt_Init_Arrows(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_Arrows(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "uparrow",
+    Ttk_RegisterElementSpec(themePtr, "uparrow",
             &ArrowElementSpec, &ArrowElements[0]);
-    TTK_RegisterElementSpec(themePtr, "downarrow",
+    Ttk_RegisterElementSpec(themePtr, "downarrow",
             &ArrowElementSpec, &ArrowElements[1]);
-    TTK_RegisterElementSpec(themePtr, "leftarrow",
+    Ttk_RegisterElementSpec(themePtr, "leftarrow",
             &ArrowElementSpec, &ArrowElements[2]);
-    TTK_RegisterElementSpec(themePtr, "rightarrow",
+    Ttk_RegisterElementSpec(themePtr, "rightarrow",
             &ArrowElementSpec, &ArrowElements[3]);
-    TTK_RegisterElementSpec(themePtr, "arrow",
+    Ttk_RegisterElementSpec(themePtr, "arrow",
             &ArrowElementSpec, &ArrowElements[0]);
 
     /*

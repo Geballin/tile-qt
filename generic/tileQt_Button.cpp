@@ -21,7 +21,7 @@
 /*
  * Pushbuttons (Tk: "Button")
  */
-static TTK_StateTable pushbutton_statemap[] =
+static Ttk_StateTable pushbutton_statemap[] =
 {
     {QStyle::Style_Default                          , TTK_STATE_DISABLED, 0},
     {QStyle::Style_Enabled | QStyle::Style_Down     , TTK_STATE_PRESSED, 0},
@@ -34,23 +34,23 @@ static TTK_StateTable pushbutton_statemap[] =
 typedef struct {
 } ButtonElement;
 
-static TTK_ElementOptionSpec ButtonElementOptions[] = {
+static Ttk_ElementOptionSpec ButtonElementOptions[] = {
     {NULL}
 };
 
 static void ButtonElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    int *widthPtr, int *heightPtr, TTK_Padding *paddingPtr)
+    int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     QPushButton button(TileQt_QWidget_Widget);
     *widthPtr   = button.width();
     *heightPtr  = button.height();
-    *paddingPtr = TTK_UniformPadding(2);
+    *paddingPtr = Ttk_UniformPadding(2);
 }
 
 static void ButtonElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
-    Drawable d, TTK_Box b, unsigned state)
+    Drawable d, Ttk_Box b, unsigned state)
 {
     QPixmap     pixmap(b.width, b.height);
     QPainter    painter(&pixmap);
@@ -60,7 +60,7 @@ static void ButtonElementDraw(
     // QPoint p = button.backgroundOffset();
     // QPoint pos = button.pos();
     // TileQt_StateInfo(state, tkwin);
-    QStyle::SFlags sflags = TTK_StateTableLookup(pushbutton_statemap, state);
+    QStyle::SFlags sflags = Ttk_StateTableLookup(pushbutton_statemap, state);
     /* Handle buggy styles, that do not check flags but check widget states. */
     if (state & TTK_STATE_ALTERNATE) {
         button.setDefault(true);
@@ -73,7 +73,7 @@ static void ButtonElementDraw(
         button.setDown(false);
     }
     // printf("state=%d, qt style=%d\n", state,
-    //        TTK_StateTableLookup(pushbutton_statemap, state));
+    //        Ttk_StateTableLookup(pushbutton_statemap, state));
     if (TileQt_QPixmap_BackgroundTile &&
         !(TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
@@ -90,7 +90,7 @@ static void ButtonElementDraw(
                                     0, 0, b.width, b.height, b.x, b.y);
 }
 
-static TTK_ElementSpec ButtonElementSpec = {
+static Ttk_ElementSpec ButtonElementSpec = {
     TK_STYLE_VERSION_2,
     sizeof(ButtonElement),
     ButtonElementOptions,
@@ -108,17 +108,17 @@ TTK_BEGIN_LAYOUT(ButtonLayout)
 		TTK_NODE("Button.label", TTK_FILL_BOTH)))
 TTK_END_LAYOUT
 
-int TileQt_Init_Button(Tcl_Interp *interp, TTK_Theme themePtr)
+int TileQt_Init_Button(Tcl_Interp *interp, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
-    TTK_RegisterElementSpec(themePtr, "Button.button",
+    Ttk_RegisterElementSpec(themePtr, "Button.button",
             &ButtonElementSpec, NULL);
 
     /*
      * Register layouts:
      */
-    TTK_RegisterLayout(themePtr, "TButton", ButtonLayout);
+    Ttk_RegisterLayout(themePtr, "TButton", ButtonLayout);
     return TCL_OK;
 }; /* TileQt_Init_Button */
