@@ -10,14 +10,8 @@
 TILE_INCLUDES = -I/disk2b/local/sources/tcl/tile/generic/
 
 #========================================================================
-# The names of the source files is defined in the configure script.
-# The object files are used for linking into the final library.
-# This will be used when a dist target is added to the Makefile.
-# It is not important to specify the directory, as long as it is the
-# $(srcdir) or in the generic, win or unix subdirectory.
-#========================================================================
 
-GENERIC_OBJECTS	= \
+PKG_OBJECTS	= \
     tileQt_Init.$(OBJEXT) \
     tileQt_QApp.$(OBJEXT) \
     tileQt_Utilities.$(OBJEXT) \
@@ -37,30 +31,14 @@ GENERIC_OBJECTS	= \
     tileQt_Scale.$(OBJEXT) \
     tileQt_Arrows.$(OBJEXT)
     
-
-WIN_OBJECTS	= 
-MACOSX_OBJECTS	= 
-
-PKG_OBJECTS	= $(GENERIC_OBJECTS) @PKG_OBJECTS@
-
 #========================================================================
 # PKG_TCL_SOURCES identifies Tcl runtime files that are associated with
 # this package that need to be installed, if any.
 #========================================================================
 
-#PKG_TCL_SOURCES = @PKG_TCL_SOURCES@
-PKG_TCL_SOURCES = \
-  tileqt.tcl
-
-#========================================================================
-# This is a list of public header files to be installed, if any.
-#========================================================================
-
-PKG_HEADERS	= @PKG_HEADERS@
-
-PKG_EXTRA_FILES = license.terms README.txt
-
-PKG_MAN_PAGES	= Theme.3 style.n widget.n
+PKG_TCL_SOURCES = tileqt.tcl
+PKG_EXTRA_FILES = license.terms
+PKG_MAN_PAGES	=
 
 #========================================================================
 # "PKG_LIB_FILE" refers to the library (dynamic or static as per
@@ -68,7 +46,6 @@ PKG_MAN_PAGES	= Theme.3 style.n widget.n
 #========================================================================
 
 PKG_LIB_FILE	= @PKG_LIB_FILE@
-PKG_STUB_LIB_FILE = @PKG_STUB_LIB_FILE@
 
 lib_BINARIES	= $(PKG_LIB_FILE)
 BINARIES	= $(lib_BINARIES)
@@ -125,10 +102,6 @@ TCL_BIN_DIR	= @TCL_BIN_DIR@
 TK_SRC_DIR	= @TK_SRC_DIR@
 TK_BIN_DIR	= @TK_BIN_DIR@
 
-# Not used by sample, but retained for reference of what Tcl required
-TCL_LIBS	= @TCL_LIBS@
-TK_LIBS		= @TK_LIBS@
-
 #========================================================================
 # TCLLIBPATH seeds the auto_path in Tcl's init.tcl so we can test our
 # package without installing.  The other environment variables allow us
@@ -158,7 +131,7 @@ EXTRA_CFLAGS	= @PKG_CFLAGS@
 
 DEFS		= @DEFS@ $(EXTRA_CFLAGS)
 
-CONFIG_CLEAN_FILES = Makefile
+CONFIG_CLEAN_FILES = Makefile pkgIndex.tcl
 
 CPPFLAGS	= @CPPFLAGS@
 ## The following are needed by KDE/QT configuration
@@ -175,69 +148,42 @@ TILE_LIB_DIR    = $(shell echo \
     set ::tile_lib [lindex [package ifneeded tile [set ::tile_version]] 1];\
     puts [file dirname [set ::tile_lib]]" | $(TCLSH_PROG))
 TILE_LIBS       = -L$(TILE_LIB_DIR) -ltile$(TILE_VERSION)
-LIBS		= @PKG_LIBS@ @LIBS@ @QT_LDFLAGS@ @LIB_QT@ \
-                  @KDE_LDFLAGS@ @all_libraries@ \
-                  @LIB_KDECORE@ @LIB_KDEUI@ $(TILE_LIBS)
+LIBS		= @PKG_LIBS@ @LIBS@ @QT_LDFLAGS@ @LIB_QT@ $(TILE_LIBS)
 AR		= ar
 CFLAGS		= @CFLAGS@
 CC = g++
 COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
-COMPILECPP	= $(CC) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+COMPILECPP	= $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 
 #========================================================================
 # TEA TARGETS.  Please note that the "libraries:" target refers to platform
 # independent files, and the "binaries:" target inclues executable programs and
 # platform-dependent libraries.  Modify these targets so that they install
-# the various pieces of your package.  The make and install rules
-# for the BINARIES that you specified above have already been done.
+# the various pieces of your package.
 #========================================================================
 
-VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win:$(srcdir)/macosx
+VPATH = @srcdir@:@srcdir@/generic
 
 all: binaries libraries doc
 
-binaries: $(BINARIES) pkgIndex.tcl
+binaries: $(BINARIES)
 
 libraries:
 
 doc:
 
-install: all install-binaries install-libraries install-doc
-
-install-binaries: binaries install-lib-binaries install-bin-binaries
+install: $(PKG_LIB_FILE)
 	@mkdir -p $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) pkgIndex.tcl $(DESTDIR)$(pkglibdir)
-	@list='$(PKG_EXTRA_FILES)'; for p in $$list; do \
-	  if test -f $(srcdir)/$$p; then \
+	$(INSTALL) pkgIndex.tcl $(DESTDIR)$(pkglibdir)/pkgIndex.tcl
+	$(INSTALL) $(PKG_LIB_FILE) $(DESTDIR)$(pkglibdir)/$(PKG_LIB_FILE)
+	@list='$(PKG_TCL_SOURCES)'; for p in $$list; do \
+	  if test -f $(srcdir)/library/$$p; then \
 	    destp=`basename $$p`; \
 	    echo " Install $$destp $(DESTDIR)$(pkglibdir)/$$destp"; \
-	    $(INSTALL_DATA) $(srcdir)/$$p $(DESTDIR)$(pkglibdir)/$$destp; \
+	    $(INSTALL_DATA) $(srcdir)/library/$$p $(DESTDIR)$(pkglibdir)/$$destp; \
 	  fi; \
 	done
 
-#========================================================================
-# This rule installs platform-independent files, such as header files.
-#========================================================================
-
-install-libraries: libraries
-
-install-doc: doc
-
-install-html: html
-	@mkdir -p $(DESTDIR)$(pkglibdir)/html
-	@list='$(PKG_MAN_PAGES)'; for p in $$list; do \
-		html=`basename $$p|sed -e 's/.[^.]*$$//'`.html; \
-	  	$(INSTALL_DATA) $(srcdir)/doc/$$html $(DESTDIR)$(pkglibdir)/html/; \
-	done
-
-html:
-	@cd $(srcdir)/doc; \
-	list='$(PKG_MAN_PAGES)'; for p in $$list; do \
-		html=`basename $$p|sed -e 's/.[^.]*$$//'`.html; \
-		echo "Creating \"$$html\" from \"$$p\""; \
-		rm -f $$html; \
-		nroff -man $$p | rman -f HTML > $$html; \
-	done
 
 # Piping to cat is necessary on Windows to see the output, and
 # harmless on Unix
@@ -273,68 +219,13 @@ $(PKG_LIB_FILE): $(PKG_OBJECTS)
 .SUFFIXES: .c .cpp .$(OBJEXT)
 
 .c.@OBJEXT@:
-	$(COMPILE) -c `@CYGPATH@ $<` -o $@
+	$(COMPILE) -c $< -o $@
 
 .cpp.@OBJEXT@:
-	$(COMPILECPP) -c `@CYGPATH@ $<` -o $@
+	$(COMPILECPP) -c $< -o $@
 
-pkgIndex.tcl:
-	(\
-	echo 'if {[catch {package require Tcl 8.4}]} return';\
-	echo 'package ifneeded $(PACKAGE_NAME) $(PACKAGE_VERSION) \
-	    [list load [file join $$dir $(PKG_LIB_FILE)] $(PACKAGE_NAME)]'\
-	) > pkgIndex.tcl
-
-install-lib-binaries:
-	@mkdir -p $(DESTDIR)$(pkglibdir)
-	@list='$(lib_BINARIES)'; for p in $$list; do \
-	  if test -f $$p; then \
-	    echo " $(INSTALL_PROGRAM) $$p $(DESTDIR)$(pkglibdir)/$$p"; \
-	    $(INSTALL_PROGRAM) $$p $(DESTDIR)$(pkglibdir)/$$p; \
-	    echo " $(RANLIB) $(DESTDIR)$(pkglibdir)/$$p"; \
-	    $(RANLIB) $(DESTDIR)$(pkglibdir)/$$p; \
-	    ext=`echo $$p|sed -e "s/.*\.//"`; \
-	    if test "x$$ext" = "xdll"; then \
-		lib=`basename $$p|sed -e 's/.[^.]*$$//'`.lib; \
-		if test -f $$lib; then \
-		    echo " $(INSTALL_DATA) $$lib $(DESTDIR)$(pkglibdir)/$$lib"; \
-	            $(INSTALL_DATA) $$lib $(DESTDIR)$(pkglibdir)/$$lib; \
-		fi; \
-	    fi; \
-	  fi; \
-	done
-	@list='$(PKG_TCL_SOURCES)'; for p in $$list; do \
-	  if test -f $(srcdir)/library/$$p; then \
-	    destp=`basename $$p`; \
-	    echo " Install $$destp $(DESTDIR)$(pkglibdir)/$$destp"; \
-	    $(INSTALL_DATA) $(srcdir)/library/$$p $(DESTDIR)$(pkglibdir)/$$destp; \
-	  fi; \
-	done
-
-install-bin-binaries:
-	@mkdir -p $(DESTDIR)$(bindir)
-	@list='$(bin_BINARIES)'; for p in $$list; do \
-	  if test -f $$p; then \
-	    echo " $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p"; \
-	    $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p; \
-	  fi; \
-	done
-
-uninstall-binaries:
-	list='$(lib_BINARIES)'; for p in $$list; do \
-	  rm -f $(DESTDIR)$(pkglibdir)/$$p; \
-	done
-	list='$(PKG_TCL_SOURCES)'; for p in $$list; do \
-	  p=`basename $$p`; \
-	  rm -f $(DESTDIR)$(pkglibdir)/$$p; \
-	done
-	list='$(bin_BINARIES)'; for p in $$list; do \
-	  rm -f $(DESTDIR)$(bindir)/$$p; \
-	done
-
-Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
-	cd $(top_builddir) \
-	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
+Makefile: $(srcdir)/Makefile.in config.status
+	sh config.status
 
 #========================================================================
 # Don't modify the file to clean here.  Instead, set the "CLEANFILES"
@@ -347,7 +238,6 @@ clean:
 	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean: clean
-	-rm -f *.tab.c
 	-rm -f $(CONFIG_CLEAN_FILES)
 	-rm -f config.cache config.log config.status
 
