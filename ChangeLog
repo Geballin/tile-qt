@@ -1,3 +1,16 @@
+2006-26-02  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * generic/*: Updated TileQt to the latest tile. Eliminated the source of
+        some XErrors caused by Qt progress widgets. Made the whole tileQt
+        thread-safe. Finally, a problem has been found regarding the use of rw
+        QComboBox widgets: wish may crash on exit, if such a widget is allocated
+        (and freed) at least once. This however, seems to happen only with Tk
+        8.5, so its in the code for the time being...
+        
+2006-25-02  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * generic/tileQt_QApp.cpp: Added Tk_DeleteGenericHandler for TileQt_smw
+        widget before deleting it in TileQt_DestroyQApp, to avoid crashes during
+        application termination.
+
 2005-01-08  Joe English  <jenglish@users.sourceforge.net>
 	* configure.in, Makefile.in, pkgIndex.tcl.in: Generate 
 	pkgIndex.tcl at configure-time instead of build-time.

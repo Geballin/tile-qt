@@ -21,19 +21,21 @@ namespace eval tile::theme::tileqt {
       {
         # 3 Arrows...
         style layout Horizontal.TScrollbar {
+          Scrollbar.background
           Horizontal.Scrollbar.trough -children {
               Horizontal.Scrollbar.leftarrow -side left
               Horizontal.Scrollbar.rightarrow -side right
               Horizontal.Scrollbar.leftarrow -side right
-              Horizontal.Scrollbar.thumb
+              Horizontal.Scrollbar.thumb -side left -expand true -sticky we
           }
         };# style layout Horizontal.TScrollbar
         style layout Vertical.TScrollbar {
+          Scrollbar.background
           Vertical.Scrollbar.trough -children {
               Vertical.Scrollbar.uparrow -side top
               Vertical.Scrollbar.downarrow -side bottom
               Vertical.Scrollbar.uparrow -side bottom
-              Vertical.Scrollbar.thumb
+              Vertical.Scrollbar.thumb -side top -expand true -sticky ns
           }
         };# style layout Vertical.TScrollbar
       }
@@ -45,14 +47,14 @@ namespace eval tile::theme::tileqt {
           Horizontal.Scrollbar.trough -children {
               Horizontal.Scrollbar.rightarrow -side right
               Horizontal.Scrollbar.leftarrow -side right
-              Horizontal.Scrollbar.thumb
+              Horizontal.Scrollbar.thumb -side left -expand true -sticky we
           }
         };# style layout Horizontal.TScrollbar
         style layout Vertical.TScrollbar {
           Vertical.Scrollbar.trough -children {
               Vertical.Scrollbar.downarrow -side bottom
               Vertical.Scrollbar.uparrow -side bottom
-              Vertical.Scrollbar.thumb
+              Vertical.Scrollbar.thumb -side top -expand true -sticky ns
           }
         };# style layout Vertical.TScrollbar
       }
@@ -73,14 +75,14 @@ namespace eval tile::theme::tileqt {
           Horizontal.Scrollbar.trough -children {
               Horizontal.Scrollbar.leftarrow -side left
               Horizontal.Scrollbar.rightarrow -side right
-              Horizontal.Scrollbar.thumb
+              Horizontal.Scrollbar.thumb -side left -expand true -sticky we
           }
         };# style layout Horizontal.TScrollbar
         style layout Vertical.TScrollbar {
           Vertical.Scrollbar.trough -children {
               Vertical.Scrollbar.uparrow -side top
               Vertical.Scrollbar.downarrow -side bottom
-              Vertical.Scrollbar.thumb
+              Vertical.Scrollbar.thumb -side top -expand true -sticky ns
           }
         };# style layout Vertical.TScrollbar
       }
@@ -232,7 +234,7 @@ namespace eval tile::theme::tileqt {
   updateStyles
 
   ## Test the theme configuration panel...
-  if {![info exists ::testConfigurationPanel]} {
+  if {0 && ![info exists ::testConfigurationPanel]} {
     toplevel .themeConfPanel
     wm withdraw .themeConfPanel
     wm title .themeConfPanel "TileQt Configuration Panel..."

@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2005 by:
+ * Copyright (C) 2004-2006 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -40,7 +40,7 @@ static void ScrollbarTroughElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     //int orient = (int) clientData;
     //if (orient == TTK_ORIENT_HORIZONTAL) {
     //  *heightPtr = qApp->style().pixelMetric(QStyle::PM_ScrollBarExtent,
@@ -60,7 +60,9 @@ static void ScrollbarTroughElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QScrollBar_Widget);
+    Tcl_MutexLock(&tileqtMutex);
     /* We draw the whole scrollbar at once, but without the slider! */
     int orient = (int) clientData;
     int width, height;
@@ -107,6 +109,7 @@ static void ScrollbarTroughElementDraw(
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     width-b.width, height-b.height,
                                     b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec ScrollbarTroughElementSpec = {
@@ -128,8 +131,9 @@ static void ScrollbarThumbElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     int orient = (int) clientData;
+    Tcl_MutexLock(&tileqtMutex);
     if (orient == TTK_ORIENT_HORIZONTAL) {
       *heightPtr = qApp->style().pixelMetric(QStyle::PM_ScrollBarExtent,
                                              TileQt_QScrollBar_Widget);
@@ -143,9 +147,8 @@ static void ScrollbarThumbElementGeometry(
       *heightPtr = qApp->style().pixelMetric(QStyle::PM_ScrollBarSliderMin,
                                              TileQt_QScrollBar_Widget);
       if (*heightPtr > 100) *heightPtr = 100;
-      if (*widthPtr  > 30)  *widthPtr  =  30;
-                                             
-    }
+      if (*widthPtr  > 30)  *widthPtr  =  30;                                       }
+    Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -153,9 +156,10 @@ static void ScrollbarThumbElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     if (state & TTK_STATE_DISABLED) return;
     int orient = (int) clientData;
+    Tcl_MutexLock(&tileqtMutex);
     //QPixmap      pixmap(b.width, b.height);
     QPixmap      pixmap = QPixmap::grabWindow(Tk_WindowId(tkwin));
     QPainter     painter(&pixmap);
@@ -166,6 +170,7 @@ static void ScrollbarThumbElementDraw(
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec ScrollbarThumbElementSpec = {
@@ -187,8 +192,10 @@ static void ScrollbarUpArrowElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QScrollBar_Widget);
     int orient = (int) clientData;
+    Tcl_MutexLock(&tileqtMutex);
     if (orient == TTK_ORIENT_HORIZONTAL) {
       TileQt_QScrollBar_Widget->setOrientation(Qt::Horizontal);
     } else {
@@ -200,6 +207,7 @@ static void ScrollbarUpArrowElementGeometry(
       *widthPtr = rc.width();
       *heightPtr = rc.height();
     }
+    Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -207,8 +215,9 @@ static void ScrollbarUpArrowElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     int orient = (int) clientData;
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(scrollbar_statemap, state);
@@ -226,6 +235,7 @@ static void ScrollbarUpArrowElementDraw(
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec ScrollbarUpArrowElementSpec = {
@@ -247,8 +257,10 @@ static void ScrollbarDownArrowElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QScrollBar_Widget);
     int orient = (int) clientData;
+    Tcl_MutexLock(&tileqtMutex);
     if (orient == TTK_ORIENT_HORIZONTAL) {
       TileQt_QScrollBar_Widget->setOrientation(Qt::Horizontal);
     } else {
@@ -260,6 +272,7 @@ static void ScrollbarDownArrowElementGeometry(
       *widthPtr = rc.width();
       *heightPtr = rc.height();
     }
+    Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -267,8 +280,9 @@ static void ScrollbarDownArrowElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     int orient = (int) clientData;
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(scrollbar_statemap, state);
@@ -286,6 +300,7 @@ static void ScrollbarDownArrowElementDraw(
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec ScrollbarDownArrowElementSpec = {

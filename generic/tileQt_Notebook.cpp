@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2005 by:
+ * Copyright (C) 2004-2006 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -42,7 +42,7 @@ static void NotebookTabElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     //PM_TabBarTabOverlap, PM_TabBarTabHSpace, PM_TabBarTabVSpace, PM_TabBarBaseHeight, PM_TabBarBaseOverlap,
     QTab tab;
     QRect rc = tab.rect();
@@ -58,7 +58,9 @@ static void NotebookTabElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QTabBar_Widget);
+    Tcl_MutexLock(&tileqtMutex);
     int tabOverlap = qApp->style().pixelMetric(QStyle::PM_TabBarTabOverlap,
                                                TileQt_QTabBar_Widget);
     int tabBaseOverlap = qApp->style().pixelMetric(QStyle::PM_TabBarBaseOverlap,
@@ -125,6 +127,7 @@ static void NotebookTabElementDraw(
       TileQt_QTabBar_Widget->removeTab(tab);
       TileQt_QTabBar_Widget->removeTab(tab2);
     }
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec NotebookTabElementSpec = {
@@ -147,7 +150,7 @@ static void NotebookClientElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     *paddingPtr = Ttk_UniformPadding(NotebookClientUniformPadding);
 }
 
@@ -155,7 +158,8 @@ static void NotebookClientElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(notebook_statemap, state);
@@ -173,6 +177,7 @@ static void NotebookClientElementDraw(
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec NotebookClientElementSpec = {

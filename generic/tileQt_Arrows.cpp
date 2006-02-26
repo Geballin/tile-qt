@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2005 by:
+ * Copyright (C) 2004-2006 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -56,7 +56,7 @@ ArrowElementGeometry(
     void *clientData, void *elementRecord,
     Tk_Window tkwin, int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     ArrowElement *arrow = (ArrowElement *) elementRecord;
     int size = 12;
 
@@ -68,8 +68,8 @@ static void
 ArrowElementDraw(void *clientData, void *elementRecord,
     Tk_Window tkwin, Drawable d, Ttk_Box b, unsigned int state)
 {
-    if (qApp == NULL) return;
-    ArrowElement *arrow = (ArrowElement *) elementRecord;
+    if (qApp == NULL) NULL_Q_APP;
+    //ArrowElement *arrow = (ArrowElement *) elementRecord;
     int direction = *(int *)clientData;
     QStyle::SFlags sflags = Ttk_StateTableLookup(arrow_statemap ,state);
     QStyle::PrimitiveElement element = QStyle::PE_ArrowUp;
@@ -85,6 +85,7 @@ ArrowElementDraw(void *clientData, void *elementRecord,
         case ARROW_LEFT:  element = QStyle::PE_ArrowLeft;  break;
         case ARROW_RIGHT: element = QStyle::PE_ArrowRight; break;
     }
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap     pixmap(b.width, b.height);
     QPainter    painter(&pixmap);
     if ((TileQt_QPixmap_BackgroundTile) &&
@@ -99,6 +100,7 @@ ArrowElementDraw(void *clientData, void *elementRecord,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec ArrowElementSpec =

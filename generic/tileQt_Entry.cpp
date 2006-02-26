@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2005 by:
+ * Copyright (C) 2004-2006 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -42,7 +42,7 @@ static void EntryFieldElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     *paddingPtr = Ttk_UniformPadding(EntryUniformPadding);
 }
 
@@ -50,7 +50,8 @@ static void EntryFieldElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(entry_statemap, state);
@@ -62,6 +63,7 @@ static void EntryFieldElementDraw(
           QStyleOption(1,1));
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec EntryFieldElementSpec = {

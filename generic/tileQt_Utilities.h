@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2005 by:
+ * Copyright (C) 2004-2006 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -15,6 +15,11 @@
 
 #include "tileQt_QtHeaders.h"
 
+#define NULL_Q_APP {printf("NULL qApp\n");fflush(NULL);return;}
+#define NULL_PROXY_WIDGET(w) { if (w == NULL) {\
+        printf("NULL Proxy Widget: " STRINGIFY(w) "!\n");fflush(NULL);return;}}
+TCL_DECLARE_MUTEX(tileqtMutex);
+
 /* Global Symbols */
 extern QScrollBar*    TileQt_QScrollBar_Widget; 
 extern QComboBox*     TileQt_QComboBox_RW_Widget;
@@ -23,6 +28,7 @@ extern QWidget*       TileQt_QWidget_Widget;
 extern QWidget*       TileQt_QWidget_WidgetParent;
 extern QSlider*       TileQt_QSlider_Hor_Widget;
 extern QSlider*       TileQt_QSlider_Ver_Widget;
+extern QProgressBar*  TileQt_QProgressBar_Hor_Widget;
 extern QTabBar*       TileQt_QTabBar_Widget;
 extern const QPixmap* TileQt_QPixmap_BackgroundTile;
 

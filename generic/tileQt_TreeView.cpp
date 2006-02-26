@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2005 by:
+ * Copyright (C) 2004-2006 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -49,7 +49,7 @@ static void TreeViewFieldElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -57,7 +57,8 @@ static void TreeViewFieldElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags =Ttk_StateTableLookup(treeview_field_statemap, state);
@@ -79,6 +80,7 @@ static void TreeViewFieldElementDraw(
                        /*frameShadow*/QFrame::Sunken));
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec TreeViewFieldElementSpec = {
@@ -115,7 +117,7 @@ static void TreeViewClientElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -123,7 +125,8 @@ static void TreeViewClientElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags =Ttk_StateTableLookup(treeview_client_statemap,state);
@@ -145,6 +148,7 @@ static void TreeViewClientElementDraw(
                        /*frameShadow*/QFrame::Sunken));
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec TreeViewClientElementSpec = {
@@ -181,7 +185,7 @@ static void TreeHeadingBorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     *paddingPtr = Ttk_UniformPadding(TreeViewUniformPadding);
 }
 
@@ -189,7 +193,8 @@ static void TreeHeadingBorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(treeheading_border_statemap,
@@ -209,6 +214,7 @@ static void TreeHeadingBorderElementDraw(
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec TreeHeadingBorderElementSpec = {

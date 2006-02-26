@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2005 by:
+ * Copyright (C) 2004-2006 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -41,10 +41,12 @@ static void MenubuttonDropdownElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    Tcl_MutexLock(&tileqtMutex);
     QRect rc = qApp->style().querySubControlMetrics(QStyle::CC_ComboBox,
                           TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxArrow);
     *widthPtr = rc.width();
+    Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -52,7 +54,7 @@ static void MenubuttonDropdownElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    //if (qApp == NULL) NULL_Q_APP;
     // There is no need to re-paint the button. It has been paint along with the
     // field element (ComboboxFieldElementDraw). This is because Qt's Combobox
     // is a complex widget.
@@ -93,7 +95,8 @@ static void MenubuttonElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    Tcl_MutexLock(&tileqtMutex);
     // QComboBox    widget(TileQt_QWidget_Widget);
     // *widthPtr   = widget.width();
     // *heightPtr  = widget.height();
@@ -108,13 +111,16 @@ static void MenubuttonElementGeometry(
                                   ef_rc.y() - fr_rc.y()           /* top    */,
                      fr_rc.width()  - ef_rc.width()  - ef_rc.x()  /* right  */,
                      fr_rc.height() - ef_rc.height() - ef_rc.y()  /* bottom */);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static void MenubuttonElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QComboBox_RO_Widget);
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QComboBox&   widget = *TileQt_QComboBox_RO_Widget;
@@ -140,6 +146,7 @@ static void MenubuttonElementDraw(
           scflags, activeflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec MenubuttonElementSpec = {

@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2005 by:
+ * Copyright (C) 2004-2006 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -41,18 +41,22 @@ static void ScaleTroughElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
-    QSlider* widget = NULL;
+    if (qApp == NULL) NULL_Q_APP;
     int orient = (int) clientData;
+    QSlider* widget = NULL;
     if (orient == TTK_ORIENT_HORIZONTAL) {
+      NULL_PROXY_WIDGET(TileQt_QSlider_Hor_Widget);
       widget = TileQt_QSlider_Hor_Widget;
     } else {
+      NULL_PROXY_WIDGET(TileQt_QSlider_Ver_Widget);
       widget = TileQt_QSlider_Ver_Widget;
     }
+    Tcl_MutexLock(&tileqtMutex);
     widget->setRange(0, 100);
     widget->setValue(50);
     *widthPtr   = widget->sizeHint().width();
     *heightPtr  = widget->sizeHint().height();
+    Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -60,17 +64,21 @@ static void ScaleTroughElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     QSlider* widget = NULL;
     int orient = (int) clientData;
     int width, height;
     QRect rc;
     if (orient == TTK_ORIENT_HORIZONTAL) {
+      NULL_PROXY_WIDGET(TileQt_QSlider_Hor_Widget);
+      Tcl_MutexLock(&tileqtMutex);
       widget = TileQt_QSlider_Hor_Widget;
       widget->resize(b.width, b.height);
       rc = widget->sliderRect();
       width = b.width + rc.width(); height = b.height;
     } else {
+      NULL_PROXY_WIDGET(TileQt_QSlider_Ver_Widget);
+      Tcl_MutexLock(&tileqtMutex);
       widget = TileQt_QSlider_Ver_Widget;
       widget->resize(b.width, b.height);
       rc = widget->sliderRect();
@@ -117,6 +125,7 @@ static void ScaleTroughElementDraw(
                    0, rc.y()+rc.height(), b.width, height-(rc.y()+rc.height()),
                    b.x, rc.y());
     }
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec ScaleTroughElementSpec = {
@@ -141,22 +150,25 @@ static void ScaleSliderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     QSlider* widget = NULL;
     int orient = (int) clientData;
     QRect rc;
     if (orient == TTK_ORIENT_HORIZONTAL) {
+      NULL_PROXY_WIDGET(TileQt_QSlider_Hor_Widget);
       widget = TileQt_QSlider_Hor_Widget;
     } else {
+      NULL_PROXY_WIDGET(TileQt_QSlider_Ver_Widget);
       widget = TileQt_QSlider_Ver_Widget;
     }
+    Tcl_MutexLock(&tileqtMutex);
     widget->setRange(0, 100);
     widget->setValue(50);
     widget->resize(widget->sizeHint().width(), widget->sizeHint().height());
     rc = widget->sliderRect();
     *widthPtr   = rc.width();
     *heightPtr  = rc.height();
-
+    Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -164,15 +176,18 @@ static void ScaleSliderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     int orient = (int) clientData;
     QSlider* widget = NULL;
     QStyle::SFlags sflags = Ttk_StateTableLookup(scale_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) {
+      NULL_PROXY_WIDGET(TileQt_QSlider_Hor_Widget);
       widget = TileQt_QSlider_Hor_Widget;
     } else {
+      NULL_PROXY_WIDGET(TileQt_QSlider_Ver_Widget);
       widget = TileQt_QSlider_Ver_Widget;
     }
+    Tcl_MutexLock(&tileqtMutex);
     widget->setBackgroundOrigin(QWidget::ParentOrigin);
     widget->setEnabled(state != TTK_STATE_DISABLED);
     widget->setRange(0, 100);
@@ -188,6 +203,7 @@ static void ScaleSliderElementDraw(
     QRect rc = widget->sliderRect();
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                  rc.x(), rc.y(), b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec ScaleSliderElementSpec = {

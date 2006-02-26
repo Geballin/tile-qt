@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2005 by:
+ * Copyright (C) 2004-2006 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -36,7 +36,7 @@ static void BackgroundElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     // int padding = qApp->style().pixelMetric(QStyle::PM_DefaultFrameWidth);
     // *paddingPtr = Ttk_UniformPadding(0);
 }
@@ -45,7 +45,8 @@ static void BackgroundElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    Tcl_MutexLock(&tileqtMutex);
     int width = Tk_Width(tkwin), height = Tk_Height(tkwin);
     QPixmap      pixmap(width, height);
     QPainter     painter(&pixmap);
@@ -60,6 +61,7 @@ static void BackgroundElementDraw(
     }
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, width, height, 0, 0);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec TileQt_BackgroundElementSpec = {
@@ -91,18 +93,21 @@ static void BorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    //Tcl_MutexLock(&tileqtMutex);
     BorderElement *border = (BorderElement*) elementRecord;
     int borderWidth = 0;
     Tcl_GetIntFromObj(NULL, border->borderWidthObj, &borderWidth);
     *paddingPtr = Ttk_UniformPadding((short)borderWidth+2);
+    //Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static void BorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    Tcl_MutexLock(&tileqtMutex);
     BorderElement *border = (BorderElement*) elementRecord;
     int relief = TK_RELIEF_FLAT;
     int borderWidth = 0;
@@ -144,6 +149,7 @@ static void BorderElementDraw(
     }
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec BorderElementSpec = {

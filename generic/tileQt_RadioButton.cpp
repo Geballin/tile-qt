@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2005 by:
+ * Copyright (C) 2004-2006 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -52,9 +52,11 @@ static void RadioButtonIndicatorElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    Tcl_MutexLock(&tileqtMutex);
     *widthPtr  = qApp->style().pixelMetric(QStyle::PM_ExclusiveIndicatorWidth);
     *heightPtr = qApp->style().pixelMetric(QStyle::PM_ExclusiveIndicatorHeight);
+    Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_MakePadding(0, 0, RadioButtonHorizontalPadding, 0);
 }
 
@@ -62,7 +64,9 @@ static void RadioButtonIndicatorElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QRadioButton button(TileQt_QWidget_Widget);
@@ -84,6 +88,7 @@ static void RadioButtonIndicatorElementDraw(
           qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec RadioButtonIndicatorElementSpec = {
@@ -106,10 +111,13 @@ static void RadioButtonBorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
+    Tcl_MutexLock(&tileqtMutex);
     QRadioButton button(TileQt_QWidget_Widget);
     *widthPtr   = button.width();
     *heightPtr  = button.height();
+    Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_MakePadding(0, 0, 0, 0);
 }
 
@@ -117,7 +125,8 @@ static void RadioButtonBorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QRadioButton button(TileQt_QWidget_Widget);	
@@ -147,6 +156,7 @@ static void RadioButtonBorderElementDraw(
      * get the proper background colour... */
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     b.width/2, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec RadioButtonBorderElementSpec = {

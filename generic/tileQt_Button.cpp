@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2005 by:
+ * Copyright (C) 2004-2006 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -42,7 +42,7 @@ static void ButtonElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
     // QPushButton button(TileQt_QWidget_Widget);
     // *widthPtr   = button.width();
     // *heightPtr  = button.height();
@@ -53,14 +53,14 @@ static void ButtonElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap     pixmap(b.width, b.height);
     QPainter    painter(&pixmap);
     QPushButton button(TileQt_QWidget_Widget);	
     button.setBackgroundOrigin(QWidget::ParentOrigin);
     button.setGeometry(b.x, b.y, b.width, b.height);
-    // QPoint p = button.backgroundOffset();
-    // QPoint pos = button.pos();
     // TileQt_StateInfo(state, tkwin);
     QStyle::SFlags sflags = Ttk_StateTableLookup(pushbutton_statemap, state);
     /* Handle buggy styles, that do not check flags but check widget states. */
@@ -74,6 +74,8 @@ static void ButtonElementDraw(
     } else {
         button.setDown(false);
     }
+    QPoint p   = button.backgroundOffset();
+    QPoint pos = button.pos();
     // printf("state=%d, qt style=%d\n", state,
     //        Ttk_StateTableLookup(pushbutton_statemap, state));
     if (TileQt_QPixmap_BackgroundTile &&
@@ -90,6 +92,7 @@ static void ButtonElementDraw(
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec ButtonElementSpec = {

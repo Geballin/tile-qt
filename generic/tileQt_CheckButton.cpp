@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2005 by:
+ * Copyright (C) 2004-2006 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -52,9 +52,11 @@ static void CheckButtonIndicatorElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    Tcl_MutexLock(&tileqtMutex);
     *widthPtr  = qApp->style().pixelMetric(QStyle::PM_IndicatorWidth);
     *heightPtr = qApp->style().pixelMetric(QStyle::PM_IndicatorHeight);
+    Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_MakePadding(0, 0, CheckButtonHorizontalPadding, 0);
 }
 
@@ -62,7 +64,9 @@ static void CheckButtonIndicatorElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QCheckBox    button(TileQt_QWidget_Widget);
@@ -83,6 +87,7 @@ static void CheckButtonIndicatorElementDraw(
           qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec CheckButtonIndicatorElementSpec = {
@@ -105,18 +110,23 @@ static void CheckButtonBorderElementGeometry(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
+    Tcl_MutexLock(&tileqtMutex);
     QCheckBox button(TileQt_QWidget_Widget);
     *widthPtr   = button.width();
     *heightPtr  = button.height();
     *paddingPtr = Ttk_MakePadding(0, 0, 0, 0);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static void CheckButtonBorderElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-    if (qApp == NULL) return;
+    if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
+    Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QCheckBox    button(TileQt_QWidget_Widget);	
@@ -146,6 +156,7 @@ static void CheckButtonBorderElementDraw(
      * get the proper background colour... */
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     b.width/2, 0, b.width, b.height, b.x, b.y);
+    Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static Ttk_ElementSpec CheckButtonBorderElementSpec = {

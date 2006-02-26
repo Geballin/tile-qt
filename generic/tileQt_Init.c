@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright (C) 2004-2005 Georgios Petasis
+ * Copyright (C) 2004-2006 Georgios Petasis
  *
  * The Tile-Qt theme is a Tk/Tile theme that uses Qt/KDE for drawing.
  */
@@ -29,7 +29,23 @@ static char initScript[] =
  * Exit Handler.
  */
 static void TileQt_ExitProc(ClientData data) {
-  TileQt_DestroyQApp();
+  //Tcl_MutexLock(&tileqtMutex);
+  //TileQt_DestroyQApp();
+  //Tcl_MutexUnlock(&tileqtMutex);
+  Tcl_MutexLock(&tileqtMutex);
+  // printf("TileQt_ExitProc: %d\n", TileQt_QAppCreated); fflush(NULL);
+  if (TileQt_QAppCreated < 0) {
+    Tcl_MutexUnlock(&tileqtMutex);
+    return;
+  }
+  --TileQt_QAppCreated;
+  if (TileQt_QAppCreated == 0) {
+    // printf("TileQt_ExitProc: %d <- TileQt_DestroyQApp();\n",
+    //       TileQt_QAppCreated); fflush(NULL);
+    TileQt_DestroyQApp();
+  }
+  Tcl_MutexUnlock(&tileqtMutex);
+  return;
 }; /* TileQt_ExitProc */
 
 /*
@@ -38,11 +54,13 @@ static void TileQt_ExitProc(ClientData data) {
 int Tileqt_ThemeName(ClientData clientData, Tcl_Interp *interp,
                                  int objc, Tcl_Obj *const objv[]) {
   if (objc != 1) {Tcl_WrongNumArgs(interp, 1, objv, ""); return TCL_ERROR;}
+  Tcl_MutexLock(&tileqtMutex);
   if (qApp) {
     Tcl_SetResult(interp, (char *) qApp->style().name(), TCL_VOLATILE);
   } else {
     Tcl_SetResult(interp, "", TCL_STATIC);
   }
+  Tcl_MutexUnlock(&tileqtMutex);
   return TCL_OK;
 }; /* Tileqt_ThemeName */
 
@@ -50,10 +68,12 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
                                  int objc, Tcl_Obj *const objv[]) {
   static char *Methods[] = {
     "-background", "-foreground", "-selectforeground", "-selectbackground",
+    "-buttonbackground", "-buttonforeground",
     (char *) NULL
   };
   enum methods {
-    CLR_background, CLR_foreground, CLR_selectforeground, CLR_selectbackground
+    CLR_background, CLR_foreground, CLR_selectforeground, CLR_selectbackground,
+    CLR_buttonbackground, CLR_buttonforeground
   };
   int index;
   if (Tcl_GetIndexFromObj(interp, objv[1], (const char **) Methods,
@@ -63,6 +83,7 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
     Tcl_SetResult(interp, "", TCL_STATIC);
     return TCL_OK;
   }
+  Tcl_MutexLock(&tileqtMutex);
   QColorGroup colours = qApp->palette().active();
   QColor colour;
   switch ((enum methods) index) {
@@ -78,14 +99,22 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
     case CLR_selectbackground: {
       colour = qApp->palette().active().highlight(); break;
     }
+    case CLR_buttonbackground: {
+      colour = qApp->palette().active().background(); break;
+    }
+    case CLR_buttonforeground: {
+      colour = qApp->palette().active().foreground(); break;
+    }
   }
   Tcl_SetResult(interp, (char *) colour.name().ascii(), TCL_VOLATILE);
+  Tcl_MutexUnlock(&tileqtMutex);
   return TCL_OK;
 }; /* Tileqt_ThemeColour */
 
 int Tileqt_AvailableStyles(ClientData clientData, Tcl_Interp *interp,
                                  int objc, Tcl_Obj *const objv[]) {
   if (objc != 1) {Tcl_WrongNumArgs(interp, 1, objv, ""); return TCL_ERROR;}
+  Tcl_MutexLock(&tileqtMutex);
   if (qApp) {
     QStringList styles = QStyleFactory::keys();
     Tcl_Obj* stylesObj = Tcl_NewListObj(0, NULL);
@@ -97,12 +126,14 @@ int Tileqt_AvailableStyles(ClientData clientData, Tcl_Interp *interp,
   } else {
     Tcl_SetResult(interp, "", TCL_STATIC);
   }
+  Tcl_MutexUnlock(&tileqtMutex);
   return TCL_OK;
 }; /* Tileqt_AvailableStyles */
 
 int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
                                  int objc, Tcl_Obj *const objv[]) {
   if (objc != 2) {Tcl_WrongNumArgs(interp, 1, objv, "style"); return TCL_ERROR;}
+  Tcl_MutexLock(&tileqtMutex);
   if (qApp) {
     int len;
     const char* str = Tcl_GetStringFromObj(objv[1], &len);
@@ -111,6 +142,7 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
     TileQt_QPixmap_BackgroundTile =
                                TileQt_QWidget_Widget->paletteBackgroundPixmap();
   }
+  Tcl_MutexUnlock(&tileqtMutex);
   return TCL_OK;
 }; /* Tileqt_SetStyle */
 
@@ -120,14 +152,16 @@ Tileqt_Init(Tcl_Interp *interp)
     Ttk_Theme themePtr;
     Tk_Window tkwin;
     char tmpScript[1024];
-    qApp = NULL;
 
     if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL)
 	return TCL_ERROR;
-    if (Tk_InitStubs(interp, TK_VERSION, 0) == NULL)
+    if (Tk_InitStubs(interp,  TK_VERSION,  0) == NULL)
 	return TCL_ERROR;
 
     /* The first thing we must do, is to retrieve a valid display. */
+    Tcl_MutexLock(&tileqtMutex);
+    if (TileQt_QAppCreated == 0) qApp = NULL;
+    Tcl_MutexUnlock(&tileqtMutex);
     tkwin = Tk_MainWindow(interp);
     if (tkwin == NULL) return TCL_ERROR;
 
@@ -137,7 +171,8 @@ Tileqt_Init(Tcl_Interp *interp)
     /*
      * Initialise Qt:
      */
-    if (!TileQt_QAppCreated) TileQt_CreateQApp(interp);
+    Tcl_MutexLock(&tileqtMutex);
+    if (TileQt_QAppCreated == 0) TileQt_CreateQApp(interp);
     ++TileQt_QAppCreated;
 
     /*
@@ -159,6 +194,7 @@ Tileqt_Init(Tcl_Interp *interp)
     TileQt_Init_Scale(interp, themePtr);
     TileQt_Init_Arrows(interp, themePtr);
     Tcl_CreateExitHandler(&TileQt_ExitProc, 0);
+    //Tcl_CreateThreadExitHandler(&TileQt_ExitProc, 0);
     
     /*
      * Register the TileQt package...
@@ -182,11 +218,14 @@ Tileqt_Init(Tcl_Interp *interp)
       strcat(tmpScript, "{}");
     }
     strcat(tmpScript, " };");
+    Tcl_MutexUnlock(&tileqtMutex);
     
-    if (Tcl_Eval(interp, tmpScript) != TCL_OK)
+    if (Tcl_Eval(interp, tmpScript) != TCL_OK) {
 	return TCL_ERROR;
-    if (Tcl_Eval(interp, initScript) != TCL_OK)
+    }
+    if (Tcl_Eval(interp, initScript) != TCL_OK) {
 	return TCL_ERROR;
+    }
     Tcl_PkgProvide(interp, "tile::theme::tileqt", PACKAGE_VERSION);
     Tcl_PkgProvide(interp, PACKAGE_NAME, PACKAGE_VERSION);
     return TCL_OK;
@@ -195,8 +234,10 @@ Tileqt_Init(Tcl_Interp *interp)
 int DLLEXPORT
 TileQt_Finish(Tcl_Interp *interp)
 {
+    Tcl_MutexLock(&tileqtMutex);
     if (TileQt_QAppCreated < 0) return 0;
     --TileQt_QAppCreated;
-    if (TileQt_QAppCreated < 1) TileQt_DestroyQApp();
+    if (TileQt_QAppCreated == 0) TileQt_DestroyQApp();
+    Tcl_MutexUnlock(&tileqtMutex);
     return 0;
 }; /* TileQt_Finish */
