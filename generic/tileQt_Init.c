@@ -67,18 +67,25 @@ int Tileqt_ThemeName(ClientData clientData, Tcl_Interp *interp,
 int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
                                  int objc, Tcl_Obj *const objv[]) {
   static char *Methods[] = {
-    "-background", "-foreground", "-selectforeground", "-selectbackground",
-    "-buttonbackground", "-buttonforeground",
+    "-active",     "-disabled",        "-inactive",
+    "-background", "-foreground",      "-button",     "-light",
+    "-dark",       "-mid",             "-text",       "-base",
+    "-midlight",   "-brightText",      "-buttonText", "-shadow",
+    "-highlight",  "-highlightedText", "-link",       "-linkVisited",
     (char *) NULL
   };
   enum methods {
-    CLR_background, CLR_foreground, CLR_selectforeground, CLR_selectbackground,
-    CLR_buttonbackground, CLR_buttonforeground
+    STT_ACTIVE,     STT_DISABLED,        STT_INACTIVE,
+    CLR_background, CLR_foreground,      CLR_button,     CLR_light,
+    CLR_dark,       CLR_mid,             CLR_text,       CLR_base,
+    CLR_midlight,   CLR_brightText,      CLR_buttonText, CLR_shadow,
+    CLR_highlight,  CLR_highlightedText, CLR_link,       CLR_linkVisited
   };
   int index;
-  if (Tcl_GetIndexFromObj(interp, objv[1], (const char **) Methods,
-                          "method", 0, &index) != TCL_OK) return TCL_ERROR;
-  if (objc != 2) {Tcl_WrongNumArgs(interp, 2, objv, "");  return TCL_ERROR;}
+  if (objc != 2 && objc != 3) {
+    Tcl_WrongNumArgs(interp, 2, objv, "?-active|-disabled|-inactive? colour");
+    return TCL_ERROR;
+  }
   if (!qApp) {
     Tcl_SetResult(interp, "", TCL_STATIC);
     return TCL_OK;
@@ -86,24 +93,29 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
   Tcl_MutexLock(&tileqtMutex);
   QColorGroup colours = qApp->palette().active();
   QColor colour;
-  switch ((enum methods) index) {
-    case CLR_background: {
-      colour = qApp->palette().active().background(); break;
-    }
-    case CLR_foreground: {
-      colour = qApp->palette().active().foreground(); break;
-    }
-    case CLR_selectforeground: {
-      colour = qApp->palette().active().highlightedText(); break;
-    }
-    case CLR_selectbackground: {
-      colour = qApp->palette().active().highlight(); break;
-    }
-    case CLR_buttonbackground: {
-      colour = qApp->palette().active().background(); break;
-    }
-    case CLR_buttonforeground: {
-      colour = qApp->palette().active().foreground(); break;
+  for (int i = 1; i < objc; ++i) {
+    if (Tcl_GetIndexFromObj(interp, objv[i], (const char **) Methods,
+                            "method", 0, &index) != TCL_OK) return TCL_ERROR;
+    switch ((enum methods) index) {
+      case STT_ACTIVE:          {colours = qApp->palette().active();   break;}
+      case STT_DISABLED:        {colours = qApp->palette().disabled(); break;}
+      case STT_INACTIVE:        {colours = qApp->palette().inactive(); break;}
+      case CLR_background:      {colour = colours.background();        break;}
+      case CLR_foreground:      {colour = colours.foreground();        break;}
+      case CLR_button:          {colour = colours.button();            break;}
+      case CLR_light:           {colour = colours.light();             break;}
+      case CLR_dark:            {colour = colours.dark();              break;}
+      case CLR_mid:             {colour = colours.mid();               break;}
+      case CLR_text:            {colour = colours.text();              break;}
+      case CLR_base:            {colour = colours.base();              break;}
+      case CLR_midlight:        {colour = colours.midlight();          break;}
+      case CLR_brightText:      {colour = colours.brightText();        break;}
+      case CLR_buttonText:      {colour = colours.buttonText();        break;}
+      case CLR_shadow:          {colour = colours.shadow();            break;}
+      case CLR_highlight:       {colour = colours.highlight();         break;}
+      case CLR_highlightedText: {colour = colours.highlightedText();   break;}
+      case CLR_link:            {colour = colours.link();              break;}
+      case CLR_linkVisited:     {colour = colours.linkVisited();       break;}
     }
   }
   Tcl_SetResult(interp, (char *) colour.name().ascii(), TCL_VOLATILE);
@@ -154,9 +166,9 @@ Tileqt_Init(Tcl_Interp *interp)
     char tmpScript[1024];
 
     if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL)
-	return TCL_ERROR;
+        return TCL_ERROR;
     if (Tk_InitStubs(interp,  TK_VERSION,  0) == NULL)
-	return TCL_ERROR;
+        return TCL_ERROR;
 
     /* The first thing we must do, is to retrieve a valid display. */
     Tcl_MutexLock(&tileqtMutex);
@@ -221,10 +233,10 @@ Tileqt_Init(Tcl_Interp *interp)
     Tcl_MutexUnlock(&tileqtMutex);
     
     if (Tcl_Eval(interp, tmpScript) != TCL_OK) {
-	return TCL_ERROR;
+      return TCL_ERROR;
     }
     if (Tcl_Eval(interp, initScript) != TCL_OK) {
-	return TCL_ERROR;
+      return TCL_ERROR;
     }
     Tcl_PkgProvide(interp, "tile::theme::tileqt", PACKAGE_VERSION);
     Tcl_PkgProvide(interp, PACKAGE_NAME, PACKAGE_VERSION);

@@ -1,3 +1,8 @@
+2006-07-03  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * generic/tileQt_Init.c: Changed callback of
+        tile::theme::tileqt::currentThemeColour, to give full colour
+        introspection of the current theme.
+        
 2006-26-02  Georgios Petasis  <petasis@iit.demokritos.gr>
         * generic/*: Updated TileQt to the latest tile. Eliminated the source of
         some XErrors caused by Qt progress widgets. Made the whole tileQt

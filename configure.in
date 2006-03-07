@@ -3,7 +3,7 @@
 #
 
 AC_REVISION($Revision$)
-AC_INIT([tileqt],[0.1])
+AC_INIT([tileqt],[0.2])
 AC_CONFIG_AUX_DIR(tclconfig)
 
 AC_PROG_CXX

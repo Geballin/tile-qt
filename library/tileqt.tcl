@@ -92,10 +92,10 @@ namespace eval tile::theme::tileqt {
   proc updateStyles {} {
     style theme settings tileqt {
       style default "." \
-         -background [currentThemeColour -background] \
-         -foreground [currentThemeColour -foreground] \
-	 -selectforeground [currentThemeColour -selectforeground] \
-	 -selectbackground [currentThemeColour -selectbackground] \
+         -background [currentThemeColour -active -background] \
+         -foreground [currentThemeColour -active -foreground] \
+	 -selectforeground [currentThemeColour -highlightedText] \
+	 -selectbackground [currentThemeColour -highlight] \
          ;
       style default TButton      -padding {4 4} -width -11
       style default TCheckbutton -padding 0
