@@ -21,9 +21,11 @@
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
+#if 0
 static Ttk_StateTable background_statemap[] =
 {
 };
+#endif
 
 typedef struct {
 } BackgroundElement;
@@ -46,15 +48,16 @@ static void BackgroundElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
     Tcl_MutexLock(&tileqtMutex);
     int width = Tk_Width(tkwin), height = Tk_Height(tkwin);
     QPixmap      pixmap(width, height);
     QPainter     painter(&pixmap);
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, width, height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *(wc->TileQt_QPixmap_BackgroundTile)));
     } else {
         painter.fillRect(0, 0, width, height,
                          qApp->palette().active().background());
@@ -75,7 +78,7 @@ static Ttk_ElementSpec TileQt_BackgroundElementSpec = {
 /*------------------------------------------------------------------------
  * +++ Border element.
  */
-
+#if 0
 typedef struct {
     Tcl_Obj 	*borderWidthObj;
     Tcl_Obj 	*reliefObj;
@@ -107,6 +110,7 @@ static void BorderElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_WidgetParent);
     Tcl_MutexLock(&tileqtMutex);
     BorderElement *border = (BorderElement*) elementRecord;
     int relief = TK_RELIEF_FLAT;
@@ -133,17 +137,17 @@ static void BorderElementDraw(
 
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *(wc->TileQt_QPixmap_BackgroundTile)));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
     if (borderWidth) {
-      qApp->style().drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
+      wc->TileQt_Style->drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
             QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
             QStyleOption(borderWidth, 0));
     }
@@ -159,19 +163,20 @@ static Ttk_ElementSpec BorderElementSpec = {
     BorderElementGeometry,
     BorderElementDraw
 };
-
+#endif
 
 /*------------------------------------------------------------------------
  * +++ Widget layout.
  */
 
-int TileQt_Init_Background(Tcl_Interp *interp, Ttk_Theme themePtr)
+int TileQt_Init_Background(Tcl_Interp *interp,
+                           TileQt_WidgetCache **wc, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
     Ttk_RegisterElement(interp, themePtr, "background",
-            &TileQt_BackgroundElementSpec, NULL);
+            &TileQt_BackgroundElementSpec, (void *) wc[0]);
     //Ttk_RegisterElement(interp, themePtr, "border",
     //        &BorderElementSpec, NULL);
     /*

@@ -1,17 +1,20 @@
 namespace eval tile::theme::tileqt {
-  variable PreviewPipe {}
+  variable PreviewInterp {}
 
   proc updateLayouts {} {
     ## Variable "theme" should be defined by the C part of the extension.
     variable theme
     if {![info exists theme]} {return}
     style theme use tileqt
-    # puts "Current Qt Theme: [currentThemeName]"
-    switch -exact -- $theme {
+    # puts "Current Qt Theme: [currentThemeName] ($theme)"
+    switch -exact -- [string tolower $theme] {
       b3 -
       default -
       keramik -
       plastik -
+      metal4kde -
+      polyester -
+      liquid -
       platinum -
       thinkeramik -
       highcolor -
@@ -94,20 +97,168 @@ namespace eval tile::theme::tileqt {
       style default "." \
          -background [currentThemeColour -active -background] \
          -foreground [currentThemeColour -active -foreground] \
-	 -selectforeground [currentThemeColour -highlightedText] \
-	 -selectbackground [currentThemeColour -highlight] \
+         -selectforeground [currentThemeColour -highlightedText] \
+         -selectbackground [currentThemeColour -highlight] \
          ;
-      style default TButton      -padding {4 4} -width -11
-      style default TCheckbutton -padding 0
-      style default TCombobox    -padding {3 2 3 2}
-      style default TEntry       -padding {2 2 2 4}
+      style map "." -foreground [list \
+         active          [currentThemeColour -active   -foreground] \
+         disabled        [currentThemeColour -disabled -foreground] \
+         focus           [currentThemeColour -active   -foreground] \
+         pressed         [currentThemeColour -active   -foreground] \
+         selected        [currentThemeColour -active   -foreground] \
+      ] -background [list \
+         active          [currentThemeColour -active   -background] \
+         disabled        [currentThemeColour -disabled -background] \
+         pressed         [currentThemeColour -active   -background] \
+         pressed         [currentThemeColour -active   -background] \
+         selected        [currentThemeColour -active   -background] \
+      ] -selectforeground [list \
+         active          [currentThemeColour -active   -highlightedText] \
+         disabled        [currentThemeColour -disabled -highlightedText] \
+         focus           [currentThemeColour -active   -highlightedText] \
+         pressed         [currentThemeColour -active   -highlightedText] \
+         selected        [currentThemeColour -active   -highlightedText] \
+      ] -selectbackground [list \
+         active          [currentThemeColour -active   -highlight] \
+         disabled        [currentThemeColour -disabled -highlight] \
+         focus           [currentThemeColour -active   -highlight] \
+         pressed         [currentThemeColour -active   -highlight] \
+         selected        [currentThemeColour -active   -highlight] \
+      ]
+
+      style map TButton -foreground [list \
+         active          [currentThemeColour -active   -buttonText] \
+         disabled        [currentThemeColour -disabled -buttonText] \
+         focus           [currentThemeColour -active   -buttonText] \
+         pressed         [currentThemeColour -active   -buttonText] \
+         selected        [currentThemeColour -active   -buttonText] \
+      ] -background [list \
+         active          [currentThemeColour -active   -button] \
+         disabled        [currentThemeColour -disabled -button] \
+         focus           [currentThemeColour -active   -button] \
+         pressed         [currentThemeColour -active   -button] \
+         selected        [currentThemeColour -active   -button] \
+      ]
+      style default TButton      -width -11 -padding {4 4 4 4}
+
+      style map TCheckbutton -foreground [list \
+         active          [currentThemeColour -active   -buttonText] \
+         disabled        [currentThemeColour -disabled -buttonText] \
+         focus           [currentThemeColour -active   -buttonText] \
+         pressed         [currentThemeColour -active   -buttonText] \
+         selected        [currentThemeColour -active   -buttonText] \
+      ] -background [list \
+         active          [currentThemeColour -active   -button] \
+         disabled        [currentThemeColour -disabled -button] \
+         focus           [currentThemeColour -active   -button] \
+         pressed         [currentThemeColour -active   -button] \
+         selected        [currentThemeColour -active   -button] \
+      ]
+      style default TCheckbutton ;#-padding 0
+      
+      style map TCombobox -foreground [list \
+         active          [currentThemeColour -active   -buttonText] \
+         disabled        [currentThemeColour -disabled -buttonText] \
+         focus           [currentThemeColour -active   -buttonText] \
+         pressed         [currentThemeColour -active   -buttonText] \
+         selected        [currentThemeColour -active   -buttonText] \
+      ] -background [list \
+         active          [currentThemeColour -active   -button] \
+         disabled        [currentThemeColour -disabled -button] \
+         focus           [currentThemeColour -active   -button] \
+         pressed         [currentThemeColour -active   -button] \
+         selected        [currentThemeColour -active   -button] \
+      ]
+      style default TCombobox    ;#-padding {3 2 3 2}
+      
+      style map TEntry -foreground [list \
+         active          [currentThemeColour -active   -text] \
+         disabled        [currentThemeColour -disabled -text] \
+         focus           [currentThemeColour -active   -text] \
+         pressed         [currentThemeColour -active   -text] \
+         selected        [currentThemeColour -active   -text] \
+      ] -background [list \
+         active          [currentThemeColour -active   -text] \
+         disabled        [currentThemeColour -disabled -text] \
+         focus           [currentThemeColour -active   -text] \
+         pressed         [currentThemeColour -active   -text] \
+         selected        [currentThemeColour -active   -text] \
+      ] -selectforeground [list \
+         active          [currentThemeColour -active   -highlightedText] \
+         disabled        [currentThemeColour -disabled -highlightedText] \
+         focus           [currentThemeColour -active   -highlightedText] \
+         pressed         [currentThemeColour -active   -highlightedText] \
+         selected        [currentThemeColour -active   -highlightedText] \
+      ] -selectbackground [list \
+         active          [currentThemeColour -active   -highlight] \
+         disabled        [currentThemeColour -disabled -highlight] \
+         focus           [currentThemeColour -active   -highlight] \
+         pressed         [currentThemeColour -active   -highlight] \
+         selected        [currentThemeColour -active   -highlight] \
+      ]
+      style default TEntry       -padding {3 2 3 2}
+      
       style default TLabelframe  -background [currentThemeColour -background] \
                                  -padding 0
-      style default TMenubutton  -padding {4 4} -width -11
+      
+      style map TMenubutton -foreground [list \
+         active          [currentThemeColour -active   -buttonText] \
+         disabled        [currentThemeColour -disabled -buttonText] \
+         focus           [currentThemeColour -active   -buttonText] \
+         pressed         [currentThemeColour -active   -buttonText] \
+         selected        [currentThemeColour -active   -buttonText] \
+      ] -background [list \
+         active          [currentThemeColour -active   -button] \
+         disabled        [currentThemeColour -disabled -button] \
+         focus           [currentThemeColour -active   -button] \
+         pressed         [currentThemeColour -active   -button] \
+         selected        [currentThemeColour -active   -button] \
+      ] -selectforeground [list \
+         active          [currentThemeColour -active   -highlightedText] \
+         disabled        [currentThemeColour -disabled -highlightedText] \
+         focus           [currentThemeColour -active   -highlightedText] \
+         pressed         [currentThemeColour -active   -highlightedText] \
+         selected        [currentThemeColour -active   -highlightedText] \
+      ] -selectbackground [list \
+         active          [currentThemeColour -active   -highlight] \
+         disabled        [currentThemeColour -disabled -highlight] \
+         focus           [currentThemeColour -active   -highlight] \
+         pressed         [currentThemeColour -active   -highlight] \
+         selected        [currentThemeColour -active   -highlight] \
+      ]
+      style default TMenubutton  -width -11 -padding {3 2 3 2}
       #style default TNotebook    -expandtab {2 2 2 2}
-      style default TNotebook    -expandtab {1 0 1 0}
+      #style default TNotebook    -expandtab {1 0 1 0}
+
+      style map TRadiobutton -foreground [list \
+         active          [currentThemeColour -active   -buttonText] \
+         disabled        [currentThemeColour -disabled -buttonText] \
+         focus           [currentThemeColour -active   -buttonText] \
+         pressed         [currentThemeColour -active   -buttonText] \
+         selected        [currentThemeColour -active   -buttonText] \
+      ] -background [list \
+         active          [currentThemeColour -active   -button] \
+         disabled        [currentThemeColour -disabled -button] \
+         focus           [currentThemeColour -active   -button] \
+         pressed         [currentThemeColour -active   -button] \
+         selected        [currentThemeColour -active   -button] \
+      ]
       style default TRadiobutton -padding 0
-      style default Toolbutton   -padding {4 4}
+
+      style map Toolbutton -foreground [list \
+         active          [currentThemeColour -active   -buttonText] \
+         disabled        [currentThemeColour -disabled -buttonText] \
+         focus           [currentThemeColour -active   -buttonText] \
+         pressed         [currentThemeColour -active   -buttonText] \
+         selected        [currentThemeColour -active   -buttonText] \
+      ] -background [list \
+         active          [currentThemeColour -active   -button] \
+         disabled        [currentThemeColour -disabled -button] \
+         focus           [currentThemeColour -active   -button] \
+         pressed         [currentThemeColour -active   -button] \
+         selected        [currentThemeColour -active   -button] \
+      ]
+      style default Toolbutton   ;#-padding {4 4}
     };# style theme settings tileqt
   };# updateStyles
 
@@ -127,6 +278,7 @@ namespace eval tile::theme::tileqt {
   proc applyStyle {style} {
     setStyle $style
     updateStyles
+    updateLayouts
   };# applyStyle
 
   ## createThemeConfigurationPanel:
@@ -151,38 +303,44 @@ namespace eval tile::theme::tileqt {
     ## session through a pipe, and we embed its window in our dialog. Then, we
     ## instrument this second wish through the pipe...
     ttk::labelframe $dlgFrame.preview -text "Preview:"
-      variable PreviewPipe
-      if {[string length $PreviewPipe]} {
+      variable PreviewInterp
+      if {[string length $PreviewInterp]} {
         frame $dlgFrame.preview.container -text {Preview Unavailable!}
       } else {
         frame $dlgFrame.preview.container -container 1 -height 250 -width 400
-        ## Open a pipe to a second wish process...
-        if {[catch {
-          set PreviewPipe [open "|[info nameofexecutable] \
-                                -use [winfo id $dlgFrame.preview.container]" w]
-          puts $PreviewPipe "set ::testConfigurationPanel 0"
-          puts $PreviewPipe "set auto_path \{$::auto_path\}"
-          puts $PreviewPipe "package require Tk; package require tile;\
-                             package require tile::theme::tileqt"
-          puts $PreviewPipe ". configure -height 250 -width 400"
-          puts $PreviewPipe "tile::theme::tileqt::applyStyle \{[currentThemeName]\}"
-          puts $PreviewPipe "tile::theme::tileqt::selectStyleDlg_previewWidgets"
-          flush $PreviewPipe
-          } error]} {
-          catch {close $PreviewPipe}
-          set PreviewPipe {}
-        } else {
-          bind $dlgFrame.preview.container <Destroy> \
-            {puts $tile::theme::tileqt::PreviewPipe exit;
-             puts {Closing pipe...};
-             catch {close $tile::theme::tileqt::PreviewPipe}}
-          bind $dlgFrame.style_selection.style <<ComboboxSelected>> \
-            {puts $tile::theme::tileqt::PreviewPipe "tile::theme::tileqt::applyStyle \{[%W get]\}"; flush $tile::theme::tileqt::PreviewPipe}
-        }
+        ## Create a slave interpreter, and load tileQt. Widgets in this interp
+        ## may be of a different widget style!
+        set PreviewInterp [interp create]
+        interp eval $PreviewInterp {package require Tk}
+        interp eval $PreviewInterp "
+          wm withdraw .
+          set auto_path \{$::auto_path\}
+          package require tile
+          package require tile::theme::tileqt
+          tile::theme::tileqt::applyStyle \{[currentThemeName]\}
+          toplevel .widgets -height 250 -width 400 \
+                            -use [winfo id $dlgFrame.preview.container]
+          tile::theme::tileqt::selectStyleDlg_previewWidgets .widgets
+        "
+        bind $dlgFrame.preview.container <Destroy> \
+          "tile::theme::tileqt::destroyThemeConfigurationPanel"
+        bind $dlgFrame.style_selection.style <<ComboboxSelected>> \
+          {tile::theme::tileqt::updateThemeConfigurationPanel [%W get]}
       }
       pack $dlgFrame.preview.container -padx 0 -pady 0 -fill both -expand 1
     pack $dlgFrame.preview -fill both -expand 1 -padx 2 -pady 2
-  };# selectStyleDlg
+  };# createThemeConfigurationPanel
+
+  proc destroyThemeConfigurationPanel {} {
+    variable PreviewInterp
+    interp delete $PreviewInterp
+    set PreviewInterp {}
+  };# destroyThemeConfigurationPanel
+
+  proc updateThemeConfigurationPanel {style} {
+    variable PreviewInterp
+    interp eval $PreviewInterp "tile::theme::tileqt::applyStyle \{$style\}"
+  };# updateThemeConfigurationPanel
 
   proc selectStyleDlg_previewWidgets {{win {}}} {
     ## Create a notebook widget...
@@ -191,6 +349,10 @@ namespace eval tile::theme::tileqt {
     $win.nb add $tab1 -text "Tab 1" -underline 0 -sticky news
     set tab2 [ttk::frame $win.nb.tab2]
     $win.nb add $tab2 -text "Tab 2" -underline 0 -sticky news
+    set tab3 [ttk::frame $win.nb.tab3]
+    $win.nb add $tab3 -text "Tab 3" -underline 0 -sticky news
+    set tab4 [ttk::frame $win.nb.tab4]
+    $win.nb add $tab4 -text "Tab 4" -underline 0 -sticky news
     ## Fill only tab1...
     #####################
     ## Add a set of radiobuttons to the left...
@@ -225,6 +387,10 @@ namespace eval tile::theme::tileqt {
       $tab1.widgets.combo set {Selection 1}
       grid $tab1.widgets.combo -sticky snew -padx 1 -pady 1
     grid $tab1.buttons $tab1.widgets -padx 2 -pady 2 -sticky snew
+    ttk::scrollbar $tab1.hsb -orient horizontal
+    grid $tab1.hsb -columnspan 2 -padx 2 -pady 2 -sticky snew
+    ttk::scrollbar $tab1.vsb -orient vertical
+    grid $tab1.vsb -row 0 -column 3 -padx 2 -pady 2 -sticky snew
     grid columnconfigure $tab1 1 -weight 1
     pack $win.nb -fill both -expand 1
   };# selectStyleDlg_previewWidgets

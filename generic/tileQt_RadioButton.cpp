@@ -53,9 +53,10 @@ static void RadioButtonIndicatorElementGeometry(
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_Style);
     Tcl_MutexLock(&tileqtMutex);
-    *widthPtr  = qApp->style().pixelMetric(QStyle::PM_ExclusiveIndicatorWidth);
-    *heightPtr = qApp->style().pixelMetric(QStyle::PM_ExclusiveIndicatorHeight);
+    *widthPtr  = wc->TileQt_Style->pixelMetric(QStyle::PM_ExclusiveIndicatorWidth);
+    *heightPtr = wc->TileQt_Style->pixelMetric(QStyle::PM_ExclusiveIndicatorHeight);
     Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_MakePadding(0, 0, RadioButtonHorizontalPadding, 0);
 }
@@ -69,21 +70,21 @@ static void RadioButtonIndicatorElementDraw(
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    QRadioButton button(TileQt_QWidget_Widget);
+    QRadioButton button(wc->TileQt_QWidget_Widget);
     button.resize(b.width - RadioButtonHorizontalPadding, b.height);
     QStyle::SFlags sflags = Ttk_StateTableLookup(radiobutton_statemap, state);
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
 
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawControl(QStyle::CE_RadioButton, &painter, &button,
+    wc->TileQt_Style->drawControl(QStyle::CE_RadioButton, &painter, &button,
           QRect(0, 0, b.width - RadioButtonHorizontalPadding, b.height),
           qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
@@ -114,7 +115,7 @@ static void RadioButtonBorderElementGeometry(
     if (qApp == NULL) NULL_Q_APP;
     NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
     Tcl_MutexLock(&tileqtMutex);
-    QRadioButton button(TileQt_QWidget_Widget);
+    QRadioButton button(wc->TileQt_QWidget_Widget);
     *widthPtr   = button.width();
     *heightPtr  = button.height();
     Tcl_MutexUnlock(&tileqtMutex);
@@ -126,25 +127,26 @@ static void RadioButtonBorderElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    QRadioButton button(TileQt_QWidget_Widget);	
+    QRadioButton button(wc->TileQt_QWidget_Widget);	
     button.setBackgroundOrigin(QWidget::ParentOrigin);
     button.resize(b.width, b.height);
     //button.setGeometry(b.x, b.y, b.width, b.height);
     QStyle::SFlags sflags = Ttk_StateTableLookup(radiobutton_statemap, state);
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawControl(QStyle::CE_RadioButtonLabel, &painter, &button,
+    wc->TileQt_Style->drawControl(QStyle::CE_RadioButtonLabel, &painter, &button,
           QRect(0, 0, b.width, b.height),
           qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
@@ -180,15 +182,16 @@ TTK_BEGIN_LAYOUT(RadiobuttonLayout)
 		 TTK_NODE("Radiobutton.label", TTK_FILL_BOTH))))
 TTK_END_LAYOUT
 
-int TileQt_Init_RadioButton(Tcl_Interp *interp, Ttk_Theme themePtr)
+int TileQt_Init_RadioButton(Tcl_Interp *interp,
+                       TileQt_WidgetCache **wc, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
     Ttk_RegisterElement(interp, themePtr, "Radiobutton.border",
-            &RadioButtonBorderElementSpec, NULL);
+            &RadioButtonBorderElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Radiobutton.indicator",
-            &RadioButtonIndicatorElementSpec, NULL);
+            &RadioButtonIndicatorElementSpec, (void *) wc[0]);
     
     /*
      * Register layouts:

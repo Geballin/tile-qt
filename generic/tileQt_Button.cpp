@@ -43,9 +43,10 @@ static void ButtonElementGeometry(
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     if (qApp == NULL) NULL_Q_APP;
-    // QPushButton button(TileQt_QWidget_Widget);
-    // *widthPtr   = button.width();
-    // *heightPtr  = button.height();
+    // NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
+    // QPushButton button(wc->TileQt_QWidget_Widget);
+    // *widthPtr   = button.minimumWidth();
+    // *heightPtr  = button.minimumHeight();
     *paddingPtr = Ttk_UniformPadding(0);
 }
 
@@ -58,10 +59,10 @@ static void ButtonElementDraw(
     Tcl_MutexLock(&tileqtMutex);
     QPixmap     pixmap(b.width, b.height);
     QPainter    painter(&pixmap);
-    QPushButton button(TileQt_QWidget_Widget);	
+    QPushButton button(wc->TileQt_QWidget_Widget);
     button.setBackgroundOrigin(QWidget::ParentOrigin);
     button.setGeometry(b.x, b.y, b.width, b.height);
-    // TileQt_StateInfo(state, tkwin);
+    // wc->TileQt_StateInfo(state, tkwin);
     QStyle::SFlags sflags = Ttk_StateTableLookup(pushbutton_statemap, state);
     /* Handle buggy styles, that do not check flags but check widget states. */
     if (state & TTK_STATE_ALTERNATE) {
@@ -78,17 +79,17 @@ static void ButtonElementDraw(
     QPoint pos = button.pos();
     // printf("state=%d, qt style=%d\n", state,
     //        Ttk_StateTableLookup(pushbutton_statemap, state));
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
 
-    qApp->style().drawControl(QStyle::CE_PushButton, &painter, &button,
+    wc->TileQt_Style->drawControl(QStyle::CE_PushButton, &painter, &button,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
@@ -113,13 +114,14 @@ TTK_BEGIN_LAYOUT(ButtonLayout)
 		TTK_NODE("Button.label", TTK_FILL_BOTH)))
 TTK_END_LAYOUT
 
-int TileQt_Init_Button(Tcl_Interp *interp, Ttk_Theme themePtr)
+int TileQt_Init_Button(Tcl_Interp *interp,
+                       TileQt_WidgetCache **wc, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
     Ttk_RegisterElement(interp, themePtr, "Button.button",
-            &ButtonElementSpec, NULL);
+            &ButtonElementSpec, (void *) wc[0]);
 
     /*
      * Register layouts:

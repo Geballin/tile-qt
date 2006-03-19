@@ -48,22 +48,23 @@ static void LabelframeBorderElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(labelframe_statemap, state);
     sflags |= QStyle::Style_Sunken;
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
+    wc->TileQt_Style->drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
           QStyleOption(/*lineWidth*/1, /*midLineWidth*/0
                        /*frameShape*//*frameShadow*/));
@@ -90,13 +91,14 @@ TTK_BEGIN_LAYOUT(LabelframeLayout)
     TTK_NODE("Labelframe.text", TTK_FILL_BOTH)
 TTK_END_LAYOUT
 
-int TileQt_Init_Labelframe(Tcl_Interp *interp, Ttk_Theme themePtr)
+int TileQt_Init_Labelframe(Tcl_Interp *interp,
+                       TileQt_WidgetCache **wc, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
     Ttk_RegisterElement(interp, themePtr, "Labelframe.border",
-            &LabelframeBorderElementSpec, NULL);
+            &LabelframeBorderElementSpec, (void *) wc[0]);
     
     /*
      * Register layouts:

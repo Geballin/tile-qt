@@ -58,22 +58,23 @@ static void TreeViewFieldElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags =Ttk_StateTableLookup(treeview_field_statemap, state);
     sflags |= QStyle::Style_Horizontal;
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
+    wc->TileQt_Style->drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
           QStyleOption(/*lineWidth*/1, /*midLineWidth*/0,
                        /*frameShape*/QFrame::StyledPanel,
@@ -126,22 +127,23 @@ static void TreeViewClientElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags =Ttk_StateTableLookup(treeview_client_statemap,state);
     sflags |= QStyle::Style_Horizontal;
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
+    wc->TileQt_Style->drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
           QStyleOption(/*lineWidth*/1, /*midLineWidth*/0,
                        /*frameShape*/QFrame::StyledPanel,
@@ -194,23 +196,24 @@ static void TreeHeadingBorderElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(treeheading_border_statemap,
                                                  state);
     sflags |= QStyle::Style_Horizontal;
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawPrimitive(QStyle::PE_HeaderSection, &painter,
+    wc->TileQt_Style->drawPrimitive(QStyle::PE_HeaderSection, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
@@ -230,11 +233,13 @@ static Ttk_ElementSpec TreeHeadingBorderElementSpec = {
  * +++ Widget layout.
  */
 
+#if 0
 TTK_BEGIN_LAYOUT(TreeviewLayout)
     TTK_GROUP("Treeview.field", TTK_FILL_BOTH|TTK_BORDER,
 	TTK_GROUP("Treeview.padding", TTK_FILL_BOTH,
 	    TTK_NODE("Treeview.client", TTK_FILL_BOTH)))
 TTK_END_LAYOUT
+#endif
 
 TTK_BEGIN_LAYOUT(ItemLayout)
     TTK_GROUP("Treeitem.padding", TTK_FILL_BOTH,
@@ -260,17 +265,18 @@ TTK_BEGIN_LAYOUT(RowLayout)
     TTK_NODE("Treeitem.row", TTK_FILL_BOTH)
 TTK_END_LAYOUT
 
-int TileQt_Init_TreeView(Tcl_Interp *interp, Ttk_Theme themePtr)
+int TileQt_Init_TreeView(Tcl_Interp *interp,
+                       TileQt_WidgetCache **wc, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
     Ttk_RegisterElement(interp, themePtr, "Treeview.field",
-            &TreeViewFieldElementSpec, NULL);
+            &TreeViewFieldElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Treeview.client",
-            &TreeViewClientElementSpec, NULL);
+            &TreeViewClientElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Treeheading.border",
-            &TreeHeadingBorderElementSpec, NULL);
+            &TreeHeadingBorderElementSpec, (void *) wc[0]);
     
     /*
      * Register layouts:

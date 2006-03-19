@@ -43,17 +43,30 @@ static void ComboboxFieldElementGeometry(
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QComboBox_RO_Widget);
     Tcl_MutexLock(&tileqtMutex);
     // In order to get the correct padding, calculate the difference between the
     // frame & edit field rectangulars...
-    QRect fr_rc = qApp->style().querySubControlMetrics(QStyle::CC_ComboBox,
-                      TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxFrame);
-    QRect ef_rc = qApp->style().querySubControlMetrics(QStyle::CC_ComboBox,
-                      TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxEditField);
+    QRect fr_rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ComboBox,
+                  wc->TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxFrame);
+    QRect ef_rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ComboBox,
+                  wc->TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxEditField);
     Tcl_MutexUnlock(&tileqtMutex);
+    *widthPtr  = wc->TileQt_QComboBox_RO_Widget->minimumWidth();
+    *heightPtr = wc->TileQt_QComboBox_RO_Widget->minimumHeight();
+#if 0
+    printf("left=%d, top=%d, right=%d, bottom=%d\n",
+            ef_rc.x() - fr_rc.x(), ef_rc.y() - fr_rc.y(),
+            fr_rc.width()  - ef_rc.width()  - ef_rc.x(),
+            fr_rc.height() - ef_rc.height() - ef_rc.y());
+#endif
     *paddingPtr = Ttk_MakePadding(ef_rc.x() - fr_rc.x()           /* left   */,
                                   ef_rc.y() - fr_rc.y()           /* top    */,
+#if 0
                      fr_rc.width()  - ef_rc.width()  - ef_rc.x()  /* right  */,
+#else
+                     ef_rc.x() - fr_rc.x()                        /* right  */,
+#endif
                      fr_rc.height() - ef_rc.height() - ef_rc.y()  /* bottom */);
 }
 
@@ -67,12 +80,15 @@ static void ComboboxFieldElementDraw(
     QComboBox*   widget;
     /* According to the state, select either the read-only or the read-write
      * widget. */
+    NULL_PROXY_WIDGET(TileQt_QComboBox_RO_Widget);
     if (state & (TTK_STATE_DISABLED|TTK_STATE_READONLY)) {
-      NULL_PROXY_WIDGET(TileQt_QComboBox_RO_Widget);
-      widget = TileQt_QComboBox_RO_Widget;
+      widget = wc->TileQt_QComboBox_RO_Widget;
     } else {
-      NULL_PROXY_WIDGET(TileQt_QComboBox_RW_Widget);
-      widget = TileQt_QComboBox_RW_Widget;
+      if (wc->TileQt_QComboBox_RW_Widget) {
+        widget = wc->TileQt_QComboBox_RW_Widget;
+      } else {
+        widget = wc->TileQt_QComboBox_RO_Widget;
+      }
     }
     Tcl_MutexLock(&tileqtMutex);
     widget->setBackgroundOrigin(QWidget::ParentOrigin);
@@ -82,17 +98,17 @@ static void ComboboxFieldElementDraw(
                               QStyle::SC_ComboBoxEditField;
     QStyle::SCFlags activeflags = QStyle::SC_ComboBoxFrame;
     
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawComplexControl(QStyle::CC_ComboBox, &painter, widget,
+    wc->TileQt_Style->drawComplexControl(QStyle::CC_ComboBox, &painter, widget,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
           scflags, activeflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
@@ -111,6 +127,7 @@ static Ttk_ElementSpec ComboboxFieldElementSpec = {
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
+#if 0
 static Ttk_StateTable combobox_statemap[] =
 {
     {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0 },
@@ -118,6 +135,7 @@ static Ttk_StateTable combobox_statemap[] =
     {QStyle::Style_Enabled|QStyle::Style_MouseOver, TTK_STATE_ACTIVE, 0 },
     {QStyle::Style_Enabled,                         0, 0 }
 };
+#endif
 
 typedef struct {
 } ComboboxArrowElement;
@@ -134,8 +152,8 @@ static void ComboboxArrowElementGeometry(
     if (qApp == NULL) NULL_Q_APP;
     NULL_PROXY_WIDGET(TileQt_QComboBox_RO_Widget);
     Tcl_MutexLock(&tileqtMutex);
-    QRect rc = qApp->style().querySubControlMetrics(QStyle::CC_ComboBox,
-                          TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxArrow);
+    QRect rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ComboBox,
+                   wc->TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxArrow);
     *widthPtr = rc.width();
     Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_UniformPadding(0);
@@ -179,15 +197,16 @@ static Ttk_ElementSpec ComboboxArrowElementSpec = {
  * +++ Widget layout.
  */
 
-int TileQt_Init_Combobox(Tcl_Interp *interp, Ttk_Theme themePtr)
+int TileQt_Init_Combobox(Tcl_Interp *interp,
+                       TileQt_WidgetCache **wc, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
     Ttk_RegisterElement(interp, themePtr, "Combobox.field",
-            &ComboboxFieldElementSpec, NULL);
+            &ComboboxFieldElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Combobox.downarrow",
-            &ComboboxArrowElementSpec, NULL);
+            &ComboboxArrowElementSpec, (void *) wc[0]);
     
     /*
      * Register layouts:

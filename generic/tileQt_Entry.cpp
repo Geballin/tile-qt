@@ -51,6 +51,7 @@ static void EntryFieldElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
@@ -58,7 +59,7 @@ static void EntryFieldElementDraw(
     painter.fillRect(0, 0, b.width, b.height,
                      qApp->palette().active().base());
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawPrimitive(QStyle::PE_PanelLineEdit, &painter,
+    wc->TileQt_Style->drawPrimitive(QStyle::PE_PanelLineEdit, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
           QStyleOption(1,1));
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
@@ -78,13 +79,14 @@ static Ttk_ElementSpec EntryFieldElementSpec = {
  * +++ Widget layout.
  */
 
-int TileQt_Init_Entry(Tcl_Interp *interp, Ttk_Theme themePtr)
+int TileQt_Init_Entry(Tcl_Interp *interp,
+                       TileQt_WidgetCache **wc, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
     Ttk_RegisterElement(interp, themePtr, "Entry.field",
-            &EntryFieldElementSpec, NULL);
+            &EntryFieldElementSpec, (void *) wc[0]);
     
     /*
      * Register layouts:

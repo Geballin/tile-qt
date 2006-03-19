@@ -15,47 +15,90 @@
 
 #include "tileQt_QtHeaders.h"
 #include "tk.h"
+#include "tkTheme.h"
 #include "tkMacros.h"
 TCL_DECLARE_MUTEX(tileqtMutex);
 static bool TileQt_qAppOwner = false;
 
 /* Pointers to some Qt/KDE widgets, whose style will be used for drawing. */
-QWidget*       TileQt_smw                      = NULL;
-QScrollBar*    TileQt_QScrollBar_Widget        = NULL; 
-QComboBox*     TileQt_QComboBox_RW_Widget      = NULL;
-QComboBox*     TileQt_QComboBox_RO_Widget      = NULL;
-QWidget*       TileQt_QWidget_Widget           = NULL;
-QWidget*       TileQt_QWidget_WidgetParent     = NULL;
-QSlider*       TileQt_QSlider_Hor_Widget       = NULL;
-QSlider*       TileQt_QSlider_Ver_Widget       = NULL;
-QProgressBar*  TileQt_QProgressBar_Hor_Widget  = NULL;
-QTabBar*       TileQt_QTabBar_Widget           = NULL;
-const QPixmap* TileQt_QPixmap_BackgroundTile   = NULL;
+typedef struct TileQt_WidgetCache {
+  QStyle*        TileQt_Style;
+  bool           TileQt_Style_Owner;
+  QWidget*       TileQt_smw;
+  QScrollBar*    TileQt_QScrollBar_Widget; 
+  QComboBox*     TileQt_QComboBox_RW_Widget;
+  QComboBox*     TileQt_QComboBox_RO_Widget;
+  QWidget*       TileQt_QWidget_Widget;
+  QWidget*       TileQt_QWidget_WidgetParent;
+  QSlider*       TileQt_QSlider_Hor_Widget;
+  QSlider*       TileQt_QSlider_Ver_Widget;
+  QProgressBar*  TileQt_QProgressBar_Hor_Widget;
+  QTabBar*       TileQt_QTabBar_Widget;
+  const QPixmap* TileQt_QPixmap_BackgroundTile;
+  Tk_Window      TileQt_tkwin;
+  Display*       TileQt_MainDisplay;
+  Tcl_Interp*    TileQt_MainInterp;
+  Atom           TileQt_KIPC_COMM_ATOM;
+  int orientation;
+} TileQt_WidgetCache;
 
-Tk_Window   TileQt_tkwin = NULL;
-Display*    TileQt_MainDisplay = None;
-Tcl_Interp* TileQt_MainInterp = NULL;
-Atom        TileQt_KIPC_COMM_ATOM = None;
+// static int  TileQt_ClientMessageHandler(Tk_Window winPtr, XEvent *eventPtr);
+// static int  TileQt_XEventHandler(ClientData clientdata, XEvent *eventPtr);
+// static void TileQt_XEventHandlerVoid(ClientData clientdata, XEvent *eventPtr);
 
-static int  TileQt_ClientMessageHandler(Tk_Window winPtr, XEvent *eventPtr);
-static int  TileQt_XEventHandler(ClientData clientdata, XEvent *eventPtr);
-static void TileQt_XEventHandlerVoid(ClientData clientdata, XEvent *eventPtr);
+/*
+ * TileQt_InterpDeleteProc:
+ * This function will be called when the interpreter gets deleted. It must free
+ * all allocated interp-specific memory segments.
+ */
+static void TileQt_InterpDeleteProc(ClientData clientData, Tcl_Interp *interp)
+{
+  TileQt_WidgetCache **wc_array = (TileQt_WidgetCache **) clientData;
+  TileQt_WidgetCache *wc = wc_array[0];
+//  if (wc->TileQt_smw) 
+//    Tk_DeleteGenericHandler(&TileQt_XEventHandler, (ClientData) wc->TileQt_smw);
+  if (wc->TileQt_QScrollBar_Widget)       delete wc->TileQt_QScrollBar_Widget;
+  if (wc->TileQt_QComboBox_RO_Widget)     delete wc->TileQt_QComboBox_RO_Widget;
+  if (wc->TileQt_QComboBox_RW_Widget)     {
+    wc->TileQt_QComboBox_RW_Widget->setEditable(false);
+    delete wc->TileQt_QComboBox_RW_Widget;
+  }
+  if (wc->TileQt_QSlider_Hor_Widget)      delete wc->TileQt_QSlider_Hor_Widget;
+  if (wc->TileQt_QSlider_Ver_Widget)      delete wc->TileQt_QSlider_Ver_Widget;
+  if (wc->TileQt_QProgressBar_Hor_Widget) delete wc->TileQt_QProgressBar_Hor_Widget;
+  if (wc->TileQt_QTabBar_Widget)          delete wc->TileQt_QTabBar_Widget;
+  if (wc->TileQt_QWidget_Widget)          delete wc->TileQt_QWidget_Widget;
+  if (wc->TileQt_QWidget_WidgetParent)    delete wc->TileQt_QWidget_WidgetParent;
+  if (wc->TileQt_smw)                     delete wc->TileQt_smw;
+  Tcl_Free((char *) wc_array[0]);
+  Tcl_Free((char *) wc_array[1]);
+  Tcl_Free((char *) wc_array);
+}; /* TileQt_InterpDeleteProc */
 
-int TileQt_CreateQApp(Tcl_Interp *interp)
+TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp)
 {
     Tcl_MutexLock(&tileqtMutex);
-    if (TileQt_tkwin == NULL) {
-      TileQt_MainInterp = interp;
-      TileQt_tkwin = Tk_MainWindow(interp);
-      if (TileQt_tkwin != NULL && TileQt_MainDisplay == None) {
-        //Tk_MapWindow(TileQt_tkwin);
-        Tk_MakeWindowExist(TileQt_tkwin);
-        TileQt_MainDisplay = Tk_Display(TileQt_tkwin);
-      }
+    TileQt_WidgetCache **wc_array = (TileQt_WidgetCache **) 
+                             Tcl_Alloc(sizeof(TileQt_WidgetCache*)*2);
+    wc_array[0] = (TileQt_WidgetCache *) 
+                             Tcl_Alloc(sizeof(TileQt_WidgetCache));
+    wc_array[1] = (TileQt_WidgetCache *) 
+                             Tcl_Alloc(sizeof(TileQt_WidgetCache));
+    Tcl_SetAssocData(interp, "tileqt_widget_cache",
+                     &TileQt_InterpDeleteProc, (ClientData) wc_array);
+    TileQt_WidgetCache *wc = wc_array[0];
+    memset(wc, 0, sizeof(TileQt_WidgetCache));
+    wc->TileQt_MainInterp = interp;
+    wc->TileQt_tkwin      = Tk_MainWindow(interp);
+    if (wc->TileQt_tkwin != NULL && wc->TileQt_MainDisplay == None) {
+      //Tk_MapWindow(TileQt_tkwin);
+      Tk_MakeWindowExist(wc->TileQt_tkwin);
+      wc->TileQt_MainDisplay = Tk_Display(wc->TileQt_tkwin);
     }
-    if (TileQt_MainDisplay == None) {
-      return TCL_ERROR;
+    if (wc->TileQt_MainDisplay == None) {
       Tcl_MutexUnlock(&tileqtMutex);
+      Tcl_Free((char *) wc_array);
+      return NULL;
     }
     /*
      * In order to create a Qt/KDE application, we need command line arguments.
@@ -63,42 +106,45 @@ int TileQt_CreateQApp(Tcl_Interp *interp)
      */
     //initKdeSettings();
     if (!TileQt_qAppOwner && !qApp) {
-      new QApplication(TileQt_MainDisplay);
+      new QApplication(wc->TileQt_MainDisplay);
       TileQt_qAppOwner = true;
     }
+    wc->TileQt_Style = &(qApp->style());
+    wc->TileQt_Style_Owner = false;
     /* Create some needed widgets, which we will use for drawing. */
-    TileQt_QScrollBar_Widget        = new QScrollBar(0);
+    wc->TileQt_QScrollBar_Widget        = new QScrollBar(0);
     // The following crashes wish at exit :-(
-    TileQt_QComboBox_RW_Widget    = new QComboBox(true,  0);
-    //TileQt_QComboBox_RW_Widget      = new QComboBox(false, 0);
-    TileQt_QComboBox_RO_Widget      = new QComboBox(false, 0);
-    TileQt_QWidget_WidgetParent     = new QWidget(0);
-    TileQt_QWidget_Widget           = new QWidget(TileQt_QWidget_WidgetParent);
-    TileQt_QWidget_Widget->polish();
-    TileQt_QSlider_Hor_Widget       = new QSlider(Qt::Horizontal,
-                                          TileQt_QWidget_Widget, "hslider");
-    TileQt_QSlider_Hor_Widget->polish();
-    TileQt_QSlider_Ver_Widget       = new QSlider(Qt::Vertical,
-                                          TileQt_QWidget_Widget, "vslider");
-    TileQt_QSlider_Ver_Widget->polish();
-    TileQt_QProgressBar_Hor_Widget  = new QProgressBar(100, 0);
-    TileQt_QProgressBar_Hor_Widget->setCenterIndicator(false);
-    TileQt_QProgressBar_Hor_Widget->setPercentageVisible(false);
-    TileQt_QTabBar_Widget           = new QTabBar(TileQt_QWidget_Widget);
-    TileQt_QPixmap_BackgroundTile   =
-                               TileQt_QWidget_Widget->paletteBackgroundPixmap();
-    TileQt_QScrollBar_Widget->setMinValue(0);
-    TileQt_QScrollBar_Widget->setMaxValue(65535);
-    TileQt_QScrollBar_Widget->setValue(65535);
-    TileQt_QScrollBar_Widget->setPageStep(1);
+    wc->TileQt_QComboBox_RW_Widget      = new QComboBox(true,  0);
+    wc->TileQt_QComboBox_RO_Widget      = new QComboBox(false, 0);
+    wc->TileQt_QWidget_WidgetParent     = new QWidget(0);
+    wc->TileQt_QWidget_Widget           = 
+                                 new QWidget(wc->TileQt_QWidget_WidgetParent);
+    wc->TileQt_QWidget_Widget->polish();
+    wc->TileQt_QSlider_Hor_Widget       = new QSlider(Qt::Horizontal,
+                                          wc->TileQt_QWidget_Widget, "hslider");
+    wc->TileQt_QSlider_Hor_Widget->polish();
+    wc->TileQt_QSlider_Ver_Widget       = new QSlider(Qt::Vertical,
+                                          wc->TileQt_QWidget_Widget, "vslider");
+    wc->TileQt_QSlider_Ver_Widget->polish();
+    wc->TileQt_QProgressBar_Hor_Widget  = new QProgressBar(100, 0);
+    wc->TileQt_QProgressBar_Hor_Widget->setCenterIndicator(false);
+    wc->TileQt_QProgressBar_Hor_Widget->setPercentageVisible(false);
+    wc->TileQt_QTabBar_Widget           = 
+                                 new QTabBar(wc->TileQt_QWidget_Widget);
+    wc->TileQt_QPixmap_BackgroundTile   =
+                         (wc->TileQt_QWidget_Widget)->paletteBackgroundPixmap();
+    wc->TileQt_QScrollBar_Widget->setMinValue(0);
+    wc->TileQt_QScrollBar_Widget->setMaxValue(65535);
+    wc->TileQt_QScrollBar_Widget->setValue(65535);
+    wc->TileQt_QScrollBar_Widget->setPageStep(1);
     /* Register a Client Message handler, so as to catch style changes... */
-    TileQt_KIPC_COMM_ATOM = XInternAtom(TileQt_MainDisplay,
+    wc->TileQt_KIPC_COMM_ATOM = XInternAtom(wc->TileQt_MainDisplay,
                                      "KIPC_COMM_ATOM" , false);
-    Atom TileQt_KDE_DESKTOP_WINDOW = XInternAtom(TileQt_MainDisplay,
+    Atom TileQt_KDE_DESKTOP_WINDOW = XInternAtom(wc->TileQt_MainDisplay,
                                      "KDE_DESKTOP_WINDOW" , false);
     // Create a new window, and set the KDE_DESKTOP_WINDOW property on it
     // This window will then receive events from KDE when the style changes
-    QWidget* TileQt_smw = new QWidget(0,0);
+    wc->TileQt_smw = new QWidget(0,0);
     long data = 1;
     // XChangeProperty(TileQt_MainDisplay, Tk_RealToplevelWindow(TileQt_tkwin),
     //              TileQt_KDE_DESKTOP_WINDOW, TileQt_KDE_DESKTOP_WINDOW,
@@ -109,44 +155,20 @@ int TileQt_CreateQApp(Tcl_Interp *interp)
     //Tk_CreateClientMessageHandler(&TileQt_ClientMessageHandler);
     //Tk_CreateEventHandler(TileQt_tkwin, ClientMessage,
     //                     &TileQt_XEventHandlerVoid, 0);
-    Tk_CreateGenericHandler(&TileQt_XEventHandler, (ClientData) TileQt_smw);
-    XChangeProperty(qt_xdisplay(), TileQt_smw->winId(),
-                    TileQt_KDE_DESKTOP_WINDOW, TileQt_KDE_DESKTOP_WINDOW,
-                    32, PropModeReplace, (unsigned char *)&data, 1);
+    //Tk_CreateGenericHandler(&TileQt_XEventHandler, (ClientData) wc->TileQt_smw);
+    //XChangeProperty(qt_xdisplay(), wc->TileQt_smw->winId(),
+    //                TileQt_KDE_DESKTOP_WINDOW, TileQt_KDE_DESKTOP_WINDOW,
+    //                32, PropModeReplace, (unsigned char *)&data, 1);
     Tcl_MutexUnlock(&tileqtMutex);
-    return TCL_OK;
+    memcpy(wc_array[1], wc_array[0], sizeof(TileQt_WidgetCache));
+    wc_array[0]->orientation = TTK_ORIENT_HORIZONTAL;
+    wc_array[1]->orientation = TTK_ORIENT_VERTICAL;
+    return wc_array;
 }; /* TileQt_CreateQApp */
 
 void TileQt_DestroyQApp(void)
 {
     Tcl_MutexLock(&tileqtMutex);
-    if (TileQt_smw) 
-      Tk_DeleteGenericHandler(&TileQt_XEventHandler, (ClientData) TileQt_smw);
-    if (TileQt_QScrollBar_Widget)       delete TileQt_QScrollBar_Widget;
-    if (TileQt_QComboBox_RO_Widget)     delete TileQt_QComboBox_RO_Widget;
-    if (TileQt_QComboBox_RW_Widget)     {
-      TileQt_QComboBox_RW_Widget->setEditable(false);
-      delete TileQt_QComboBox_RW_Widget;
-    }
-    if (TileQt_QSlider_Hor_Widget)      delete TileQt_QSlider_Hor_Widget;
-    if (TileQt_QSlider_Ver_Widget)      delete TileQt_QSlider_Ver_Widget;
-    if (TileQt_QProgressBar_Hor_Widget) delete TileQt_QProgressBar_Hor_Widget;
-    if (TileQt_QTabBar_Widget)          delete TileQt_QTabBar_Widget;
-    if (TileQt_QWidget_Widget)          delete TileQt_QWidget_Widget;
-    if (TileQt_QWidget_WidgetParent)    delete TileQt_QWidget_WidgetParent;
-    if (TileQt_smw)                     delete TileQt_smw;
-    TileQt_QScrollBar_Widget       = NULL;
-    TileQt_QComboBox_RO_Widget     = NULL;
-    TileQt_QComboBox_RW_Widget     = NULL;
-    TileQt_QSlider_Hor_Widget      = NULL;
-    TileQt_QSlider_Ver_Widget      = NULL;
-    TileQt_QProgressBar_Hor_Widget = NULL;
-    TileQt_QTabBar_Widget          = NULL;
-    TileQt_QWidget_Widget          = NULL;
-    TileQt_QWidget_WidgetParent    = NULL;
-    TileQt_smw                     = NULL;
-    TileQt_QPixmap_BackgroundTile  = NULL;
-    
     if (TileQt_qAppOwner) {
       if (qApp) {
         delete qApp;
@@ -158,31 +180,31 @@ void TileQt_DestroyQApp(void)
     Tcl_MutexUnlock(&tileqtMutex);
 }; /* TileQt_DestroyQApp */
 
-static int TileQt_ClientMessageHandler(Tk_Window winPtr, XEvent *eventPtr) {
-    printf("TileQt_ClientMessageHandler\n");
-    if (eventPtr->type != ClientMessage ||
-        eventPtr->xclient.message_type != TileQt_KIPC_COMM_ATOM) return False;
-    TileQt_DestroyQApp();
-    TileQt_CreateQApp(TileQt_MainInterp);
-    return True;
-} /* TileQt_XEventHandler */
-
-static int TileQt_XEventHandler(ClientData clientData, XEvent *eventPtr) {
-    if (eventPtr->type != ClientMessage ||
-        eventPtr->xclient.message_type != TileQt_KIPC_COMM_ATOM) return False;
-    // printf("TileQt_XEventHandler\n"); fflush(NULL);
-    TileQt_DestroyQApp();
-    TileQt_CreateQApp(TileQt_MainInterp);
-    /* Notify the tile engine about the change... */
-    Tcl_Eval(TileQt_MainInterp,
-             "tile::theme::tileqt::kdeStyleChangeNotification");
-    return True;
-} /* TileQt_XEventHandler */
-
-static void TileQt_XEventHandlerVoid(ClientData clientData, XEvent *eventPtr) {
-    printf("TileQt_XEventHandlerVoid\n");
-    if (eventPtr->type != ClientMessage ||
-        eventPtr->xclient.message_type != TileQt_KIPC_COMM_ATOM) return;
-    TileQt_DestroyQApp();
-    TileQt_CreateQApp(TileQt_MainInterp);
-} /* TileQt_XEventHandler */
+// static int TileQt_ClientMessageHandler(Tk_Window winPtr, XEvent *eventPtr) {
+//     printf("TileQt_ClientMessageHandler\n");
+//     if (eventPtr->type != ClientMessage ||
+//         eventPtr->xclient.message_type != TileQt_KIPC_COMM_ATOM) return False;
+//     TileQt_DestroyQApp();
+//     TileQt_CreateQApp(TileQt_MainInterp);
+//     return True;
+// } /* TileQt_XEventHandler */
+// 
+// static int TileQt_XEventHandler(ClientData clientData, XEvent *eventPtr) {
+//     if (eventPtr->type != ClientMessage ||
+//         eventPtr->xclient.message_type != TileQt_KIPC_COMM_ATOM) return False;
+//     // printf("TileQt_XEventHandler\n"); fflush(NULL);
+//     TileQt_DestroyQApp();
+//     TileQt_CreateQApp(TileQt_MainInterp);
+//     /* Notify the tile engine about the change... */
+//     Tcl_Eval(TileQt_MainInterp,
+//              "tile::theme::tileqt::kdeStyleChangeNotification");
+//     return True;
+// } /* TileQt_XEventHandler */
+// 
+// static void TileQt_XEventHandlerVoid(ClientData clientData, XEvent *eventPtr) {
+//     printf("TileQt_XEventHandlerVoid\n");
+//     if (eventPtr->type != ClientMessage ||
+//         eventPtr->xclient.message_type != TileQt_KIPC_COMM_ATOM) return;
+//     TileQt_DestroyQApp();
+//     TileQt_CreateQApp(TileQt_MainInterp);
+// } /* TileQt_XEventHandler */

@@ -59,7 +59,7 @@ static void ToolButtonElementDraw(
     Tcl_MutexLock(&tileqtMutex);
     QPixmap     pixmap(b.width, b.height);
     QPainter    painter(&pixmap);
-    QToolButton button(TileQt_QWidget_Widget);	
+    QToolButton button(wc->TileQt_QWidget_Widget);	
     button.setBackgroundOrigin(QWidget::ParentOrigin);
     button.setGeometry(b.x, b.y, b.width, b.height);
     // QPoint p = button.backgroundOffset();
@@ -82,19 +82,19 @@ static void ToolButtonElementDraw(
     }
     // printf("state=%d, qt style=%d\n", state,
     //        Ttk_StateTableLookup(toolbutton_statemap, state));
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
 
-    qApp->style().drawComplexControl(QStyle::CC_ToolButton, &painter, &button,
-          QRect(0, 0, b.width, b.height), button.colorGroup(), sflags,
-           scflags, activeflags);
+    wc->TileQt_Style->drawComplexControl(QStyle::CC_ToolButton, &painter,
+          &button, QRect(0, 0, b.width, b.height), button.colorGroup(), sflags,
+          scflags, activeflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);
@@ -118,13 +118,14 @@ TTK_BEGIN_LAYOUT(ToolbuttonLayout)
 		TTK_NODE("Toolbutton.label", TTK_FILL_BOTH)))
 TTK_END_LAYOUT
 
-int TileQt_Init_ToolButton(Tcl_Interp *interp, Ttk_Theme themePtr)
+int TileQt_Init_ToolButton(Tcl_Interp *interp,
+                       TileQt_WidgetCache **wc, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
     Ttk_RegisterElement(interp, themePtr, "Toolbutton.border",
-            &ToolButtonElementSpec, NULL);
+            &ToolButtonElementSpec, (void *) wc[0]);
 
     /*
      * Register layouts:

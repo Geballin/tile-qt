@@ -18,6 +18,7 @@
 #include "tkTheme.h"
 #include "tileQt_WidgetDefaults.h"
 
+#if 0
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
@@ -139,3 +140,4 @@ int TileQt_Init_Arrows(Tcl_Interp *interp, Ttk_Theme themePtr)
 
     return TCL_OK;
 }; /* TileQt_Init_Arrows */
+#endif

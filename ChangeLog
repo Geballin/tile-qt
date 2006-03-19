@@ -1,3 +1,15 @@
+2006-20-03  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * ================= Release 0.3 =================
+
+        * generic/tileQtNotebook.cpp: Various aisthetic changes regarding
+        notebook widgets. Now, tab bar base is drawn, if supported by the style.
+
+        * library/tileqt.tcl: Various improvements regarding colours in disabled
+        widget states.
+        
+        * generic/*: Changes for allowing a different Qt/KDE style to be used
+        per interpreter.
+        
 2006-07-03  Georgios Petasis  <petasis@iit.demokritos.gr>
         * generic/tileQt_Init.c: Changed callback of
         tile::theme::tileqt::currentThemeColour, to give full colour

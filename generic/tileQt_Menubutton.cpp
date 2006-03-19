@@ -42,9 +42,10 @@ static void MenubuttonDropdownElementGeometry(
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QComboBox_RO_Widget);
     Tcl_MutexLock(&tileqtMutex);
-    QRect rc = qApp->style().querySubControlMetrics(QStyle::CC_ComboBox,
-                          TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxArrow);
+    QRect rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ComboBox,
+                   wc->TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxArrow);
     *widthPtr = rc.width();
     Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_UniformPadding(0);
@@ -96,6 +97,7 @@ static void MenubuttonElementGeometry(
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     if (qApp == NULL) NULL_Q_APP;
+    NULL_PROXY_WIDGET(TileQt_QComboBox_RO_Widget);
     Tcl_MutexLock(&tileqtMutex);
     // QComboBox    widget(TileQt_QWidget_Widget);
     // *widthPtr   = widget.width();
@@ -103,10 +105,10 @@ static void MenubuttonElementGeometry(
     //*paddingPtr = Ttk_UniformPadding(0);
     // In order to get the correct padding, calculate the difference between the
     // frame & edit field rectangulars...
-    QRect fr_rc = qApp->style().querySubControlMetrics(QStyle::CC_ComboBox,
-                      TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxFrame);
-    QRect ef_rc = qApp->style().querySubControlMetrics(QStyle::CC_ComboBox,
-                      TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxEditField);
+    QRect fr_rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ComboBox,
+                  wc->TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxFrame);
+    QRect ef_rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ComboBox,
+                  wc->TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxEditField);
     *paddingPtr = Ttk_MakePadding(ef_rc.x() - fr_rc.x()           /* left   */,
                                   ef_rc.y() - fr_rc.y()           /* top    */,
                      fr_rc.width()  - ef_rc.width()  - ef_rc.x()  /* right  */,
@@ -123,7 +125,7 @@ static void MenubuttonElementDraw(
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    QComboBox&   widget = *TileQt_QComboBox_RO_Widget;
+    QComboBox&   widget = *wc->TileQt_QComboBox_RO_Widget;
     widget.setBackgroundOrigin(QWidget::ParentOrigin);
     widget.resize(b.width, b.height);
     QStyle::SFlags sflags = Ttk_StateTableLookup(menubutton_statemap, state);
@@ -131,17 +133,17 @@ static void MenubuttonElementDraw(
                               QStyle::SC_ComboBoxEditField;
     QStyle::SCFlags activeflags = QStyle::SC_ComboBoxFrame;
     
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawComplexControl(QStyle::CC_ComboBox, &painter, &widget,
+    wc->TileQt_Style->drawComplexControl(QStyle::CC_ComboBox, &painter, &widget,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
           scflags, activeflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
@@ -168,15 +170,16 @@ TTK_BEGIN_LAYOUT(MenubuttonLayout)
 		TTK_NODE("Menubutton.label", TTK_FILL_BOTH)))
 TTK_END_LAYOUT
 
-int TileQt_Init_Menubutton(Tcl_Interp *interp, Ttk_Theme themePtr)
+int TileQt_Init_Menubutton(Tcl_Interp *interp,
+                       TileQt_WidgetCache **wc, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
     Ttk_RegisterElement(interp, themePtr, "Menubutton.dropdown",
-            &MenubuttonDropdownElementSpec, NULL);
+            &MenubuttonDropdownElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Menubutton.button",
-            &MenubuttonElementSpec, NULL);
+            &MenubuttonElementSpec, (void *) wc[0]);
 
     /*
      * Register layouts:

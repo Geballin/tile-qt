@@ -41,16 +41,16 @@ static void ScrollbarTroughElementGeometry(
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     if (qApp == NULL) NULL_Q_APP;
-    //int orient = (int) clientData;
+    // NULL_PROXY_ORIENTED_WIDGET(TileQt_QScrollBar_Widget);
     //if (orient == TTK_ORIENT_HORIZONTAL) {
-    //  *heightPtr = qApp->style().pixelMetric(QStyle::PM_ScrollBarExtent,
+    //  *heightPtr = wc->TileQt_Style->pixelMetric(QStyle::PM_ScrollBarExtent,
     //                                         TileQt_QScrollBar_Widget);
-    //  *widthPtr  = qApp->style().pixelMetric(QStyle::PM_ScrollBarSliderMin,
+    //  *widthPtr  = wc->TileQt_Style->pixelMetric(QStyle::PM_ScrollBarSliderMin,
     //                                         TileQt_QScrollBar_Widget);
     //} else {
-    //  *widthPtr  = qApp->style().pixelMetric(QStyle::PM_ScrollBarExtent,
+    //  *widthPtr  = wc->TileQt_Style->pixelMetric(QStyle::PM_ScrollBarExtent,
     //                                         TileQt_QScrollBar_Widget);
-    //  *heightPtr = qApp->style().pixelMetric(QStyle::PM_ScrollBarSliderMin,
+    //  *heightPtr = wc->TileQt_Style->pixelMetric(QStyle::PM_ScrollBarSliderMin,
     //                                         TileQt_QScrollBar_Widget);
     //}
     *paddingPtr = Ttk_UniformPadding(0);
@@ -61,30 +61,33 @@ static void ScrollbarTroughElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
-    NULL_PROXY_WIDGET(TileQt_QScrollBar_Widget);
+    NULL_PROXY_ORIENTED_WIDGET(TileQt_QScrollBar_Widget);
     Tcl_MutexLock(&tileqtMutex);
     /* We draw the whole scrollbar at once, but without the slider! */
-    int orient = (int) clientData;
     int width, height;
     //TileQt_QScrollBar_Widget->resize(b.width, b.height);
     QStyle::SFlags sflags = Ttk_StateTableLookup(scrollbar_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) {
       width = 2*b.width; height = b.height;
-      TileQt_QScrollBar_Widget->setOrientation(Qt::Horizontal);
+      wc->TileQt_QScrollBar_Widget->setOrientation(Qt::Horizontal);
       sflags |= QStyle::Style_Horizontal;
     } else {
       width = b.width; height = 2*b.height;
-      TileQt_QScrollBar_Widget->setOrientation(Qt::Vertical);
+      wc->TileQt_QScrollBar_Widget->setOrientation(Qt::Vertical);
     }
-    TileQt_QScrollBar_Widget->resize(width, height);
-    TileQt_QScrollBar_Widget->setValue(0);
+#ifdef TILEQT_SCROLLBAR_SIZE_DEBUG
+    printf("ScrollbarTroughElementDraw: width=%d, height=%d, orient=%d\n",
+            width, height, orient); fflush(0);
+#endif /* TILEQT_SCROLLBAR_SIZE_DEBUG */
+    wc->TileQt_QScrollBar_Widget->resize(width, height);
+    wc->TileQt_QScrollBar_Widget->setValue(0);
     QPixmap      pixmap(width, height);
     QPainter     painter(&pixmap);
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, width, height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, width, height,
                          qApp->palette().active().background());
@@ -102,8 +105,8 @@ static void ScrollbarTroughElementDraw(
     QStyle::SCFlags activeflags = QStyle::SC_None;
     
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawComplexControl(QStyle::CC_ScrollBar, &painter,
-          TileQt_QScrollBar_Widget,
+    wc->TileQt_Style->drawComplexControl(QStyle::CC_ScrollBar, &painter,
+          wc->TileQt_QScrollBar_Widget,
           QRect(0, 0, width, height), qApp->palette().active(), sflags,
           scflags, activeflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
@@ -132,24 +135,28 @@ static void ScrollbarThumbElementGeometry(
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     if (qApp == NULL) NULL_Q_APP;
-    int orient = (int) clientData;
+    NULL_PROXY_ORIENTED_WIDGET(TileQt_QScrollBar_Widget);
     Tcl_MutexLock(&tileqtMutex);
     if (orient == TTK_ORIENT_HORIZONTAL) {
-      *heightPtr = qApp->style().pixelMetric(QStyle::PM_ScrollBarExtent,
-                                             TileQt_QScrollBar_Widget);
-      *widthPtr  = qApp->style().pixelMetric(QStyle::PM_ScrollBarSliderMin,
-                                             TileQt_QScrollBar_Widget);
+      *heightPtr = wc->TileQt_Style->pixelMetric(QStyle::PM_ScrollBarExtent,
+                                             wc->TileQt_QScrollBar_Widget);
+      *widthPtr  = wc->TileQt_Style->pixelMetric(QStyle::PM_ScrollBarSliderMin,
+                                             wc->TileQt_QScrollBar_Widget);
       if (*heightPtr > 30)  *heightPtr =  30;
       if (*widthPtr  > 100) *widthPtr  = 100;
     } else {
-      *widthPtr  = qApp->style().pixelMetric(QStyle::PM_ScrollBarExtent,
-                                             TileQt_QScrollBar_Widget);
-      *heightPtr = qApp->style().pixelMetric(QStyle::PM_ScrollBarSliderMin,
-                                             TileQt_QScrollBar_Widget);
+      *widthPtr  = wc->TileQt_Style->pixelMetric(QStyle::PM_ScrollBarExtent,
+                                             wc->TileQt_QScrollBar_Widget);
+      *heightPtr = wc->TileQt_Style->pixelMetric(QStyle::PM_ScrollBarSliderMin,
+                                             wc->TileQt_QScrollBar_Widget);
       if (*heightPtr > 100) *heightPtr = 100;
       if (*widthPtr  > 30)  *widthPtr  =  30;                                       }
     Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_UniformPadding(0);
+#ifdef TILEQT_SCROLLBAR_SIZE_DEBUG
+    printf("ScrollbarThumbElementGeometry: width=%d, height=%d, orient=%d\n",
+            *widthPtr, *heightPtr, orient); fflush(0);
+#endif /* TILEQT_SCROLLBAR_SIZE_DEBUG */
 }
 
 static void ScrollbarThumbElementDraw(
@@ -158,7 +165,7 @@ static void ScrollbarThumbElementDraw(
 {
     if (qApp == NULL) NULL_Q_APP;
     if (state & TTK_STATE_DISABLED) return;
-    int orient = (int) clientData;
+    NULL_PROXY_ORIENTED_WIDGET(TileQt_QScrollBar_Widget);
     Tcl_MutexLock(&tileqtMutex);
     //QPixmap      pixmap(b.width, b.height);
     QPixmap      pixmap = QPixmap::grabWindow(Tk_WindowId(tkwin));
@@ -166,7 +173,7 @@ static void ScrollbarThumbElementDraw(
     QStyle::SFlags sflags = Ttk_StateTableLookup(scrollbar_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) sflags |= QStyle::Style_Horizontal;
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    qApp->style().drawPrimitive(QStyle::PE_ScrollBarSlider, &painter,
+    wc->TileQt_Style->drawPrimitive(QStyle::PE_ScrollBarSlider, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
@@ -193,22 +200,29 @@ static void ScrollbarUpArrowElementGeometry(
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     if (qApp == NULL) NULL_Q_APP;
-    NULL_PROXY_WIDGET(TileQt_QScrollBar_Widget);
-    int orient = (int) clientData;
+    NULL_PROXY_ORIENTED_WIDGET(TileQt_QScrollBar_Widget);
     Tcl_MutexLock(&tileqtMutex);
     if (orient == TTK_ORIENT_HORIZONTAL) {
-      TileQt_QScrollBar_Widget->setOrientation(Qt::Horizontal);
+      wc->TileQt_QScrollBar_Widget->setOrientation(Qt::Horizontal);
     } else {
-      TileQt_QScrollBar_Widget->setOrientation(Qt::Vertical);
+      wc->TileQt_QScrollBar_Widget->setOrientation(Qt::Vertical);
     }
-    QRect rc = qApp->style().querySubControlMetrics(QStyle::CC_ScrollBar,
-                        TileQt_QScrollBar_Widget, QStyle::SC_ScrollBarSubLine);
+    QRect rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ScrollBar,
+                   wc->TileQt_QScrollBar_Widget, QStyle::SC_ScrollBarSubLine);
     if (rc.isValid()) {
       *widthPtr = rc.width();
       *heightPtr = rc.height();
+      /* Qt Style Fixes: */
+      if (strcmp(wc->TileQt_Style->name(), "Keramik") == 0) {
+        if (orient == TTK_ORIENT_HORIZONTAL && *heightPtr > 16) *heightPtr = 16;
+      }
     }
     Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_UniformPadding(0);
+#ifdef TILEQT_SCROLLBAR_SIZE_DEBUG
+    printf("ScrollbarUpArrowElementGeometry: width=%d, height=%d, orient=%d\n",
+            *widthPtr, *heightPtr, orient); fflush(0);
+#endif /* TILEQT_SCROLLBAR_SIZE_DEBUG */
 }
 
 static void ScrollbarUpArrowElementDraw(
@@ -216,26 +230,30 @@ static void ScrollbarUpArrowElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
-    int orient = (int) clientData;
+    NULL_PROXY_ORIENTED_WIDGET(TileQt_QScrollBar_Widget);
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(scrollbar_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) sflags |= QStyle::Style_Horizontal;
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
-    qApp->style().drawPrimitive(QStyle::PE_ScrollBarSubLine, &painter,
+    wc->TileQt_Style->drawPrimitive(QStyle::PE_ScrollBarSubLine, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);
+#ifdef TILEQT_SCROLLBAR_SIZE_DEBUG
+    printf("ScrollbarUpArrowElementDraw: width=%d, height=%d, orient=%d\n",
+            b.width, b.height, orient); fflush(0);
+#endif /* TILEQT_SCROLLBAR_SIZE_DEBUG */
 }
 
 static Ttk_ElementSpec ScrollbarUpArrowElementSpec = {
@@ -258,22 +276,29 @@ static void ScrollbarDownArrowElementGeometry(
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     if (qApp == NULL) NULL_Q_APP;
-    NULL_PROXY_WIDGET(TileQt_QScrollBar_Widget);
-    int orient = (int) clientData;
+    NULL_PROXY_ORIENTED_WIDGET(TileQt_QScrollBar_Widget);
     Tcl_MutexLock(&tileqtMutex);
     if (orient == TTK_ORIENT_HORIZONTAL) {
-      TileQt_QScrollBar_Widget->setOrientation(Qt::Horizontal);
+      wc->TileQt_QScrollBar_Widget->setOrientation(Qt::Horizontal);
     } else {
-      TileQt_QScrollBar_Widget->setOrientation(Qt::Vertical);
+      wc->TileQt_QScrollBar_Widget->setOrientation(Qt::Vertical);
     }
-    QRect rc = qApp->style().querySubControlMetrics(QStyle::CC_ScrollBar,
-                        TileQt_QScrollBar_Widget, QStyle::SC_ScrollBarAddLine);
+    QRect rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ScrollBar,
+                   wc->TileQt_QScrollBar_Widget, QStyle::SC_ScrollBarAddLine);
     if (rc.isValid()) {
       *widthPtr = rc.width();
       *heightPtr = rc.height();
+      /* Qt Style Fixes: */
+      if (strcmp(wc->TileQt_Style->name(), "Keramik") == 0) {
+        if (orient == TTK_ORIENT_HORIZONTAL && *heightPtr > 16) *heightPtr = 16;
+      }
     }
     Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_UniformPadding(0);
+#ifdef TILEQT_SCROLLBAR_SIZE_DEBUG
+   printf("ScrollbarDownArrowElementGeometry: width=%d, height=%d, orient=%d\n",
+            *widthPtr, *heightPtr, orient); fflush(0);
+#endif /* TILEQT_SCROLLBAR_SIZE_DEBUG */
 }
 
 static void ScrollbarDownArrowElementDraw(
@@ -281,26 +306,30 @@ static void ScrollbarDownArrowElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
-    int orient = (int) clientData;
+    NULL_PROXY_ORIENTED_WIDGET(TileQt_QScrollBar_Widget);
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QStyle::SFlags sflags = Ttk_StateTableLookup(scrollbar_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) sflags |= QStyle::Style_Horizontal;
-    if (TileQt_QPixmap_BackgroundTile &&
-        !(TileQt_QPixmap_BackgroundTile->isNull())) {
+    if (wc->TileQt_QPixmap_BackgroundTile &&
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
         painter.fillRect(0, 0, b.width, b.height,
                          QBrush(QColor(255,255,255),
-                         *TileQt_QPixmap_BackgroundTile));
+                         *wc->TileQt_QPixmap_BackgroundTile));
     } else {
         painter.fillRect(0, 0, b.width, b.height,
                          qApp->palette().active().background());
     }
-    qApp->style().drawPrimitive(QStyle::PE_ScrollBarAddLine, &painter,
+    wc->TileQt_Style->drawPrimitive(QStyle::PE_ScrollBarAddLine, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);
+#ifdef TILEQT_SCROLLBAR_SIZE_DEBUG
+    printf("ScrollbarDownArrowElementDraw: width=%d, height=%d, orient=%d\n",
+            b.width, b.height, orient); fflush(0);
+#endif /* TILEQT_SCROLLBAR_SIZE_DEBUG */
 }
 
 static Ttk_ElementSpec ScrollbarDownArrowElementSpec = {
@@ -329,29 +358,30 @@ static Ttk_ElementSpec ScrollbarDownArrowElementSpec = {
 //         TTK_NODE("Vertical.Scrollbar.thumb", TTK_FILL_BOTH))
 // TTK_END_LAYOUT
 
-int TileQt_Init_Scrollbar(Tcl_Interp *interp, Ttk_Theme themePtr)
+int TileQt_Init_Scrollbar(Tcl_Interp *interp,
+                       TileQt_WidgetCache **wc, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
     Ttk_RegisterElement(interp, themePtr, "Horizontal.Scrollbar.trough",
-            &ScrollbarTroughElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
+      &ScrollbarTroughElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Vertical.Scrollbar.trough",
-            &ScrollbarTroughElementSpec, (void *) TTK_ORIENT_VERTICAL);
+      &ScrollbarTroughElementSpec, (void *) wc[1]);
     Ttk_RegisterElement(interp, themePtr, "Horizontal.Scrollbar.leftarrow",
-            &ScrollbarUpArrowElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
+      &ScrollbarUpArrowElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Vertical.Scrollbar.uparrow",
-            &ScrollbarUpArrowElementSpec, (void *) TTK_ORIENT_VERTICAL);
+      &ScrollbarUpArrowElementSpec, (void *) wc[1]);
     Ttk_RegisterElement(interp, themePtr, "Horizontal.Scrollbar.rightarrow",
-            &ScrollbarDownArrowElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
+      &ScrollbarDownArrowElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Vertical.Scrollbar.downarrow",
-            &ScrollbarDownArrowElementSpec, (void *) TTK_ORIENT_VERTICAL);
+      &ScrollbarDownArrowElementSpec, (void *) wc[1]);
     Ttk_RegisterElement(interp, themePtr, "Horizontal.Scrollbar.thumb",
-            &ScrollbarThumbElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
+      &ScrollbarThumbElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Vertical.Scrollbar.thumb",
-            &ScrollbarThumbElementSpec, (void *) TTK_ORIENT_VERTICAL);
+      &ScrollbarThumbElementSpec, (void *) wc[1]);
     Ttk_RegisterElement(interp, themePtr, "Scrollbar.grip",
-            &ScrollbarTroughElementSpec, NULL);
+      &ScrollbarTroughElementSpec, NULL);
     
     /*
      * Register layouts:

@@ -5337,7 +5337,7 @@ AC_DEFUN([AM_PROG_OBJC],[
 AC_CHECK_PROGS(OBJC, gcc, gcc)
 test -z "$OBJC" && AC_MSG_ERROR([no acceptable objective-c gcc found in \$PATH])
 if test "x${OBJCFLAGS-unset}" = xunset; then
-   OBJCFLAGS="-g -O2"
+   OBJCFLAGS="-O2"
 fi
 AC_SUBST(OBJCFLAGS)
 _AM_IF_OPTION([no-dependencies],, [_AM_DEPENDENCIES(OBJC)])

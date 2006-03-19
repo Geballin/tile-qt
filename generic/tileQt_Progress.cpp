@@ -21,10 +21,17 @@
 /*
  * Map between Tk/Tile & Qt/KDE state flags.
  */
+#if 0
 static Ttk_StateTable progress_statemap[] =
 {
+    {QStyle::Style_Default                          , TTK_STATE_DISABLED, 0},
+    {QStyle::Style_Enabled | QStyle::Style_Down     , TTK_STATE_PRESSED, 0},
+    {QStyle::Style_Enabled | QStyle::Style_MouseOver, TTK_STATE_ACTIVE, 0},
+    {QStyle::Style_Enabled | QStyle::Style_HasFocus , TTK_STATE_FOCUS, 0},
+    {QStyle::Style_Enabled | QStyle::Style_Active   , TTK_STATE_ALTERNATE, 0},
     {QStyle::Style_Enabled, 0, 0 }
 };
+#endif
 
 typedef struct {
 } ProgressTroughElement;
@@ -46,10 +53,9 @@ static void ProgressTroughElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
-    NULL_PROXY_WIDGET(TileQt_QProgressBar_Hor_Widget);
-    int orient = (int) clientData;
+    NULL_PROXY_ORIENTED_WIDGET(TileQt_QProgressBar_Hor_Widget);
     Tcl_MutexLock(&tileqtMutex);
-    QProgressBar& widget = *TileQt_QProgressBar_Hor_Widget;
+    QProgressBar& widget = *wc->TileQt_QProgressBar_Hor_Widget;
     if (orient == TTK_ORIENT_HORIZONTAL) {
       widget.resize(b.width, b.height);
     } else {
@@ -58,6 +64,7 @@ static void ProgressTroughElementDraw(
     widget.reset();
     widget.setCenterIndicator(false);
     widget.setPercentageVisible(false);
+    if (state & TTK_STATE_DISABLED) widget.setEnabled(false);
     QPixmap pixmap = QPixmap::grabWidget(&widget);
     if (orient == TTK_ORIENT_VERTICAL) {
       // Qt does not support vertical progress bars. Rotate it :-)
@@ -105,8 +112,8 @@ static void ProgressBarElementGeometry(
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     if (qApp == NULL) NULL_Q_APP;
-    NULL_PROXY_WIDGET(TileQt_QProgressBar_Hor_Widget);
-    int orient = (int) clientData, length;
+    NULL_PROXY_ORIENTED_WIDGET(TileQt_QProgressBar_Hor_Widget);
+    int length;
     bool determinate = true;
     ProgressBarElement *pbar = (ProgressBarElement *) elementRecord;
     Tk_GetPixelsFromObj(NULL, tkwin, pbar->lengthObj, &length);
@@ -114,7 +121,7 @@ static void ProgressBarElementGeometry(
         determinate = false;
 
     Tcl_MutexLock(&tileqtMutex);
-    QProgressBar& widget = *TileQt_QProgressBar_Hor_Widget;
+    QProgressBar& widget = *wc->TileQt_QProgressBar_Hor_Widget;
     if (orient == TTK_ORIENT_HORIZONTAL) {
       *widthPtr   = length/4 /*widget.sizeHint().width()*/;
       *heightPtr  = widget.sizeHint().height();
@@ -131,8 +138,7 @@ static void ProgressBarElementDraw(
     Drawable d, Ttk_Box b, unsigned state)
 {
     if (qApp == NULL) NULL_Q_APP;
-    NULL_PROXY_WIDGET(TileQt_QProgressBar_Hor_Widget);
-    int orient = (int) clientData;
+    NULL_PROXY_ORIENTED_WIDGET(TileQt_QProgressBar_Hor_Widget);
     ProgressBarElement *pbar = (ProgressBarElement *) elementRecord;
     int width = Tk_Width(tkwin), height = Tk_Height(tkwin);
     bool determinate = true;
@@ -146,28 +152,37 @@ static void ProgressBarElementDraw(
     int src_x = 0, src_y = 0, dest_x = 0, dest_y = 0;
 
     Tcl_MutexLock(&tileqtMutex);
-    QProgressBar& widget = *TileQt_QProgressBar_Hor_Widget;
-    double percentage = value/maximum;
+    QProgressBar& widget = *wc->TileQt_QProgressBar_Hor_Widget;
+    double percentage = value/maximum*100.0;
     if (orient == TTK_ORIENT_HORIZONTAL) {
       if (!determinate) {
         widget.resize(b.width, height);
+        widget.setTotalSteps(0);
         percentage = 1.0;
         width = b.width;
         dest_x = b.x;
       } else {
         widget.resize(width, height);
+        widget.setTotalSteps(100);
       }
     } else {
       if (!determinate) {
         widget.resize(b.height, width);
+        widget.setTotalSteps(0);
         percentage = 1.0;
         height = b.height;
         dest_y = b.y;
       } else {
         widget.resize(height, width);
+        widget.setTotalSteps(100);
       }
     }
-    widget.setProgress((int)(percentage*100.0));
+    widget.setProgress((int)(percentage));
+    if (state & TTK_STATE_DISABLED) {
+      widget.setEnabled(false);
+    } else {
+      widget.setEnabled(true);
+    }
     if (determinate) {
       widget.setCenterIndicator(true);
       widget.setPercentageVisible(true);
@@ -210,20 +225,21 @@ TTK_BEGIN_LAYOUT(HorizontalProgressBarLayout)
         TTK_NODE("Horizontal.Progressbar.pbar", TTK_PACK_LEFT|TTK_FILL_Y))
 TTK_END_LAYOUT
 
-int TileQt_Init_Progress(Tcl_Interp *interp, Ttk_Theme themePtr)
+int TileQt_Init_Progress(Tcl_Interp *interp,
+                       TileQt_WidgetCache **wc, Ttk_Theme themePtr)
 {
     /*
      * Register elements:
      */
     Ttk_RegisterElement(interp, themePtr, "Horizontal.Progressbar.trough",
-            &ProgressTroughElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
+            &ProgressTroughElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Vertical.Progressbar.trough",
-            &ProgressTroughElementSpec, (void *) TTK_ORIENT_VERTICAL);
+            &ProgressTroughElementSpec, (void *) wc[1]);
 
     Ttk_RegisterElement(interp, themePtr, "Horizontal.Progressbar.pbar",
-            &ProgressBarElementSpec, (void *) TTK_ORIENT_HORIZONTAL);
+            &ProgressBarElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Vertical.Progressbar.pbar",
-            &ProgressBarElementSpec, (void *) TTK_ORIENT_VERTICAL);
+            &ProgressBarElementSpec, (void *) wc[1]);
     
     /*
      * Register layouts:

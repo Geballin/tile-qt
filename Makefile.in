@@ -152,8 +152,8 @@ LIBS		= @PKG_LIBS@ @LIBS@ @QT_LDFLAGS@ @LIB_QT@ $(TILE_LIBS)
 AR		= ar
 CFLAGS		= @CFLAGS@
 CC = g++
-COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
-COMPILECPP	= $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+COMPILE		= $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -Wno-non-virtual-dtor
+COMPILECPP	= $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) -Wno-non-virtual-dtor
 
 #========================================================================
 # TEA TARGETS.  Please note that the "libraries:" target refers to platform
