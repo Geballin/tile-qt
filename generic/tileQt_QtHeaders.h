@@ -65,7 +65,6 @@ typedef struct TileQt_WidgetCache {
   Tk_Window      TileQt_tkwin;
   Display*       TileQt_MainDisplay;
   Tcl_Interp*    TileQt_MainInterp;
-  Atom           TileQt_KIPC_COMM_ATOM;
   int orientation;
 } TileQt_WidgetCache;
 

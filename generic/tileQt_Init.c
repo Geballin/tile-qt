@@ -268,7 +268,7 @@ Tileqt_Init(Tcl_Interp *interp)
                          "tile::theme::tileqt::currentThemeColour",
                          Tileqt_ThemeColour, (ClientData) wc, NULL);
     Tcl_CreateObjCommand(interp,
-                         "tile::theme::tileqt::availableStyles",
+                         "tile::theme::tileqt::availableStyles_AsReturned",
                          Tileqt_AvailableStyles, (ClientData) wc, NULL);
     Tcl_CreateObjCommand(interp,
                          "tile::theme::tileqt::setStyle",

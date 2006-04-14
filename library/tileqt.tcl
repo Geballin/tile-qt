@@ -295,9 +295,48 @@ namespace eval tile::theme::tileqt {
   #  This procedure will be called from tileqt core each time a message is
   #  received from KDE to change the style used.
   proc kdeStyleChangeNotification {} {
+    puts >>kdeStyleChangeNotification
     ## This method will be called each time a ClientMessage is received from
     ## KDE KIPC...
-    updateStyles
+    ## Our Job is:
+    ##  a) To get the current style from KDE, and
+    ##  b) Apply it.
+    set KDE_dirs {}
+    # As a first step, examine the KDE env variables...
+    global env
+    foreach {var cmd} {KDEHOME {kde-config --localprefix} 
+                 KDEDIRS {}
+                 KDEDIR  {kde-config --prefix}} {
+      if {[info exists env($var)]} {
+        set paths [set env($var)]
+        if {[string length $paths]} {
+          foreach path [split $paths :] {lappend KDE_dirs $path}
+        }
+      }
+      if {[string length $cmd]} {
+        lappend KDE_dirs [eval exec $cmd]
+      }
+    }
+    # Now, examine all the paths found to locate the kdeglobals file.
+    foreach path $KDE_dirs {
+      if {[file exists $path/share/config/kdeglobals]} {
+        set file [open $path/share/config/kdeglobals]
+        while {[gets $file line] != -1} {
+          set line [string trim $line]
+          if {[string match widgetStyle*=* $line]} {
+            # We have found the style!
+            set index [string first = $line]; incr index
+            set style [string range $line $index end]
+            if {[string length $style]} {
+              close $file
+              applyStyle $style
+              return
+            }
+          }
+        }
+        close $file
+      }
+    }
   };# kdeStyleChangeNotification
 
   ## applyStyle:
@@ -308,6 +347,7 @@ namespace eval tile::theme::tileqt {
     setStyle $style
     updateStyles
     updateLayouts
+    event generate {} <<ThemeChanged>>
   };# applyStyle
 
   ## createThemeConfigurationPanel:
@@ -319,6 +359,8 @@ namespace eval tile::theme::tileqt {
     ttk::labelframe $dlgFrame.style_selection -text "Qt/KDE Style:"
       ttk::combobox $dlgFrame.style_selection.style -state readonly
       $dlgFrame.style_selection.style set [currentThemeName]
+      bind $dlgFrame.style_selection.style <<ThemeChanged>> \
+        {%W set [tile::theme::tileqt::currentThemeName]}
       bind $dlgFrame.style_selection.style <Enter> \
         {%W configure -values [tile::theme::tileqt::availableStyles]}
       ttk::button $dlgFrame.style_selection.apply -text Apply -command \
@@ -423,6 +465,10 @@ namespace eval tile::theme::tileqt {
     grid columnconfigure $tab1 1 -weight 1
     pack $win.nb -fill both -expand 1
   };# selectStyleDlg_previewWidgets
+
+  proc availableStyles {} {
+    return [lsort -dictionary [availableStyles_AsReturned]]
+  };# availableStyles
   
   ## Update layouts on load...
   updateLayouts
