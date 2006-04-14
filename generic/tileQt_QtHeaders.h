@@ -12,6 +12,8 @@
  * National Centre for Scientific Research (NCSR) "Demokritos",
  * Aghia Paraskevi, 153 10, Athens, Greece.
  */
+#ifndef _TILEQT_QTHEADERS
+#define _TILEQT_QTHEADERS
 
 #include <qt.h>
 #include <qapplication.h>
@@ -44,3 +46,27 @@
 #include <qdeepcopy.h>
 #include <qstringlist.h> 
 #include <tk.h>
+
+typedef struct TileQt_WidgetCache {
+  QStyle*        TileQt_Style;
+  bool           TileQt_Style_Owner;
+  QString*       lowerStyleName;
+  QWidget*       TileQt_smw;
+  QScrollBar*    TileQt_QScrollBar_Widget; 
+  QComboBox*     TileQt_QComboBox_RW_Widget;
+  QComboBox*     TileQt_QComboBox_RO_Widget;
+  QWidget*       TileQt_QWidget_Widget;
+  QWidget*       TileQt_QWidget_WidgetParent;
+  QSlider*       TileQt_QSlider_Hor_Widget;
+  QSlider*       TileQt_QSlider_Ver_Widget;
+  QProgressBar*  TileQt_QProgressBar_Hor_Widget;
+  QTabBar*       TileQt_QTabBar_Widget;
+  const QPixmap* TileQt_QPixmap_BackgroundTile;
+  Tk_Window      TileQt_tkwin;
+  Display*       TileQt_MainDisplay;
+  Tcl_Interp*    TileQt_MainInterp;
+  Atom           TileQt_KIPC_COMM_ATOM;
+  int orientation;
+} TileQt_WidgetCache;
+
+#endif

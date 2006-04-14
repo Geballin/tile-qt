@@ -34,27 +34,6 @@
 
 TCL_DECLARE_MUTEX(tileqtMutex);
 
-typedef struct TileQt_WidgetCache {
-  QStyle*        TileQt_Style;
-  bool           TileQt_Style_Owner;
-  QWidget*       TileQt_smw;
-  QScrollBar*    TileQt_QScrollBar_Widget; 
-  QComboBox*     TileQt_QComboBox_RW_Widget;
-  QComboBox*     TileQt_QComboBox_RO_Widget;
-  QWidget*       TileQt_QWidget_Widget;
-  QWidget*       TileQt_QWidget_WidgetParent;
-  QSlider*       TileQt_QSlider_Hor_Widget;
-  QSlider*       TileQt_QSlider_Ver_Widget;
-  QProgressBar*  TileQt_QProgressBar_Hor_Widget;
-  QTabBar*       TileQt_QTabBar_Widget;
-  const QPixmap* TileQt_QPixmap_BackgroundTile;
-  Tk_Window      TileQt_tkwin;
-  Display*       TileQt_MainDisplay;
-  Tcl_Interp*    TileQt_MainInterp;
-  Atom           TileQt_KIPC_COMM_ATOM;
-  int orientation;
-} TileQt_WidgetCache;
-
 /* Global Symbols */
 
 /* Helper Functions */
@@ -62,3 +41,5 @@ extern QStyle::SFlags TileQt_TileStateToSFlags(unsigned int state);
 extern void TileQt_StateInfo(int, Tk_Window);
 extern void TileQt_CopyQtPixmapOnToDrawable(QPixmap&, Drawable, Tk_Window,
                                             int, int, int, int, int, int);
+extern void TileQt_StoreStyleNameLowers(TileQt_WidgetCache *wc);
+extern bool TileQt_ThemeIs(TileQt_WidgetCache *wc, const char* name);

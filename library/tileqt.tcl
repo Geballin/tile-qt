@@ -7,19 +7,22 @@ namespace eval tile::theme::tileqt {
     if {![info exists theme]} {return}
     style theme use tileqt
     # puts "Current Qt Theme: [currentThemeName] ($theme)"
-    switch -exact -- [string tolower $theme] {
+    switch -glob -- [string tolower $theme] {
       b3 -
       default -
-      keramik -
       plastik -
       metal4kde -
       polyester -
       liquid -
       platinum -
-      thinkeramik -
       highcolor -
+      highcontrast -
       light -
       light, -
+      {light, 2nd revision} -
+      {light, 3rd revision} -
+      phase -
+      baghira -
       help 
       {
         # 3 Arrows...
@@ -38,6 +41,32 @@ namespace eval tile::theme::tileqt {
               Vertical.Scrollbar.uparrow -side top
               Vertical.Scrollbar.downarrow -side bottom
               Vertical.Scrollbar.uparrow -side bottom
+              Vertical.Scrollbar.thumb -side top -expand true -sticky ns
+          }
+        };# style layout Vertical.TScrollbar
+      }
+      keramik -
+      thinkeramik {
+        # 3 Arrows...
+        style layout Horizontal.TScrollbar {
+          Scrollbar.background
+          Horizontal.Scrollbar.trough -children {
+              Horizontal.Scrollbar.leftarrow -side left
+              Horizontal.Scrollbar.rightarrow -side right -children {
+                Horizontal.Scrollbar.subleftarrow -side left
+                Horizontal.Scrollbar.subrightarrow -side right
+              }
+              Horizontal.Scrollbar.thumb -side left -expand true -sticky we
+          }
+        };# style layout Horizontal.TScrollbar
+        style layout Vertical.TScrollbar {
+          Scrollbar.background
+          Vertical.Scrollbar.trough -children {
+              Vertical.Scrollbar.uparrow -side top
+              Vertical.Scrollbar.downarrow -side bottom -children {
+                Vertical.Scrollbar.subuparrow -side top
+                Vertical.Scrollbar.subdownarrow -side bottom
+              }
               Vertical.Scrollbar.thumb -side top -expand true -sticky ns
           }
         };# style layout Vertical.TScrollbar
@@ -178,11 +207,11 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -text] \
          selected        [currentThemeColour -active   -text] \
       ] -background [list \
-         active          [currentThemeColour -active   -text] \
-         disabled        [currentThemeColour -disabled -text] \
-         focus           [currentThemeColour -active   -text] \
-         pressed         [currentThemeColour -active   -text] \
-         selected        [currentThemeColour -active   -text] \
+         active          [currentThemeColour -active   -base] \
+         disabled        [currentThemeColour -disabled -base] \
+         focus           [currentThemeColour -active   -base] \
+         pressed         [currentThemeColour -active   -base] \
+         selected        [currentThemeColour -active   -base] \
       ] -selectforeground [list \
          active          [currentThemeColour -active   -highlightedText] \
          disabled        [currentThemeColour -disabled -highlightedText] \

@@ -213,8 +213,23 @@ static void ScrollbarUpArrowElementGeometry(
       *widthPtr = rc.width();
       *heightPtr = rc.height();
       /* Qt Style Fixes: */
-      if (strcmp(wc->TileQt_Style->name(), "Keramik") == 0) {
-        if (orient == TTK_ORIENT_HORIZONTAL && *heightPtr > 16) *heightPtr = 16;
+      if (TileQt_ThemeIs(wc, "keramik") || TileQt_ThemeIs(wc, "thinkeramik")) {
+        // Keramic & ThinKeramic are buggy: Their subcontrol metrics are for 2
+        // buttons, not one. Find the smallest dimension, and return a
+        // rectangle.
+        if (*widthPtr  > 17) *widthPtr  = 17;
+        if (*heightPtr > 17) *heightPtr = 17;
+      } else if (TileQt_ThemeIs(wc, "sgi") ||
+                 TileQt_ThemeIs(wc, "compact") ||
+                 TileQt_ThemeIs(wc, "platinum") ||
+                 TileQt_ThemeIs(wc, "motifplus") ||
+                 TileQt_ThemeIs(wc, "cde") ||
+                 TileQt_ThemeIs(wc, "motif") ||
+                 TileQt_ThemeIs(wc, "windows")) {
+        // These styles are buggy?: Some times one dimension is returned as 10,
+        // others as 21.
+        if (*widthPtr < *heightPtr) *widthPtr  = *heightPtr;
+        if (*heightPtr < *widthPtr) *heightPtr = *widthPtr;
       }
     }
     Tcl_MutexUnlock(&tileqtMutex);
@@ -289,8 +304,29 @@ static void ScrollbarDownArrowElementGeometry(
       *widthPtr = rc.width();
       *heightPtr = rc.height();
       /* Qt Style Fixes: */
-      if (strcmp(wc->TileQt_Style->name(), "Keramik") == 0) {
-        if (orient == TTK_ORIENT_HORIZONTAL && *heightPtr > 16) *heightPtr = 16;
+      // printf("%s\n", wc->TileQt_Style->name());
+      if (TileQt_ThemeIs(wc, "keramik") || TileQt_ThemeIs(wc, "thinkeramik")) {
+        // Keramic & ThinKeramic are buggy: Their subcontrol metrics are for 2
+        // buttons, not one. Find the smallest dimension, and return a
+        // rectangle.
+        if (orient == TTK_ORIENT_HORIZONTAL) {
+          *heightPtr = 17;
+          *widthPtr  = 34;
+        } else {
+          *heightPtr = 34;
+          *widthPtr  = 17;
+        }
+      } else if (TileQt_ThemeIs(wc, "sgi") ||
+                 TileQt_ThemeIs(wc, "compact") ||
+                 TileQt_ThemeIs(wc, "platinum") ||
+                 TileQt_ThemeIs(wc, "motifplus") ||
+                 TileQt_ThemeIs(wc, "cde") ||
+                 TileQt_ThemeIs(wc, "motif") ||
+                 TileQt_ThemeIs(wc, "windows")) {
+        // These styles are buggy?: Some times one dimension is returned as 10,
+        // others as 21.
+        if (*widthPtr < *heightPtr) *widthPtr  = *heightPtr;
+        if (*heightPtr < *widthPtr) *heightPtr = *widthPtr;
       }
     }
     Tcl_MutexUnlock(&tileqtMutex);
@@ -340,6 +376,72 @@ static Ttk_ElementSpec ScrollbarDownArrowElementSpec = {
     ScrollbarDownArrowElementDraw
 };
 
+typedef struct {
+} ScrollbarEmptyArrowElement;
+static Ttk_ElementOptionSpec ScrollbarEmptyArrowElementOptions[] = {
+    {NULL}
+};
+
+static void ScrollbarUpSubArrowElementDraw(
+    void *clientData, void *elementRecord, Tk_Window tkwin,
+    Drawable d, Ttk_Box b, unsigned state)
+{
+    /* This function draws only if the element state is pressed or active. */
+    if (state & TTK_STATE_PRESSED) {
+     ScrollbarUpArrowElementDraw(clientData, elementRecord, tkwin, d, b,
+                                 state);
+    }
+}
+
+static void ScrollbarDownSubArrowElementDraw(
+    void *clientData, void *elementRecord, Tk_Window tkwin,
+    Drawable d, Ttk_Box b, unsigned state)
+{
+    /* This function draws only if the element state is pressed. */
+    if (state & TTK_STATE_PRESSED) {
+      if (qApp == NULL) NULL_Q_APP;
+      NULL_PROXY_ORIENTED_WIDGET(TileQt_QScrollBar_Widget);
+      QStyle::SFlags sflags = Ttk_StateTableLookup(scrollbar_statemap, state);
+      Tcl_MutexLock(&tileqtMutex);
+      if (orient == TTK_ORIENT_HORIZONTAL) {
+        sflags |= QStyle::Style_Horizontal;
+        QPixmap      pixmap(2*b.width, b.height);
+        QPainter     painter(&pixmap);
+        wc->TileQt_Style->drawPrimitive(QStyle::PE_ScrollBarAddLine, &painter,
+              QRect(0, 0, 2*b.width, b.height),
+              qApp->palette().active(), sflags);
+        TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
+                                        16, 0, b.width-1, b.height, b.x, b.y);
+      } else {
+        QPixmap      pixmap(b.width, 2*b.height);
+        QPainter     painter(&pixmap);
+        wc->TileQt_Style->drawPrimitive(QStyle::PE_ScrollBarAddLine, &painter,
+              QRect(0, 0, b.width, 2*b.height),
+              qApp->palette().active(), sflags);
+        TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
+                                        0, 16, b.width, b.height-1, b.x, b.y);
+      }
+      Tcl_MutexUnlock(&tileqtMutex);
+    }
+}
+
+static Ttk_ElementSpec ScrollbarUpSubArrowElementSpec = {
+    TK_STYLE_VERSION_2,
+    sizeof(ScrollbarEmptyArrowElement),
+    ScrollbarEmptyArrowElementOptions,
+    ScrollbarUpArrowElementGeometry,
+    ScrollbarUpSubArrowElementDraw
+};
+
+static Ttk_ElementSpec ScrollbarDownSubArrowElementSpec = {
+    TK_STYLE_VERSION_2,
+    sizeof(ScrollbarEmptyArrowElement),
+    ScrollbarEmptyArrowElementOptions,
+    ScrollbarUpArrowElementGeometry,
+    ScrollbarDownSubArrowElementDraw
+};
+
+
 /*------------------------------------------------------------------------
  * +++ Widget layout.
  */
@@ -376,6 +478,14 @@ int TileQt_Init_Scrollbar(Tcl_Interp *interp,
       &ScrollbarDownArrowElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Vertical.Scrollbar.downarrow",
       &ScrollbarDownArrowElementSpec, (void *) wc[1]);
+    Ttk_RegisterElement(interp, themePtr, "Horizontal.Scrollbar.subleftarrow",
+      &ScrollbarUpSubArrowElementSpec, (void *) wc[0]);
+    Ttk_RegisterElement(interp, themePtr, "Vertical.Scrollbar.subuparrow",
+      &ScrollbarUpSubArrowElementSpec, (void *) wc[1]);
+    Ttk_RegisterElement(interp, themePtr, "Horizontal.Scrollbar.subrightarrow",
+      &ScrollbarDownSubArrowElementSpec, (void *) wc[0]);
+    Ttk_RegisterElement(interp, themePtr, "Vertical.Scrollbar.subdownarrow",
+      &ScrollbarDownSubArrowElementSpec, (void *) wc[1]);
     Ttk_RegisterElement(interp, themePtr, "Horizontal.Scrollbar.thumb",
       &ScrollbarThumbElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Vertical.Scrollbar.thumb",

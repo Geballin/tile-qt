@@ -14,33 +14,11 @@
  */
 
 #include "tileQt_QtHeaders.h"
+#include "tileQt_Utilities.h"
 #include "tk.h"
 #include "tkTheme.h"
 #include "tkMacros.h"
-TCL_DECLARE_MUTEX(tileqtMutex);
 static bool TileQt_qAppOwner = false;
-
-/* Pointers to some Qt/KDE widgets, whose style will be used for drawing. */
-typedef struct TileQt_WidgetCache {
-  QStyle*        TileQt_Style;
-  bool           TileQt_Style_Owner;
-  QWidget*       TileQt_smw;
-  QScrollBar*    TileQt_QScrollBar_Widget; 
-  QComboBox*     TileQt_QComboBox_RW_Widget;
-  QComboBox*     TileQt_QComboBox_RO_Widget;
-  QWidget*       TileQt_QWidget_Widget;
-  QWidget*       TileQt_QWidget_WidgetParent;
-  QSlider*       TileQt_QSlider_Hor_Widget;
-  QSlider*       TileQt_QSlider_Ver_Widget;
-  QProgressBar*  TileQt_QProgressBar_Hor_Widget;
-  QTabBar*       TileQt_QTabBar_Widget;
-  const QPixmap* TileQt_QPixmap_BackgroundTile;
-  Tk_Window      TileQt_tkwin;
-  Display*       TileQt_MainDisplay;
-  Tcl_Interp*    TileQt_MainInterp;
-  Atom           TileQt_KIPC_COMM_ATOM;
-  int orientation;
-} TileQt_WidgetCache;
 
 // static int  TileQt_ClientMessageHandler(Tk_Window winPtr, XEvent *eventPtr);
 // static int  TileQt_XEventHandler(ClientData clientdata, XEvent *eventPtr);
@@ -57,6 +35,7 @@ static void TileQt_InterpDeleteProc(ClientData clientData, Tcl_Interp *interp)
   TileQt_WidgetCache *wc = wc_array[0];
 //  if (wc->TileQt_smw) 
 //    Tk_DeleteGenericHandler(&TileQt_XEventHandler, (ClientData) wc->TileQt_smw);
+  if (wc->lowerStyleName)                 delete wc->lowerStyleName;
   if (wc->TileQt_QScrollBar_Widget)       delete wc->TileQt_QScrollBar_Widget;
   if (wc->TileQt_QComboBox_RO_Widget)     delete wc->TileQt_QComboBox_RO_Widget;
   if (wc->TileQt_QComboBox_RW_Widget)     {
@@ -88,10 +67,10 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp)
                      &TileQt_InterpDeleteProc, (ClientData) wc_array);
     TileQt_WidgetCache *wc = wc_array[0];
     memset(wc, 0, sizeof(TileQt_WidgetCache));
-    wc->TileQt_MainInterp = interp;
-    wc->TileQt_tkwin      = Tk_MainWindow(interp);
-    if (wc->TileQt_tkwin != NULL && wc->TileQt_MainDisplay == None) {
-      //Tk_MapWindow(TileQt_tkwin);
+    wc->TileQt_MainInterp  = interp;
+    wc->TileQt_tkwin       = Tk_MainWindow(interp);
+    if (wc->TileQt_tkwin != NULL) {
+      // Tk_MapWindow(wc->TileQt_tkwin);
       Tk_MakeWindowExist(wc->TileQt_tkwin);
       wc->TileQt_MainDisplay = Tk_Display(wc->TileQt_tkwin);
     }
@@ -106,11 +85,14 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp)
      */
     //initKdeSettings();
     if (!TileQt_qAppOwner && !qApp) {
+      XSynchronize(wc->TileQt_MainDisplay, true);
       new QApplication(wc->TileQt_MainDisplay);
+      XSynchronize(wc->TileQt_MainDisplay, true);
       TileQt_qAppOwner = true;
     }
     wc->TileQt_Style = &(qApp->style());
     wc->TileQt_Style_Owner = false;
+    TileQt_StoreStyleNameLowers(wc);
     /* Create some needed widgets, which we will use for drawing. */
     wc->TileQt_QScrollBar_Widget        = new QScrollBar(0);
     // The following crashes wish at exit :-(

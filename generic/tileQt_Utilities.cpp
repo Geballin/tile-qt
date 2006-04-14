@@ -16,7 +16,6 @@
 #include "tileQt_QtHeaders.h"
 #include <tk.h>
 #include "tkTheme.h"
-TCL_DECLARE_MUTEX(tileqtMutex);
 
 /*
  * TileQt_TileStateToSFlags
@@ -91,3 +90,14 @@ void TileQt_CopyQtPixmapOnToDrawable(QPixmap& pixmap, Drawable d,
               x, y, w, h, x1, x2);
     Tk_FreeGC(Tk_Display(tkwin), gc);
 }; /* TileQt_CopyQtPixmapOnToDrawable */
+
+void TileQt_StoreStyleNameLowers(TileQt_WidgetCache *wc) {
+  if (wc->lowerStyleName) delete wc->lowerStyleName;
+  wc->lowerStyleName = new QString();
+  *(wc->lowerStyleName) = QString(wc->TileQt_Style->name()).lower();
+}; /* TileQt_StoreStyleName */
+
+bool TileQt_ThemeIs(TileQt_WidgetCache *wc, const char* name) {
+  if (wc->lowerStyleName) return *(wc->lowerStyleName) == name;
+  return false;
+}; /* TileQt_ThemeIs */

@@ -1,6 +1,12 @@
-2006-20-03  Georgios Petasis  <petasis@iit.demokritos.gr>
+2006-26-03  Georgios Petasis  <petasis@iit.demokritos.gr>
         * ================= Release 0.3 =================
-
+        
+        * library/tileqt.tcl:
+        * generic/tileQtScrollbar.cpp: Many changes regarding Keramik & other
+        Qt styles (Motif, CDE, etc). Many of these changes originated from
+        discussions witn Csaba Nemethi.
+        
+2006-20-03  Georgios Petasis  <petasis@iit.demokritos.gr>
         * generic/tileQtNotebook.cpp: Various aisthetic changes regarding
         notebook widgets. Now, tab bar base is drawn, if supported by the style.
 

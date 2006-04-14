@@ -165,6 +165,7 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
       wc->TileQt_Style = QStyleFactory::create(style);
       wc->TileQt_Style_Owner = true;
     }
+    TileQt_StoreStyleNameLowers(wc);
     wc->TileQt_QScrollBar_Widget->setStyle(wc->TileQt_Style);
     wc->TileQt_QComboBox_RW_Widget->setStyle(wc->TileQt_Style);
     wc->TileQt_QComboBox_RO_Widget->setStyle(wc->TileQt_Style);
@@ -176,8 +177,26 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
     wc->TileQt_QProgressBar_Hor_Widget->setStyle(wc->TileQt_Style);
     wc->TileQt_QTabBar_Widget->setStyle(wc->TileQt_Style);
     wc->TileQt_QPixmap_BackgroundTile =
-                           (wc->TileQt_QWidget_Widget)->paletteBackgroundPixmap();
+                       (wc->TileQt_QWidget_Widget)->paletteBackgroundPixmap();
     if (todelete) delete todelete;
+#if 0
+    // Print Scrollbar statistics...
+#define SC_PRINT_INFO(subcontrol) \
+    wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ScrollBar,\
+        wc->TileQt_QScrollBar_Widget, subcontrol).x(),\
+    wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ScrollBar,\
+        wc->TileQt_QScrollBar_Widget, subcontrol).y(),\
+    wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ScrollBar,\
+        wc->TileQt_QScrollBar_Widget, subcontrol).width(),\
+    wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ScrollBar,\
+        wc->TileQt_QScrollBar_Widget, subcontrol).height()
+    printf("SC_ScrollBarAddLine: x=%d, y=%d, w=%d, h=%d\n", SC_PRINT_INFO(QStyle::SC_ScrollBarAddLine));
+    printf("SC_ScrollBarSubLine: x=%d, y=%d, w=%d, h=%d\n", SC_PRINT_INFO(QStyle::SC_ScrollBarSubLine));
+    printf("SC_ScrollBarAddPage: x=%d, y=%d, w=%d, h=%d\n", SC_PRINT_INFO(QStyle::SC_ScrollBarAddPage));
+    printf("SC_ScrollBarSubPage: x=%d, y=%d, w=%d, h=%d\n", SC_PRINT_INFO(QStyle::SC_ScrollBarSubPage));
+    printf("SC_ScrollBarFirst: x=%d, y=%d, w=%d, h=%d\n", SC_PRINT_INFO(QStyle::SC_ScrollBarFirst));
+    printf("SC_ScrollBarLast: x=%d, y=%d, w=%d, h=%d\n", SC_PRINT_INFO(QStyle::SC_ScrollBarLast));
+#endif
   }
   memcpy(wc_array[1], wc_array[0], sizeof(TileQt_WidgetCache));
   wc_array[0]->orientation = TTK_ORIENT_HORIZONTAL;
