@@ -1,9 +1,13 @@
+#!/bin/bash -norc
+dnl	This file is an input file used by the GNU "autoconf" program to
+dnl	generate the file "configure", which is run during Tcl installation
+dnl	to configure the system for the local environment.
 #
 # $Id$
 #
 
 AC_REVISION($Revision$)
-AC_INIT([tileqt],[0.3])
+AC_INIT([tileqt],[0.4])
 AC_CONFIG_AUX_DIR(tclconfig)
 
 AC_PROG_CXX
@@ -12,7 +16,7 @@ AC_PROG_CXX
 AC_PATH_QT
 
 # Tcl stuff:
-TEA_INIT([3.1])
+TEA_INIT([3.5])
 TEA_PATH_TCLCONFIG
 TEA_LOAD_TCLCONFIG
 TEA_PATH_TKCONFIG
@@ -32,16 +36,16 @@ TEA_PATH_X
 TEA_ADD_SOURCES([])
 TEA_ADD_INCLUDES([-I\"${srcdir}/generic\"])
 
-AC_DEFINE(USE_TCL_STUBS)
-AC_DEFINE(USE_TK_STUBS)
+AC_DEFINE(USE_TCL_STUBS, 1, [Use Tcl stubs])
+AC_DEFINE(USE_TK_STUBS, 1, [Use Tk stubs])
 
 TEA_MAKE_LIB
 
 TEA_PROG_TCLSH
 TEA_PROG_WISH
 
-AC_SUBST(CLEANFILES,[])
-
-AC_CONFIG_FILES([Makefile pkgIndex.tcl])
-AC_OUTPUT
+#AC_SUBST(CLEANFILES,[])
+#
+#AC_CONFIG_FILES([Makefile pkgIndex.tcl])
+AC_OUTPUT([Makefile pkgIndex.tcl])
 

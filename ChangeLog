@@ -1,3 +1,12 @@
+2006-30-04  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * generic/tileQt_QApp.cpp: Added support for KDE color palette changes.
+
+        * library/tileqt.tcl: Fixed a bug in the style change dialog, reported
+        by Csaba Nemethi.
+
+        * tclconfig:
+        * aclocal.m4: Updated extension configuration to TEA 3.5.
+
 2006-26-03  Georgios Petasis  <petasis@iit.demokritos.gr>
         * ================= Release 0.3 =================
         

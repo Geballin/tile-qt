@@ -376,7 +376,9 @@ namespace eval tile::theme::tileqt {
     ttk::labelframe $dlgFrame.preview -text "Preview:"
       variable PreviewInterp
       if {[string length $PreviewInterp]} {
-        frame $dlgFrame.preview.container -text {Preview Unavailable!}
+        frame $dlgFrame.preview.container
+          pack [label $dlgFrame.preview.container.lbl \
+                 -text {Preview Unavailable!}] -fill both -expand 1
       } else {
         frame $dlgFrame.preview.container -container 1 -height 250 -width 400
         ## Create a slave interpreter, and load tileQt. Widgets in this interp

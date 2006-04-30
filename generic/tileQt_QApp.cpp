@@ -167,7 +167,22 @@ static int TileQt_XEventHandler(ClientData clientData, XEvent *eventPtr) {
   Atom TileQt_KIPC_COMM_ATOM = XInternAtom(eventPtr->xclient.display,
                                            "KIPC_COMM_ATOM" , false);
   if (eventPtr->xclient.message_type != TileQt_KIPC_COMM_ATOM) return 0;
-  if (eventPtr->xclient.data.l[0] != 2) return 0;
+  /* The following data variable contains the type of the KIPC message,
+   * As defined in kdelibs/kdecore/kipc.h:
+   * PaletteChanged      = 0
+   * StyleChanged        = 2
+   * ToolbarStyleChanged = 6
+   */
+  switch (eventPtr->xclient.data.l[0]) {
+    case 0:   /* PaletteChanged      */
+    case 2:   /* StyleChanged        */
+    case 6: { /* ToolbarStyleChanged */
+      break;
+    }
+    default: {
+      return 0;
+    }
+  }
   Tcl_Interp *interp = (Tcl_Interp *) clientData;
   if (interp == NULL) return 0;
   // printf("TileQt_XEventHandler: %p\n", interp); fflush(NULL);
