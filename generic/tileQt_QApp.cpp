@@ -163,6 +163,8 @@ static int TileQt_XErrorHandler(Display *displayPtr, XErrorEvent *errorPtr) {
 }; /* TileQt_XErrorHandler */
 
 static int TileQt_XEventHandler(ClientData clientData, XEvent *eventPtr) {
+  char *tcl_callback;
+  int status;
   if (eventPtr->type != ClientMessage) return 0;
   Atom TileQt_KIPC_COMM_ATOM = XInternAtom(eventPtr->xclient.display,
                                            "KIPC_COMM_ATOM" , false);
@@ -175,8 +177,11 @@ static int TileQt_XEventHandler(ClientData clientData, XEvent *eventPtr) {
    */
   switch (eventPtr->xclient.data.l[0]) {
     case 0:   /* PaletteChanged      */
+      tcl_callback = "tile::theme::tileqt::kdePaletteChangeNotification";
+      break;
     case 2:   /* StyleChanged        */
     case 6: { /* ToolbarStyleChanged */
+      tcl_callback = "tile::theme::tileqt::kdeStyleChangeNotification";
       break;
     }
     default: {
@@ -187,7 +192,8 @@ static int TileQt_XEventHandler(ClientData clientData, XEvent *eventPtr) {
   if (interp == NULL) return 0;
   // printf("TileQt_XEventHandler: %p\n", interp); fflush(NULL);
   /* Notify the tile engine about the change... */
-  Tcl_Eval(interp, "tile::theme::tileqt::kdeStyleChangeNotification");
+  status = Tcl_Eval(interp, tcl_callback);
+  if (status != TCL_OK) Tcl_BackgroundError(interp);
   /* Do not remove True: As many interpreters may have registered this event
    * handler, allow Tk to call all of them! */
   return 0;

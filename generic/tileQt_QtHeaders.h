@@ -45,6 +45,7 @@
 #include <qtextstream.h>
 #include <qdeepcopy.h>
 #include <qstringlist.h> 
+#include <qcolor.h>
 #include <tk.h>
 
 typedef struct TileQt_WidgetCache {

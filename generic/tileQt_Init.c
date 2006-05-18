@@ -97,7 +97,9 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
   QColor colour;
   for (int i = 1; i < objc; ++i) {
     if (Tcl_GetIndexFromObj(interp, objv[i], (const char **) Methods,
-                            "method", 0, &index) != TCL_OK) return TCL_ERROR;
+                            "method", 0, &index) != TCL_OK) {
+      Tcl_MutexUnlock(&tileqtMutex); return TCL_ERROR;
+    }
     switch ((enum methods) index) {
       case STT_ACTIVE:          {colours = qApp->palette().active();   break;}
       case STT_DISABLED:        {colours = qApp->palette().disabled(); break;}
@@ -124,6 +126,147 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
   Tcl_MutexUnlock(&tileqtMutex);
   return TCL_OK;
 }; /* Tileqt_ThemeColour */
+
+int Tileqt_SetPalette(ClientData clientData, Tcl_Interp *interp,
+                                 int objc, Tcl_Obj *const objv[]) {
+  static char *Methods[] = {
+    "-background",       "-foreground",
+    "-buttonBackground", "-buttonForeground",
+    "-selectBackground", "-selectForeground",
+    "-windowBackground", "-windowForeground",
+    "-linkColor",        "-visitedLinkColor",
+    "-contrast",
+    (char *) NULL
+  };
+  enum methods {
+    CLR_background,       CLR_foreground,
+    CLR_buttonBackground, CLR_buttonForeground,
+    CLR_selectBackground, CLR_selectForeground,
+    CLR_windowBackground, CLR_windowForeground,
+    CLR_linkColor,        CLR_visitedLinkColor,
+    CLR_contrast
+  };
+  int index, contrast_;
+  char *value;
+  if ((objc-1)%2) {
+    Tcl_WrongNumArgs(interp, 1, objv, "?-key value?");
+    return TCL_ERROR;
+  }
+  if (!qApp) {
+    Tcl_SetResult(interp, "", TCL_STATIC);
+    return TCL_OK;
+  }
+  Tcl_MutexLock(&tileqtMutex);
+  QColor kde34Background( 239, 239, 239 );
+  QColor kde34Blue( 103,141,178 );
+
+  QColor kde34Button;
+  if ( QPixmap::defaultDepth() > 8 )
+    kde34Button.setRgb( 221, 223, 228 );
+  else
+    kde34Button.setRgb( 220, 220, 220 );
+
+  QColor kde34Link( 0, 0, 238 );
+  QColor kde34VisitedLink( 82, 24, 139 );
+
+
+  QColor background(kde34Background), foreground(Qt::black),
+         button(kde34Button),         buttonText(Qt::black),
+         highlight(kde34Blue),        highlightedText(Qt::white),
+         base(Qt::white),             baseText(Qt::black),
+         link(kde34Link),             visitedLink(kde34VisitedLink);
+  for (int i = 1; i < objc; i+=2) {
+    if (Tcl_GetIndexFromObj(interp, objv[i], (const char **) Methods,
+                            "method", 0, &index) != TCL_OK) {
+      Tcl_MutexUnlock(&tileqtMutex); return TCL_ERROR;
+    }
+    value = Tcl_GetString(objv[i+1]);
+    switch ((enum methods) index) {
+      case CLR_background:        background.setNamedColor(value);      break;
+      case CLR_foreground:        foreground.setNamedColor(value);      break;
+      case CLR_buttonBackground:  button.setNamedColor(value);          break;
+      case CLR_buttonForeground:  buttonText.setNamedColor(value);      break;
+      case CLR_selectBackground:  highlight.setNamedColor(value);       break;
+      case CLR_selectForeground:  highlightedText.setNamedColor(value); break;
+      case CLR_windowBackground:  base.setNamedColor(value);            break;
+      case CLR_windowForeground:  baseText.setNamedColor(value);        break;
+      case CLR_linkColor:         link.setNamedColor(value);            break;
+      case CLR_visitedLinkColor:  visitedLink.setNamedColor(value);     break;
+      case CLR_contrast: {
+        if (Tcl_GetIntFromObj(interp, objv[i+1], &contrast_) != TCL_OK) {
+          Tcl_MutexUnlock(&tileqtMutex); return TCL_ERROR;
+        }
+        break;
+      }
+    }
+  }
+  int highlightVal, lowlightVal;
+  highlightVal = 100 + (2*contrast_+4)*16/10;
+  lowlightVal = 100 + (2*contrast_+4)*10;
+
+  QColor disfg = foreground;
+
+  int h, s, v;
+  disfg.hsv( &h, &s, &v );
+  if (v > 128)
+      // dark bg, light fg - need a darker disabled fg
+      disfg = disfg.dark(lowlightVal);
+  else if (disfg != Qt::black)
+      // light bg, dark fg - need a lighter disabled fg - but only if !black
+      disfg = disfg.light(highlightVal);
+  else
+      // black fg - use darkgray disabled fg
+      disfg = Qt::darkGray;
+
+
+  QColorGroup disabledgrp(disfg, background,
+                          background.light(highlightVal),
+                          background.dark(lowlightVal),
+                          background.dark(120),
+                          background.dark(120), base);
+
+  QColorGroup colgrp(foreground, background, background.light(highlightVal),
+                     background.dark(lowlightVal),
+                     background.dark(120),
+                     baseText, base);
+
+  int inlowlightVal = lowlightVal-25;
+  if(inlowlightVal < 120)
+      inlowlightVal = 120;
+
+  colgrp.setColor(QColorGroup::Highlight, highlight);
+  colgrp.setColor(QColorGroup::HighlightedText, highlightedText);
+  colgrp.setColor(QColorGroup::Button, button);
+  colgrp.setColor(QColorGroup::ButtonText, buttonText);
+  colgrp.setColor(QColorGroup::Midlight, background.light(110));
+  colgrp.setColor(QColorGroup::Link, link);
+  colgrp.setColor(QColorGroup::LinkVisited, visitedLink);
+
+  disabledgrp.setColor(QColorGroup::Button, button);
+
+  QColor disbtntext = buttonText;
+  disbtntext.hsv( &h, &s, &v );
+  if (v > 128)
+      // dark button, light buttonText - need a darker disabled buttonText
+      disbtntext = disbtntext.dark(lowlightVal);
+  else if (disbtntext != Qt::black)
+      // light buttonText, dark button - need a lighter disabled buttonText -
+      // but only if !black
+      disbtntext = disbtntext.light(highlightVal);
+  else
+      // black button - use darkgray disabled buttonText
+      disbtntext = Qt::darkGray;
+
+  disabledgrp.setColor(QColorGroup::ButtonText, disbtntext);
+  disabledgrp.setColor(QColorGroup::Midlight, background.light(110));
+  disabledgrp.setColor(QColorGroup::Highlight, highlight.dark(120));
+  disabledgrp.setColor(QColorGroup::Link, link);
+  disabledgrp.setColor(QColorGroup::LinkVisited, visitedLink);
+
+  QApplication::setPalette( QPalette(colgrp, disabledgrp, colgrp), true);
+  Tcl_MutexUnlock(&tileqtMutex);
+  return TCL_OK;
+}; /* Tileqt_SetPalette */
 
 int Tileqt_AvailableStyles(ClientData clientData, Tcl_Interp *interp,
                                  int objc, Tcl_Obj *const objv[]) {
@@ -222,9 +365,9 @@ Tileqt_Init(Tcl_Interp *interp)
         return TCL_ERROR;
 
     /* The first thing we must do, is to retrieve a valid display. */
-    Tcl_MutexLock(&tileqtMutex);
-    //if (TileQt_QAppCreated == 0) qApp = NULL;
-    Tcl_MutexUnlock(&tileqtMutex);
+    // Tcl_MutexLock(&tileqtMutex);
+    // if (TileQt_QAppCreated == 0) qApp = NULL;
+    // Tcl_MutexUnlock(&tileqtMutex);
     tkwin = Tk_MainWindow(interp);
     if (tkwin == NULL) return TCL_ERROR;
 
@@ -273,6 +416,9 @@ Tileqt_Init(Tcl_Interp *interp)
     Tcl_CreateObjCommand(interp,
                          "tile::theme::tileqt::setStyle",
                          Tileqt_SetStyle, (ClientData) wc, NULL);
+    Tcl_CreateObjCommand(interp,
+                         "tile::theme::tileqt::setPalette",
+                         Tileqt_SetPalette, (ClientData) wc, NULL);
     /* Save the name of the current theme... */
     strcpy(tmpScript, "namespace eval tile::theme::tileqt { variable theme ");
     if (qApp) {
@@ -298,7 +444,7 @@ int DLLEXPORT
 TileQt_Finish(Tcl_Interp *interp)
 {
     Tcl_MutexLock(&tileqtMutex);
-    if (TileQt_QAppCreated < 0) return 0;
+    if (TileQt_QAppCreated < 0) {Tcl_MutexUnlock(&tileqtMutex); return 0;}
     --TileQt_QAppCreated;
     if (TileQt_QAppCreated == 0) TileQt_DestroyQApp();
     Tcl_MutexUnlock(&tileqtMutex);

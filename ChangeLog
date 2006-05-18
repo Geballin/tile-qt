@@ -1,3 +1,11 @@
+2006-13-05  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * generic/tileQt_Init.c: Added a new command for changing the used
+        colour palette from Tk (setPalette).
+
+        * library/tileqt.tcl: Added functions kdeLocate_kdeglobals,
+        kdePaletteChangeNotification, kdeGetColourHex, which get called during
+        colour palette changes from the KDE KIPC.
+
 2006-30-04  Georgios Petasis  <petasis@iit.demokritos.gr>
         * generic/tileQt_QApp.cpp: Added support for KDE color palette changes.
 
