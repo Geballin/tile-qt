@@ -183,7 +183,7 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -button] \
          selected        [currentThemeColour -active   -button] \
       ]
-      style default TCheckbutton ;#-padding 0
+      style default TCheckbutton -padding {0 1 0 1}
       
       style map TCombobox -foreground [list \
          active          [currentThemeColour -active   -buttonText] \
@@ -272,7 +272,7 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -button] \
          selected        [currentThemeColour -active   -button] \
       ]
-      style default TRadiobutton -padding 0
+      style default TRadiobutton -padding {0 1 0 1}
 
       style map Toolbutton -foreground [list \
          active          [currentThemeColour -active   -buttonText] \

@@ -239,7 +239,7 @@ clean:
 
 distclean: clean
 	-rm -f $(CONFIG_CLEAN_FILES)
-	-rm -f config.cache config.log config.status
+	-rm -rf config.cache config.log config.status autom4*.cache
 
 .PHONY: all binaries clean depend distclean doc install libraries test
 

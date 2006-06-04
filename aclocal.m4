@@ -3,7 +3,7 @@
 #
 
 builtin(include,tclconfig/tcl.m4)
-builtin(include,tclconfig/kde-qt.m4)
+builtin(include,tclconfig/kde-qt-3.m4)
 #
 # Add here whatever m4 macros you want to define for your package
 #

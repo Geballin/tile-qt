@@ -1,3 +1,12 @@
+2006-04-06  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * tcl-config: Added support for finding Qt 4.x.
+        
+        * generic/tileQt_CheckButton.cpp:
+        * generic/tileQt_RadioButton.cpp: Only the size of indicators is now
+        retrieved from Qt, and not the whole widget size (as before). This
+        change was a request from Mats Bengtsson, as check/radio buttons appear
+        to be taller that with other tile themes.
+        
 2006-18-05  Georgios Petasis  <petasis@iit.demokritos.gr>
         * generic/tileQt_Init.c: Fixed a crash in Tileqt_ThemeColour, when
         invoked with no arguments.

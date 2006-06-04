@@ -113,13 +113,13 @@ static void RadioButtonBorderElementGeometry(
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     if (qApp == NULL) NULL_Q_APP;
-    NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
-    Tcl_MutexLock(&tileqtMutex);
-    QRadioButton button(wc->TileQt_QWidget_Widget);
-    *widthPtr   = button.width();
-    *heightPtr  = button.height();
-    Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_MakePadding(0, 0, 0, 0);
+    // NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
+    // Tcl_MutexLock(&tileqtMutex);
+    // QRadioButton button(wc->TileQt_QWidget_Widget);
+    // *widthPtr   = button.width();
+    // *heightPtr  = button.height();
+    // Tcl_MutexUnlock(&tileqtMutex);
 }
 
 static void RadioButtonBorderElementDraw(
