@@ -318,53 +318,11 @@ namespace eval tile::theme::tileqt {
     return $PATHS
   };# kdeLocate_kdeglobals
 
-  ## kdeStyleChangeNotification:
-  #  This procedure will be called from tileqt core each time a message is
-  #  received from KDE to change the style used.
-  proc kdeStyleChangeNotification {} {
-    #  puts >>kdeStyleChangeNotification
-    ## This method will be called each time a ClientMessage is received from
-    ## KDE KIPC...
-    ## Our Job is:
-    ##  a) To get the current style from KDE, and
-    ##  b) Apply it.
-    foreach filename [kdeLocate_kdeglobals] {
-      if {[file exists $filename]} {
-        set file [open $filename]
-        while {[gets $file line] != -1} {
-          set line [string trim $line]
-          if {[string match widgetStyle*=* $line]} {
-            # We have found the style!
-            set index [string first = $line]; incr index
-            set style [string range $line $index end]
-            if {[string length $style]} {
-              close $file
-              applyStyle $style
-              return
-            }
-          }
-        }
-        close $file
-      }
-    }
-  };# kdeStyleChangeNotification
-
-  ## applyStyle:
-  #  This procedure can be used to apply any available Qt/KDE style.
-  #  Ths "style" parameter must be a string from the style names returned by
-  #  tile::theme::tileqt::availableStyles.
-  proc applyStyle {style} {
-    setStyle $style
-    updateStyles
-    updateLayouts
-    event generate {} <<ThemeChanged>>
-  };# applyStyle
-
-  ## kdePaletteChangeNotification:
+  ## updateColourPalette:
   #  This procedure will be called from tileqt core each time a message is
   #  received from KDE to change the palette used.
-  proc kdePaletteChangeNotification {} {
-    #  puts >>kdePaletteChangeNotification
+  proc updateColourPalette {} {
+    #  puts >>updateColourPalette
     foreach filename [kdeLocate_kdeglobals] {
       if {[file exists $filename]} {
         set file [open $filename]
@@ -433,10 +391,58 @@ namespace eval tile::theme::tileqt {
     }
     if {[info exists options]} {
       eval setPalette [array get options]
-      # updateStyles
-      # event generate {} <<ThemeChanged>>
-      kdeStyleChangeNotification
     }
+  };# updateColourPalette
+
+  ## kdeStyleChangeNotification:
+  #  This procedure will be called from tileqt core each time a message is
+  #  received from KDE to change the style used.
+  proc kdeStyleChangeNotification {} {
+    #  puts >>kdeStyleChangeNotification
+    ## This method will be called each time a ClientMessage is received from
+    ## KDE KIPC...
+    ## Our Job is:
+    ##  a) To get the current style from KDE, and
+    ##  b) Apply it.
+    foreach filename [kdeLocate_kdeglobals] {
+      if {[file exists $filename]} {
+        set file [open $filename]
+        while {[gets $file line] != -1} {
+          set line [string trim $line]
+          if {[string match widgetStyle*=* $line]} {
+            # We have found the style!
+            set index [string first = $line]; incr index
+            set style [string range $line $index end]
+            if {[string length $style]} {
+              close $file
+              applyStyle $style
+              return
+            }
+          }
+        }
+        close $file
+      }
+    }
+  };# kdeStyleChangeNotification
+
+  ## applyStyle:
+  #  This procedure can be used to apply any available Qt/KDE style.
+  #  Ths "style" parameter must be a string from the style names returned by
+  #  tile::theme::tileqt::availableStyles.
+  proc applyStyle {style} {
+    updateColourPalette
+    setStyle $style
+    updateStyles
+    updateLayouts
+    event generate {} <<ThemeChanged>>
+  };# applyStyle
+
+  ## kdePaletteChangeNotification:
+  #  This procedure will be called from tileqt core each time a message is
+  #  received from KDE to change the palette used.
+  proc kdePaletteChangeNotification {} {
+    #  puts >>kdePaletteChangeNotification
+    kdeStyleChangeNotification
   };# kdePaletteChangeNotification
 
   proc kdeGetColourHex {line} {

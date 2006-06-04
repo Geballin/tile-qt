@@ -1,3 +1,7 @@
+2006-18-05  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * generic/tileQt_Init.c: Fixed a crash in Tileqt_ThemeColour, when
+        invoked with no arguments.
+        
 2006-13-05  Georgios Petasis  <petasis@iit.demokritos.gr>
         * generic/tileQt_Init.c: Added a new command for changing the used
         colour palette from Tk (setPalette).

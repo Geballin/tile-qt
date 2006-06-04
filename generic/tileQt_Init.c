@@ -85,7 +85,7 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
   };
   int index;
   if (objc != 2 && objc != 3) {
-    Tcl_WrongNumArgs(interp, 2, objv, "?-active|-disabled|-inactive? colour");
+    Tcl_WrongNumArgs(interp, 1, objv, "?-active|-disabled|-inactive? colour");
     return TCL_ERROR;
   }
   if (!qApp) {
@@ -321,6 +321,7 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
     wc->TileQt_QTabBar_Widget->setStyle(wc->TileQt_Style);
     wc->TileQt_QPixmap_BackgroundTile =
                        (wc->TileQt_QWidget_Widget)->paletteBackgroundPixmap();
+    wc->TileQt_Style->polish(wc->TileQt_QWidget_Widget);
     if (todelete) delete todelete;
 #if 0
     // Print Scrollbar statistics...

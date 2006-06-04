@@ -196,5 +196,5 @@ static int TileQt_XEventHandler(ClientData clientData, XEvent *eventPtr) {
   if (status != TCL_OK) Tcl_BackgroundError(interp);
   /* Do not remove True: As many interpreters may have registered this event
    * handler, allow Tk to call all of them! */
-  return 0;
+  return True;
 } /* TileQt_XEventHandler */

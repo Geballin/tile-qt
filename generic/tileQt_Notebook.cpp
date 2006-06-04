@@ -96,6 +96,7 @@ static void NotebookTabElementDraw(
         PM_TabBarBaseHeight         = PM(PM_TabBarBaseHeight);
 
     QStyle::SFlags sflags = Ttk_StateTableLookup(notebook_statemap, state);
+    TileQt_StateInfo(state, tkwin);
     int width = b.width, 
         height = b.height,
         x = 0, d_x = b.x;

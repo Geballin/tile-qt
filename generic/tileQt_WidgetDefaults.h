@@ -17,8 +17,8 @@
 #define DEFAULT_ARROW_SIZE "15"
 #define MIN_THUMB_SIZE 8
 #define BorderBorderWidth               "0"
-#define RadioButtonHorizontalPadding    2
-#define CheckButtonHorizontalPadding    2
+#define RadioButtonHorizontalPadding    0
+#define CheckButtonHorizontalPadding    0
 #define EntryUniformPadding             0
 #define ComboboxHorizontalPadding       0
 #define LabelframeUniformPadding        4
