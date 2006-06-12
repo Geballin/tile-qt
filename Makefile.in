@@ -17,8 +17,8 @@ PKG_OBJECTS	= \
     tileQt_Utilities.$(OBJEXT) \
     tileQt_Background.$(OBJEXT) \
     tileQt_Button.$(OBJEXT) \
-    tileQt_RadioButton.$(OBJEXT) \
     tileQt_CheckButton.$(OBJEXT) \
+    tileQt_RadioButton.$(OBJEXT) \
     tileQt_Menubutton.$(OBJEXT) \
     tileQt_ToolButton.$(OBJEXT) \
     tileQt_Scrollbar.$(OBJEXT) \

@@ -15,9 +15,7 @@
 
 #include "tileQt_QtHeaders.h"
 #include "tileQt_Utilities.h"
-#include "tk.h"
 #include "tkTheme.h"
-#include "tkMacros.h"
 static bool TileQt_qAppOwner = false;
 
 /* In the following variable we store the XErrorHandler, before we install our
@@ -94,18 +92,34 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp) {
     /* As Qt registers also its own XError handler, reset our own... */
     XSetErrorHandler(TileQt_XErrorHandler);
   }
+#ifdef TILEQT_QT_VERSION_3
   wc->TileQt_Style = &(qApp->style());
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+  wc->TileQt_Style = qApp->style();
+#endif /* TILEQT_QT_VERSION_4 */
   wc->TileQt_Style_Owner = false;
   TileQt_StoreStyleNameLowers(wc);
   /* Create some needed widgets, which we will use for drawing. */
   wc->TileQt_QScrollBar_Widget        = new QScrollBar(0);
+#ifdef TILEQT_QT_VERSION_3
   /* The following crashes wish at exit :-( */
   wc->TileQt_QComboBox_RW_Widget      = new QComboBox(true,  0);
   wc->TileQt_QComboBox_RO_Widget      = new QComboBox(false, 0);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+  wc->TileQt_QComboBox_RW_Widget      = new QComboBox;
+  wc->TileQt_QComboBox_RO_Widget      = new QComboBox;
+  wc->TileQt_QComboBox_RW_Widget->setEditable(true);
+  wc->TileQt_QComboBox_RO_Widget->setEditable(false);
+#endif /* TILEQT_QT_VERSION_4 */
   wc->TileQt_QWidget_WidgetParent     = new QWidget(0);
   wc->TileQt_QWidget_Widget           = 
                                new QWidget(wc->TileQt_QWidget_WidgetParent);
+#ifdef TILEQT_QT_VERSION_3
   wc->TileQt_QWidget_Widget->polish();
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_3
   wc->TileQt_QSlider_Hor_Widget       = new QSlider(Qt::Horizontal,
                                         wc->TileQt_QWidget_Widget, "hslider");
   wc->TileQt_QSlider_Hor_Widget->polish();
@@ -115,14 +129,32 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp) {
   wc->TileQt_QProgressBar_Hor_Widget  = new QProgressBar(100, 0);
   wc->TileQt_QProgressBar_Hor_Widget->setCenterIndicator(false);
   wc->TileQt_QProgressBar_Hor_Widget->setPercentageVisible(false);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+  wc->TileQt_QSlider_Hor_Widget       = new QSlider(Qt::Horizontal,
+                                        wc->TileQt_QWidget_Widget);
+  wc->TileQt_QSlider_Ver_Widget       = new QSlider(Qt::Vertical,
+                                        wc->TileQt_QWidget_Widget);
+  wc->TileQt_QProgressBar_Hor_Widget  = new QProgressBar;
+  wc->TileQt_QProgressBar_Hor_Widget->setRange (0, 100);
+  wc->TileQt_QProgressBar_Hor_Widget->setTextVisible(false);
+#endif /* TILEQT_QT_VERSION_4 */
+
   wc->TileQt_QTabBar_Widget           = 
                                new QTabBar(wc->TileQt_QWidget_Widget);
   wc->TileQt_QPixmap_BackgroundTile   =
-                       (wc->TileQt_QWidget_Widget)->paletteBackgroundPixmap();
+#ifdef TILEQT_QT_VERSION_3
+                     (wc->TileQt_QWidget_Widget)->paletteBackgroundPixmap();
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+                     (wc->TileQt_QWidget_Widget)->palette().window().texture();
+#endif /* TILEQT_QT_VERSION_4 */
+#ifdef TILEQT_QT_VERSION_3
   wc->TileQt_QScrollBar_Widget->setMinValue(0);
   wc->TileQt_QScrollBar_Widget->setMaxValue(65535);
   wc->TileQt_QScrollBar_Widget->setValue(65535);
   wc->TileQt_QScrollBar_Widget->setPageStep(1);
+#endif /* TILEQT_QT_VERSION_3 */
   /* Register a Client Message handler, so as to catch style changes... */
   Atom TileQt_KDE_DESKTOP_WINDOW = XInternAtom(wc->TileQt_MainDisplay,
                                    "KDE_DESKTOP_WINDOW" , false);
@@ -148,7 +180,9 @@ void TileQt_DestroyQApp(void) {
     if (qApp) {
       delete qApp;
       // printf("TileQt_DestroyQApp: qApp deleted!\n"); fflush(NULL);
+#ifdef TILEQT_QT_VERSION_3
       qApp = NULL;
+#endif /* TILEQT_QT_VERSION_3 */
       XSetErrorHandler(TileQt_TkXErrorHandler);
     }
     TileQt_qAppOwner = false;

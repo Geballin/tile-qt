@@ -15,6 +15,13 @@
 #ifndef _TILEQT_QTHEADERS
 #define _TILEQT_QTHEADERS
 
+/* The following header file defines QT_VERSION.
+ * It exists for both Qt 3.x & 4.x. */
+#include "qglobal.h"
+
+#if QT_VERSION >= 0x030000 && QT_VERSION < 0x040000
+#define TILEQT_QT_VERSION_3 
+/* Header Files for Qt 3.x */
 #include <qt.h>
 #include <qapplication.h>
 #include <qwidget.h>
@@ -34,10 +41,6 @@
 #include <qplatinumstyle.h>
 #include <qsgistyle.h>
 #include <qwindowsstyle.h>
-//#include <qfile.h>
-//#include <qdir.h>
-//#include <qtextstream.h>
-//#include <qregexp.h>
 #include <qtabwidget.h>
 #include <qtooltip.h>
 #include <qdatetime.h>
@@ -46,7 +49,24 @@
 #include <qdeepcopy.h>
 #include <qstringlist.h> 
 #include <qcolor.h>
+#endif /* QT_VERSION >= 0x030000 && QT_VERSION < 0x040000 */
+
+#if QT_VERSION >= 0x040000 && QT_VERSION < 0x050000
+#define TILEQT_QT_VERSION_4
+/* Header Files for Qt 4.x */
+#include <Qt>
+#include <QtCore>
+#include <QtGui>
+#endif /* QT_VERSION >= 0x040000 && QT_VERSION < 0x050000 */
 #include <tk.h>
+#include "tkMacros.h"
+
+#ifdef TILEQT_QT_VERSION_4
+#include <QX11Info>
+#define qt_xdisplay QX11Info::display
+using namespace Qt;
+#endif /* TILEQT_QT_VERSION_4 */
+
 
 typedef struct TileQt_WidgetCache {
   QStyle*        TileQt_Style;
@@ -62,7 +82,12 @@ typedef struct TileQt_WidgetCache {
   QSlider*       TileQt_QSlider_Ver_Widget;
   QProgressBar*  TileQt_QProgressBar_Hor_Widget;
   QTabBar*       TileQt_QTabBar_Widget;
+#ifdef TILEQT_QT_VERSION_3
   const QPixmap* TileQt_QPixmap_BackgroundTile;
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+  QPixmap        TileQt_QPixmap_BackgroundTile;
+#endif /* TILEQT_QT_VERSION_4 */
   Tk_Window      TileQt_tkwin;
   Display*       TileQt_MainDisplay;
   Tcl_Interp*    TileQt_MainInterp;

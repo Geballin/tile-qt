@@ -32,12 +32,40 @@
 #define ENSURE_WIDGET_STYLE(widget) \
    if (&(widget.style()) != wc->TileQt_Style) widget.setStyle(wc->TileQt_Style);
 
+#ifdef TILEQT_QT_VERSION_3
+#define TILEQT_PAINT_BACKGROUND(width, height) \
+    if (wc->TileQt_QPixmap_BackgroundTile && \
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) { \
+        painter.fillRect(0, 0, width, height, \
+                         QBrush(QColor(255,255,255), \
+                         *(wc->TileQt_QPixmap_BackgroundTile))); \
+    } else { \
+        painter.fillRect(0, 0, width, height, \
+                         qApp->palette().active().background());\
+    }
+#endif /* TILEQT_QT_VERSION_3 */
+
+#ifdef TILEQT_QT_VERSION_4
+#define TILEQT_PAINT_BACKGROUND(width, height) \
+    if (!(wc->TileQt_QPixmap_BackgroundTile.isNull())) { \
+        painter.fillRect(0, 0, width, height, \
+                         QBrush(QColor(255,255,255), \
+                         wc->TileQt_QPixmap_BackgroundTile)); \
+    } else { \
+        painter.fillRect(0, 0, width, height, \
+                         qApp->palette().color(QPalette::Normal, \
+                                               QPalette::Window));\
+    }
+#endif /* TILEQT_QT_VERSION_4 */
+
 TCL_DECLARE_MUTEX(tileqtMutex);
 
 /* Global Symbols */
 
 /* Helper Functions */
+#ifdef TILEQT_QT_VERSION_3
 extern QStyle::SFlags TileQt_TileStateToSFlags(unsigned int state);
+#endif /* TILEQT_QT_VERSION_3 */
 extern void TileQt_StateInfo(int, Tk_Window);
 extern void TileQt_CopyQtPixmapOnToDrawable(QPixmap&, Drawable, Tk_Window,
                                             int, int, int, int, int, int);

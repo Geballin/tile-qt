@@ -17,6 +17,7 @@
 #include <tk.h>
 #include "tkTheme.h"
 
+#ifdef TILEQT_QT_VERSION_3
 /*
  * TileQt_TileStateToSFlags
  * Convert tile states to Qt flags...
@@ -39,6 +40,7 @@ QStyle::SFlags TileQt_TileStateToSFlags(unsigned int state)
                     return QStyle::Style_Enabled;
     }
 }
+#endif /* TILEQT_QT_VERSION_3 */
 
 void TileQt_StateInfo(int state, Tk_Window tkwin)
 {
@@ -94,7 +96,12 @@ void TileQt_CopyQtPixmapOnToDrawable(QPixmap& pixmap, Drawable d,
 void TileQt_StoreStyleNameLowers(TileQt_WidgetCache *wc) {
   if (wc->lowerStyleName) delete wc->lowerStyleName;
   wc->lowerStyleName = new QString();
+#ifdef TILEQT_QT_VERSION_3
   *(wc->lowerStyleName) = QString(wc->TileQt_Style->name()).lower();
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+  *(wc->lowerStyleName) = QString(wc->TileQt_Style->objectName()).toLower();
+#endif /* TILEQT_QT_VERSION_4 */
 }; /* TileQt_StoreStyleName */
 
 bool TileQt_ThemeIs(TileQt_WidgetCache *wc, const char* name) {

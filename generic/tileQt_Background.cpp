@@ -53,15 +53,7 @@ static void BackgroundElementDraw(
     int width = Tk_Width(tkwin), height = Tk_Height(tkwin);
     QPixmap      pixmap(width, height);
     QPainter     painter(&pixmap);
-    if (wc->TileQt_QPixmap_BackgroundTile &&
-        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
-        painter.fillRect(0, 0, width, height,
-                         QBrush(QColor(255,255,255),
-                         *(wc->TileQt_QPixmap_BackgroundTile)));
-    } else {
-        painter.fillRect(0, 0, width, height,
-                         qApp->palette().active().background());
-    }
+    TILEQT_PAINT_BACKGROUND(width, height);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, width, height, 0, 0);
     Tcl_MutexUnlock(&tileqtMutex);

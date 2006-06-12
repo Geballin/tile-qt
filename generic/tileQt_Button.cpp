@@ -23,12 +23,22 @@
  */
 static Ttk_StateTable pushbutton_statemap[] =
 {
+#ifdef TILEQT_QT_VERSION_3
     {QStyle::Style_Default                          , TTK_STATE_DISABLED, 0},
     {QStyle::Style_Enabled | QStyle::Style_Down     , TTK_STATE_PRESSED, 0},
     {QStyle::Style_Enabled | QStyle::Style_MouseOver, TTK_STATE_ACTIVE, 0},
     {QStyle::Style_Enabled | QStyle::Style_HasFocus , TTK_STATE_FOCUS, 0},
     {QStyle::Style_Enabled | QStyle::Style_Active   , TTK_STATE_ALTERNATE, 0},
     {QStyle::Style_Enabled, 0, 0 }
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    {QStyle::State_None                             , TTK_STATE_DISABLED, 0},
+    {QStyle::State_Enabled | QStyle::State_Sunken   , TTK_STATE_PRESSED, 0},
+    {QStyle::State_Enabled | QStyle::State_MouseOver, TTK_STATE_ACTIVE, 0},
+    {QStyle::State_Enabled | QStyle::State_HasFocus , TTK_STATE_FOCUS, 0},
+    {QStyle::State_Enabled | QStyle::State_Active   , TTK_STATE_ALTERNATE, 0},
+    {QStyle::State_Enabled, 0, 0 }
+#endif /* TILEQT_QT_VERSION_4 */
 };
 
 typedef struct {
@@ -60,11 +70,11 @@ static void ButtonElementDraw(
     QPixmap     pixmap(b.width, b.height);
     QPainter    painter(&pixmap);
     QPushButton button(wc->TileQt_QWidget_Widget);
+#ifdef TILEQT_QT_VERSION_3
     button.setBackgroundOrigin(QWidget::ParentOrigin);
+#endif /* TILEQT_QT_VERSION_3 */
     button.setGeometry(b.x, b.y, b.width, b.height);
     // wc->TileQt_StateInfo(state, tkwin);
-    QStyle::SFlags sflags = Ttk_StateTableLookup(pushbutton_statemap, state);
-    /* Handle buggy styles, that do not check flags but check widget states. */
     if (state & TTK_STATE_ALTERNATE) {
         button.setDefault(true);
     } else {
@@ -75,22 +85,22 @@ static void ButtonElementDraw(
     } else {
         button.setDown(false);
     }
-    QPoint p   = button.backgroundOffset();
-    QPoint pos = button.pos();
-    // printf("state=%d, qt style=%d\n", state,
-    //        Ttk_StateTableLookup(pushbutton_statemap, state));
-    if (wc->TileQt_QPixmap_BackgroundTile &&
-        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
-        painter.fillRect(0, 0, b.width, b.height,
-                         QBrush(QColor(255,255,255),
-                         *wc->TileQt_QPixmap_BackgroundTile));
-    } else {
-        painter.fillRect(0, 0, b.width, b.height,
-                         qApp->palette().active().background());
-    }
-
+    TILEQT_PAINT_BACKGROUND(b.width, b.height);
+#ifdef TILEQT_QT_VERSION_3
+    QStyle::SFlags sflags = Ttk_StateTableLookup(pushbutton_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_PushButton, &painter, &button,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    QStyleOptionButton option;
+    option.initFrom(&button); option.state |= 
+      (QStyle::StateFlag) Ttk_StateTableLookup(pushbutton_statemap, state);
+    wc->TileQt_Style->drawControl(QStyle::CE_PushButton, &option,
+                                  &painter, &button);
+#endif /* TILEQT_QT_VERSION_4 */
+    // printf("state=%d, qt style=%d\n", state,
+    //        Ttk_StateTableLookup(pushbutton_statemap, state));
+
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);

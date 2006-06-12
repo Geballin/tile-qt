@@ -58,7 +58,14 @@ int Tileqt_ThemeName(ClientData clientData, Tcl_Interp *interp,
   TileQt_WidgetCache *wc = wc_array[0];
   Tcl_MutexLock(&tileqtMutex);
   if (qApp) {
-    Tcl_SetResult(interp, (char *) wc->TileQt_Style->name(), TCL_VOLATILE);
+    Tcl_SetResult(interp,
+#ifdef TILEQT_QT_VERSION_3                    
+                    (char *) wc->TileQt_Style->name()
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4                    
+                    (char *) wc->TileQt_Style->objectName().toUtf8().data()
+#endif /* TILEQT_QT_VERSION_4 */
+                    , TCL_VOLATILE);
   } else {
     Tcl_SetResult(interp, "", TCL_STATIC);
   }
@@ -69,19 +76,21 @@ int Tileqt_ThemeName(ClientData clientData, Tcl_Interp *interp,
 int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
                                  int objc, Tcl_Obj *const objv[]) {
   static char *Methods[] = {
-    "-active",     "-disabled",        "-inactive",
+    "-active",     "-disabled",        "-inactive",   "-normal",
     "-background", "-foreground",      "-button",     "-light",
     "-dark",       "-mid",             "-text",       "-base",
     "-midlight",   "-brightText",      "-buttonText", "-shadow",
     "-highlight",  "-highlightedText", "-link",       "-linkVisited",
+    "-alternatebase",
     (char *) NULL
   };
   enum methods {
-    STT_ACTIVE,     STT_DISABLED,        STT_INACTIVE,
+    STT_ACTIVE,     STT_DISABLED,        STT_INACTIVE,   STT_NORMAL,
     CLR_background, CLR_foreground,      CLR_button,     CLR_light,
     CLR_dark,       CLR_mid,             CLR_text,       CLR_base,
     CLR_midlight,   CLR_brightText,      CLR_buttonText, CLR_shadow,
-    CLR_highlight,  CLR_highlightedText, CLR_link,       CLR_linkVisited
+    CLR_highlight,  CLR_highlightedText, CLR_link,       CLR_linkVisited,
+    CLR_alternatebase
   };
   int index;
   if (objc != 2 && objc != 3) {
@@ -93,7 +102,14 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   }
   Tcl_MutexLock(&tileqtMutex);
-  QColorGroup colours = qApp->palette().active();
+  QPalette palette = qApp->palette();
+#ifdef TILEQT_QT_VERSION_3
+  QColorGroup colours = palette.active();
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+  QPalette::ColorGroup colours = QPalette::Normal;
+  QPalette::ColorRole  role    = QPalette::Window;
+#endif /* TILEQT_QT_VERSION_4 */
   QColor colour;
   for (int i = 1; i < objc; ++i) {
     if (Tcl_GetIndexFromObj(interp, objv[i], (const char **) Methods,
@@ -101,9 +117,11 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
       Tcl_MutexUnlock(&tileqtMutex); return TCL_ERROR;
     }
     switch ((enum methods) index) {
-      case STT_ACTIVE:          {colours = qApp->palette().active();   break;}
-      case STT_DISABLED:        {colours = qApp->palette().disabled(); break;}
-      case STT_INACTIVE:        {colours = qApp->palette().inactive(); break;}
+#ifdef TILEQT_QT_VERSION_3
+      case STT_NORMAL:
+      case STT_ACTIVE:          {colours = palette.active();           break;}
+      case STT_DISABLED:        {colours = palette.disabled();         break;}
+      case STT_INACTIVE:        {colours = palette.inactive();         break;}
       case CLR_background:      {colour = colours.background();        break;}
       case CLR_foreground:      {colour = colours.foreground();        break;}
       case CLR_button:          {colour = colours.button();            break;}
@@ -111,6 +129,7 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
       case CLR_dark:            {colour = colours.dark();              break;}
       case CLR_mid:             {colour = colours.mid();               break;}
       case CLR_text:            {colour = colours.text();              break;}
+      case CLR_alternatebase:
       case CLR_base:            {colour = colours.base();              break;}
       case CLR_midlight:        {colour = colours.midlight();          break;}
       case CLR_brightText:      {colour = colours.brightText();        break;}
@@ -120,9 +139,39 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
       case CLR_highlightedText: {colour = colours.highlightedText();   break;}
       case CLR_link:            {colour = colours.link();              break;}
       case CLR_linkVisited:     {colour = colours.linkVisited();       break;}
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+      case STT_NORMAL:          {colours = QPalette::Normal;           break;}
+      case STT_ACTIVE:          {colours = QPalette::Active;           break;}
+      case STT_DISABLED:        {colours = QPalette::Disabled;         break;}
+      case STT_INACTIVE:        {colours = QPalette::Inactive;         break;}
+      case CLR_background:      {role = QPalette::Window;              break;}
+      case CLR_foreground:      {role = QPalette::WindowText;          break;}
+      case CLR_button:          {role = QPalette::Button;              break;}
+      case CLR_light:           {role = QPalette::Light;               break;}
+      case CLR_dark:            {role = QPalette::Dark;                break;}
+      case CLR_mid:             {role = QPalette::Mid;                 break;}
+      case CLR_text:            {role = QPalette::Text;                break;}
+      case CLR_base:            {role = QPalette::Base;                break;}
+      case CLR_alternatebase:   {role = QPalette::AlternateBase;       break;}
+      case CLR_midlight:        {role = QPalette::Midlight;            break;}
+      case CLR_brightText:      {role = QPalette::BrightText;          break;}
+      case CLR_buttonText:      {role = QPalette::ButtonText;          break;}
+      case CLR_shadow:          {role = QPalette::Shadow;              break;}
+      case CLR_highlight:       {role = QPalette::Highlight;           break;}
+      case CLR_highlightedText: {role = QPalette::HighlightedText;     break;}
+      case CLR_link:            {role = QPalette::Link;                break;}
+      case CLR_linkVisited:     {role = QPalette::LinkVisited;         break;}
+#endif /* TILEQT_QT_VERSION_4 */
     }
   }
+#ifdef TILEQT_QT_VERSION_3                    
   Tcl_SetResult(interp, (char *) colour.name().ascii(), TCL_VOLATILE);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+  colour = palette.color(colours, role);
+  Tcl_SetResult(interp, (char *) colour.name().toUtf8().data(), TCL_VOLATILE);
+#endif /* TILEQT_QT_VERSION_4 */
   Tcl_MutexUnlock(&tileqtMutex);
   return TCL_OK;
 }; /* Tileqt_ThemeColour */
@@ -157,6 +206,7 @@ int Tileqt_SetPalette(ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   }
   Tcl_MutexLock(&tileqtMutex);
+#ifdef TILEQT_QT_VERSION_3
   QColor kde34Background( 239, 239, 239 );
   QColor kde34Blue( 103,141,178 );
 
@@ -264,6 +314,7 @@ int Tileqt_SetPalette(ClientData clientData, Tcl_Interp *interp,
   disabledgrp.setColor(QColorGroup::LinkVisited, visitedLink);
 
   QApplication::setPalette( QPalette(colgrp, disabledgrp, colgrp), true);
+#endif /* TILEQT_QT_VERSION_3 */
   Tcl_MutexUnlock(&tileqtMutex);
   return TCL_OK;
 }; /* Tileqt_SetPalette */
@@ -276,8 +327,14 @@ int Tileqt_AvailableStyles(ClientData clientData, Tcl_Interp *interp,
     QStringList styles = QStyleFactory::keys();
     Tcl_Obj* stylesObj = Tcl_NewListObj(0, NULL);
     for (QStringList::Iterator it = styles.begin(); it != styles.end(); ++it ) {
-        Tcl_ListObjAppendElement(interp, stylesObj,
-                        Tcl_NewStringObj((*it).utf8(), -1));
+        Tcl_ListObjAppendElement(interp, stylesObj, Tcl_NewStringObj(
+#ifdef TILEQT_QT_VERSION_3                    
+                                 (*it).utf8()
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+                                 (*it).toUtf8().data()
+#endif /* TILEQT_QT_VERSION_4 */
+                                  , -1));
     }
     Tcl_SetObjResult(interp, stylesObj);
   } else {
@@ -301,8 +358,15 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
     //qApp->setStyle(style);
     /* Is this style the qApp style? */
     if (wc->TileQt_Style_Owner) todelete = wc->TileQt_Style;
+
+#ifdef TILEQT_QT_VERSION_3                    
     if (strcmp(qApp->style().name(), str) == 0) {
       wc->TileQt_Style = &(qApp->style());
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4                    
+    if (qApp->style()->objectName() == style) {
+      wc->TileQt_Style = qApp->style();
+#endif /* TILEQT_QT_VERSION_4 */
       wc->TileQt_Style_Owner = false;
     } else {
       wc->TileQt_Style = QStyleFactory::create(style);
@@ -314,13 +378,20 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
     wc->TileQt_QComboBox_RO_Widget->setStyle(wc->TileQt_Style);
     wc->TileQt_QWidget_WidgetParent->setStyle(wc->TileQt_Style);
     wc->TileQt_QWidget_Widget->setStyle(wc->TileQt_Style);
+#ifdef TILEQT_QT_VERSION_3
     wc->TileQt_QWidget_Widget->polish();
+#endif /* TILEQT_QT_VERSION_3 */
     wc->TileQt_QSlider_Hor_Widget->setStyle(wc->TileQt_Style);
     wc->TileQt_QSlider_Ver_Widget->setStyle(wc->TileQt_Style);
     wc->TileQt_QProgressBar_Hor_Widget->setStyle(wc->TileQt_Style);
     wc->TileQt_QTabBar_Widget->setStyle(wc->TileQt_Style);
-    wc->TileQt_QPixmap_BackgroundTile =
-                       (wc->TileQt_QWidget_Widget)->paletteBackgroundPixmap();
+    wc->TileQt_QPixmap_BackgroundTile = 
+#ifdef TILEQT_QT_VERSION_3
+                     (wc->TileQt_QWidget_Widget)->paletteBackgroundPixmap();
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+                     (wc->TileQt_QWidget_Widget)->palette().window().texture();
+#endif /* TILEQT_QT_VERSION_4 */
     wc->TileQt_Style->polish(wc->TileQt_QWidget_Widget);
     if (todelete) delete todelete;
 #if 0
@@ -348,7 +419,12 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
   Tcl_MutexUnlock(&tileqtMutex);
   /* Save the name of the current theme... */
   Tcl_SetVar(interp, "tile::theme::tileqt::theme",
+#ifdef TILEQT_QT_VERSION_3                    
              wc->TileQt_Style->name(), TCL_GLOBAL_ONLY);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4                    
+             wc->TileQt_Style->objectName().toUtf8().data(), TCL_GLOBAL_ONLY);
+#endif /* TILEQT_QT_VERSION_4 */
   return TCL_OK;
 }; /* Tileqt_SetStyle */
 
@@ -389,6 +465,7 @@ Tileqt_Init(Tcl_Interp *interp)
     TileQt_Init_Button(interp, wc, themePtr);
     TileQt_Init_CheckButton(interp, wc, themePtr);
     TileQt_Init_RadioButton(interp, wc, themePtr);
+#ifdef TILEQT_QT_VERSION_3
     TileQt_Init_Menubutton(interp, wc, themePtr);
     TileQt_Init_ToolButton(interp, wc, themePtr);
     TileQt_Init_Entry(interp, wc, themePtr);
@@ -399,6 +476,7 @@ Tileqt_Init(Tcl_Interp *interp)
     TileQt_Init_TreeView(interp, wc, themePtr);
     TileQt_Init_Progress(interp, wc, themePtr);
     TileQt_Init_Scale(interp, wc, themePtr);
+#endif /* TILEQT_QT_VERSION_3 */
     //TileQt_Init_Arrows(interp, wc, themePtr);
     Tcl_CreateExitHandler(&TileQt_ExitProc, 0);
     //Tcl_CreateThreadExitHandler(&TileQt_ExitProc, 0);
@@ -423,7 +501,12 @@ Tileqt_Init(Tcl_Interp *interp)
     /* Save the name of the current theme... */
     strcpy(tmpScript, "namespace eval tile::theme::tileqt { variable theme ");
     if (qApp) {
+#ifdef TILEQT_QT_VERSION_3                    
       strcat(tmpScript, qApp->style().name());
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4                    
+      strcat(tmpScript, qApp->style()->objectName().toUtf8().data());
+#endif /* TILEQT_QT_VERSION_4 */
     } else {
       strcat(tmpScript, "{}");
     }

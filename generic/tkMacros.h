@@ -1,4 +1,5 @@
-#include "tk.h"
+#ifndef __TILEQT_TK_MACROS
+#define __TILEQT_TK_MACROS
 
 typedef struct {
      long flags;
@@ -56,3 +57,5 @@ typedef struct Tk_FakeWmInfo {
 
 
 #define Tk_RealToplevelWindow(tkwin)	((((Tk_FakeWmInfo *) (((Tk_FakeWin *) (tkwin))->dummy16))->wrapperPtr)->window)
+
+#endif /* __TILEQT_TK_MACROS */

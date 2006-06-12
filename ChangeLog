@@ -1,3 +1,20 @@
+2006-12-06  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * generic/tileQt_QtHeaders.h:
+        * generic/tileQt_Utilities.h:
+        * generic/tileQt_Utilities.cpp:
+        * generic/tkMacros.h:
+        * generic/tileQt_QApp.cpp:
+        * generic/tileQt_Init.c:
+        * generic/tileQt_Background.cpp:
+        * generic/tileQt_Button.cpp:
+        * generic/tileQt_CheckButton.cpp:
+        * generic/tileQt_RadioButton.cpp: Initial support for Qt 4.x.
+        Now, button, checkbutton & radiobutton can be compiled to use either
+        Qt 3.x or Qt 4.x for drawing.
+        
+        * library/tileqt.tcl: Changed padding for TCombobox & TEntry. Bug
+        reported by Csaba Nemethi.
+        
 2006-04-06  Georgios Petasis  <petasis@iit.demokritos.gr>
         * tcl-config: Added support for finding Qt 4.x.
         

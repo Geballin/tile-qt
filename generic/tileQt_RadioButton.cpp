@@ -23,6 +23,7 @@
  */
 static Ttk_StateTable radiobutton_statemap[] =
 {
+#ifdef TILEQT_QT_VERSION_3
     {QStyle::Style_Default|QStyle::Style_On,
                            TTK_STATE_DISABLED|TTK_STATE_SELECTED, 0},
     {QStyle::Style_Enabled|QStyle::Style_Down|QStyle::Style_On,
@@ -38,6 +39,24 @@ static Ttk_StateTable radiobutton_statemap[] =
     {QStyle::Style_Enabled|QStyle::Style_MouseOver|QStyle::Style_Off,
                            TTK_STATE_ACTIVE, TTK_STATE_SELECTED},
     {QStyle::Style_Enabled|QStyle::Style_Off, 0,0 }
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    {QStyle::State_None|QStyle::State_On,
+                           TTK_STATE_DISABLED|TTK_STATE_SELECTED, 0},
+    {QStyle::State_Enabled|QStyle::State_Sunken|QStyle::State_On,
+                           TTK_STATE_PRESSED|TTK_STATE_SELECTED, 0},
+    {QStyle::State_Enabled|QStyle::State_MouseOver|QStyle::State_On,
+                           TTK_STATE_ACTIVE|TTK_STATE_SELECTED, 0},
+    {QStyle::State_Enabled|QStyle::State_On,
+                           TTK_STATE_SELECTED, 0},
+    {QStyle::State_None|QStyle::State_Off,
+                           TTK_STATE_DISABLED, TTK_STATE_SELECTED},
+    {QStyle::State_Enabled|QStyle::State_Sunken|QStyle::State_Off,
+                           TTK_STATE_PRESSED, TTK_STATE_SELECTED},
+    {QStyle::State_Enabled|QStyle::State_MouseOver|QStyle::State_Off,
+                           TTK_STATE_ACTIVE, TTK_STATE_SELECTED},
+    {QStyle::State_Enabled|QStyle::State_Off, 0, 0}
+#endif /* TILEQT_QT_VERSION_4 */
 };
 
 typedef struct {
@@ -55,8 +74,10 @@ static void RadioButtonIndicatorElementGeometry(
     if (qApp == NULL) NULL_Q_APP;
     NULL_PROXY_WIDGET(TileQt_Style);
     Tcl_MutexLock(&tileqtMutex);
-    *widthPtr  = wc->TileQt_Style->pixelMetric(QStyle::PM_ExclusiveIndicatorWidth);
-    *heightPtr = wc->TileQt_Style->pixelMetric(QStyle::PM_ExclusiveIndicatorHeight);
+    *widthPtr  = wc->TileQt_Style->pixelMetric(
+                                   QStyle::PM_ExclusiveIndicatorWidth);
+    *heightPtr = wc->TileQt_Style->pixelMetric(
+                                   QStyle::PM_ExclusiveIndicatorHeight);
     Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_MakePadding(0, 0, RadioButtonHorizontalPadding, 0);
 }
@@ -72,21 +93,20 @@ static void RadioButtonIndicatorElementDraw(
     QPainter     painter(&pixmap);
     QRadioButton button(wc->TileQt_QWidget_Widget);
     button.resize(b.width - RadioButtonHorizontalPadding, b.height);
+    TILEQT_PAINT_BACKGROUND(b.width, b.height);
+#ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags = Ttk_StateTableLookup(radiobutton_statemap, state);
-    if (wc->TileQt_QPixmap_BackgroundTile &&
-        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
-        painter.fillRect(0, 0, b.width, b.height,
-                         QBrush(QColor(255,255,255),
-                         *wc->TileQt_QPixmap_BackgroundTile));
-    } else {
-        painter.fillRect(0, 0, b.width, b.height,
-                         qApp->palette().active().background());
-    }
-
-    // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
     wc->TileQt_Style->drawControl(QStyle::CE_RadioButton, &painter, &button,
           QRect(0, 0, b.width - RadioButtonHorizontalPadding, b.height),
           qApp->palette().active(), sflags);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    QStyleOptionButton option;
+    option.initFrom(&button); option.state |= 
+      (QStyle::StateFlag) Ttk_StateTableLookup(radiobutton_statemap, state);
+    wc->TileQt_Style->drawControl(QStyle::CE_RadioButton, &option,
+                                  &painter, &button);
+#endif /* TILEQT_QT_VERSION_4 */
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);
@@ -131,24 +151,27 @@ static void RadioButtonBorderElementDraw(
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    QRadioButton button(wc->TileQt_QWidget_Widget);	
+    QRadioButton button(wc->TileQt_QWidget_Widget);
+#ifdef TILEQT_QT_VERSION_3
     button.setBackgroundOrigin(QWidget::ParentOrigin);
+#endif /* TILEQT_QT_VERSION_3 */
     button.resize(b.width, b.height);
     //button.setGeometry(b.x, b.y, b.width, b.height);
-    QStyle::SFlags sflags = Ttk_StateTableLookup(radiobutton_statemap, state);
-    if (wc->TileQt_QPixmap_BackgroundTile &&
-        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
-        painter.fillRect(0, 0, b.width, b.height,
-                         QBrush(QColor(255,255,255),
-                         *wc->TileQt_QPixmap_BackgroundTile));
-    } else {
-        painter.fillRect(0, 0, b.width, b.height,
-                         qApp->palette().active().background());
-    }
+    TILEQT_PAINT_BACKGROUND(b.width, b.height);
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    wc->TileQt_Style->drawControl(QStyle::CE_RadioButtonLabel, &painter, &button,
+#ifdef TILEQT_QT_VERSION_3
+    QStyle::SFlags sflags = Ttk_StateTableLookup(radiobutton_statemap, state);
+    wc->TileQt_Style->drawControl(QStyle::CE_RadioButtonLabel, &painter,&button,
           QRect(0, 0, b.width, b.height),
           qApp->palette().active(), sflags);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    QStyleOptionButton option;
+    option.initFrom(&button); option.state |= 
+      (QStyle::StateFlag) Ttk_StateTableLookup(radiobutton_statemap, state);
+    wc->TileQt_Style->drawControl(QStyle::CE_RadioButtonLabel, &option,
+                                  &painter, &button);
+#endif /* TILEQT_QT_VERSION_4 */
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.x);
     /* Because we have drawn only the label of the radio button, the drawn area
