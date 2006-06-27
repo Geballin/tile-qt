@@ -21,13 +21,13 @@ PKG_OBJECTS	= \
     tileQt_RadioButton.$(OBJEXT) \
     tileQt_Menubutton.$(OBJEXT) \
     tileQt_ToolButton.$(OBJEXT) \
-    tileQt_Scrollbar.$(OBJEXT) \
     tileQt_Entry.$(OBJEXT) \
     tileQt_Combobox.$(OBJEXT) \
     tileQt_Labelframe.$(OBJEXT) \
+    tileQt_Scrollbar.$(OBJEXT) \
     tileQt_Notebook.$(OBJEXT) \
-    tileQt_Progress.$(OBJEXT) \
     tileQt_TreeView.$(OBJEXT) \
+    tileQt_Progress.$(OBJEXT) \
     tileQt_Scale.$(OBJEXT) \
     tileQt_Arrows.$(OBJEXT)
     

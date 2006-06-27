@@ -23,8 +23,14 @@
  */
 static Ttk_StateTable labelframe_statemap[] =
 {
+#ifdef TILEQT_QT_VERSION_3
     {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0 },
     {QStyle::Style_Enabled,                         0, 0 }
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    {QStyle::State_None,                            TTK_STATE_DISABLED, 0 },
+    {QStyle::State_Enabled,                         0, 0 }
+#endif /* TILEQT_QT_VERSION_4 */
 };
 
 typedef struct {
@@ -52,22 +58,25 @@ static void LabelframeBorderElementDraw(
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
+    TILEQT_PAINT_BACKGROUND(b.width, b.height);
+#ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags = Ttk_StateTableLookup(labelframe_statemap, state);
     sflags |= QStyle::Style_Sunken;
-    if (wc->TileQt_QPixmap_BackgroundTile &&
-        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
-        painter.fillRect(0, 0, b.width, b.height,
-                         QBrush(QColor(255,255,255),
-                         *wc->TileQt_QPixmap_BackgroundTile));
-    } else {
-        painter.fillRect(0, 0, b.width, b.height,
-                         qApp->palette().active().background());
-    }
-    // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
     wc->TileQt_Style->drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
           QStyleOption(/*lineWidth*/1, /*midLineWidth*/0
                        /*frameShape*//*frameShadow*/));
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    QStyleOptionFrame option;
+    option.rect = QRect(0, 0, b.width, b.height);
+    option.lineWidth = 1;
+    option.state |= 
+      (QStyle::StateFlag) Ttk_StateTableLookup(labelframe_statemap, state);
+    wc->TileQt_Style->drawPrimitive(QStyle::PE_FrameGroupBox, &option,
+                                    &painter);
+#endif /* TILEQT_QT_VERSION_4 */
+    // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);

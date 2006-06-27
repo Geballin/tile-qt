@@ -23,6 +23,7 @@
  */
 static Ttk_StateTable toolbutton_statemap[] =
 {
+#ifdef TILEQT_QT_VERSION_3
     {QStyle::Style_Default                          , TTK_STATE_DISABLED, 0},
     {QStyle::Style_Enabled | QStyle::Style_Down     , TTK_STATE_SELECTED, 0},
     {QStyle::Style_Enabled | QStyle::Style_Down     , TTK_STATE_PRESSED, 0},
@@ -30,6 +31,16 @@ static Ttk_StateTable toolbutton_statemap[] =
     {QStyle::Style_Enabled | QStyle::Style_HasFocus , TTK_STATE_FOCUS, 0},
     {QStyle::Style_Enabled | QStyle::Style_Active   , TTK_STATE_ALTERNATE, 0},
     {QStyle::Style_Enabled, 0, 0 }
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    {QStyle::State_None                             , TTK_STATE_DISABLED, 0},
+    {QStyle::State_Enabled | QStyle::State_Sunken   , TTK_STATE_SELECTED, 0},
+    {QStyle::State_Enabled | QStyle::State_Sunken   , TTK_STATE_PRESSED, 0},
+    {QStyle::State_Enabled | QStyle::State_Raised   , TTK_STATE_ACTIVE, 0},
+    {QStyle::State_Enabled | QStyle::State_HasFocus , TTK_STATE_FOCUS, 0},
+    {QStyle::State_Enabled | QStyle::State_Active   , TTK_STATE_ALTERNATE, 0},
+    {QStyle::State_Enabled, 0, 0 }
+#endif /* TILEQT_QT_VERSION_4 */
 };
 
 typedef struct {
@@ -47,7 +58,7 @@ static void ToolButtonElementGeometry(
     //QToolButton button(TileQt_QWidget_Widget);
     //*widthPtr   = button.width();
     //*heightPtr  = button.height();
-    *paddingPtr = Ttk_UniformPadding(2);
+    *paddingPtr = Ttk_UniformPadding(0);
 }
 
 static void ToolButtonElementDraw(
@@ -60,14 +71,11 @@ static void ToolButtonElementDraw(
     QPixmap     pixmap(b.width, b.height);
     QPainter    painter(&pixmap);
     QToolButton button(wc->TileQt_QWidget_Widget);	
+#ifdef TILEQT_QT_VERSION_3
     button.setBackgroundOrigin(QWidget::ParentOrigin);
+#endif /* TILEQT_QT_VERSION_3 */
     button.setGeometry(b.x, b.y, b.width, b.height);
-    // QPoint p = button.backgroundOffset();
-    // QPoint pos = button.pos();
     // TileQt_StateInfo(state, tkwin);
-    QStyle::SFlags sflags = Ttk_StateTableLookup(toolbutton_statemap, state);
-    QStyle::SCFlags scflags = QStyle::SC_ToolButton;
-    QStyle::SCFlags activeflags = QStyle::SC_None;
     /* Handle buggy styles, that do not check flags but check widget states. */
     //if (state & TTK_STATE_ALTERNATE) {
     //    button.setDefault(true);
@@ -76,25 +84,28 @@ static void ToolButtonElementDraw(
     //}
     if (state & TTK_STATE_PRESSED) {
         button.setDown(true);
-        activeflags |= QStyle::SC_ToolButton;
     } else {
         button.setDown(false);
     }
-    // printf("state=%d, qt style=%d\n", state,
-    //        Ttk_StateTableLookup(toolbutton_statemap, state));
-    if (wc->TileQt_QPixmap_BackgroundTile &&
-        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) {
-        painter.fillRect(0, 0, b.width, b.height,
-                         QBrush(QColor(255,255,255),
-                         *wc->TileQt_QPixmap_BackgroundTile));
-    } else {
-        painter.fillRect(0, 0, b.width, b.height,
-                         qApp->palette().active().background());
-    }
-
+    TILEQT_PAINT_BACKGROUND(b.width, b.height);
+#ifdef TILEQT_QT_VERSION_3
+    QStyle::SFlags sflags = Ttk_StateTableLookup(toolbutton_statemap, state);
+    QStyle::SCFlags scflags = QStyle::SC_ToolButton;
+    QStyle::SCFlags activeflags = QStyle::SC_None;
+    if (state & TTK_STATE_PRESSED) activeflags |= QStyle::SC_ToolButton;
     wc->TileQt_Style->drawComplexControl(QStyle::CC_ToolButton, &painter,
           &button, QRect(0, 0, b.width, b.height), button.colorGroup(), sflags,
           scflags, activeflags);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    QStyleOptionToolButton option;
+    option.initFrom(&button); option.state |= 
+      (QStyle::StateFlag) Ttk_StateTableLookup(toolbutton_statemap, state);
+    wc->TileQt_Style->drawComplexControl(QStyle::CC_ToolButton, &option,
+                                  &painter, &button);
+#endif /* TILEQT_QT_VERSION_4 */
+    // printf("state=%d, qt style=%d\n", state,
+    //        Ttk_StateTableLookup(toolbutton_statemap, state));
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);

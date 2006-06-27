@@ -198,7 +198,7 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -button] \
          selected        [currentThemeColour -active   -button] \
       ]
-      style default TCombobox    -padding {3 4 3 3}
+      style default TCombobox    -padding {1 2 1 1}
       
       style map TEntry -foreground [list \
          active          [currentThemeColour -active   -text] \
@@ -287,7 +287,7 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -button] \
          selected        [currentThemeColour -active   -button] \
       ]
-      style default Toolbutton   ;#-padding {4 4}
+      style default Toolbutton -padding {2 2 2 2}
     };# style theme settings tileqt
   };# updateStyles
 

@@ -74,8 +74,17 @@ static void CheckButtonIndicatorElementGeometry(
     if (qApp == NULL) NULL_Q_APP;
     NULL_PROXY_WIDGET(TileQt_Style);
     Tcl_MutexLock(&tileqtMutex);
+#ifdef TILEQT_QT_VERSION_3
     *widthPtr  = wc->TileQt_Style->pixelMetric(QStyle::PM_IndicatorWidth);
     *heightPtr = wc->TileQt_Style->pixelMetric(QStyle::PM_IndicatorHeight);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    QStyleOptionButton option;
+    QRect rc = wc->TileQt_Style->subElementRect(QStyle::SE_CheckBoxIndicator,
+                   &option);
+    *widthPtr  = rc.width();
+    *heightPtr = rc.height();
+#endif /* TILEQT_QT_VERSION_4 */
     Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_MakePadding(0, 0, CheckButtonHorizontalPadding, 0);
 }

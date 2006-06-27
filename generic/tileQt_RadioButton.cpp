@@ -74,10 +74,21 @@ static void RadioButtonIndicatorElementGeometry(
     if (qApp == NULL) NULL_Q_APP;
     NULL_PROXY_WIDGET(TileQt_Style);
     Tcl_MutexLock(&tileqtMutex);
+#ifdef TILEQT_QT_VERSION_3
     *widthPtr  = wc->TileQt_Style->pixelMetric(
                                    QStyle::PM_ExclusiveIndicatorWidth);
     *heightPtr = wc->TileQt_Style->pixelMetric(
                                    QStyle::PM_ExclusiveIndicatorHeight);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    /* pixelMetric is buggy in Qt 4.x. It returns 12x12 while the indicator is
+     * 13x13! */
+    QStyleOptionButton option;
+    QRect rc = wc->TileQt_Style->subElementRect(QStyle::SE_RadioButtonIndicator,
+                   &option);
+    *widthPtr  = rc.width();
+    *heightPtr = rc.height();
+#endif /* TILEQT_QT_VERSION_4 */
     Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_MakePadding(0, 0, RadioButtonHorizontalPadding, 0);
 }

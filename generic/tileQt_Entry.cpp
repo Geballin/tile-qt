@@ -23,11 +23,20 @@
  */
 static Ttk_StateTable entry_statemap[] =
 {
+#ifdef TILEQT_QT_VERSION_3
     {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0 },
     {QStyle::Style_Enabled|QStyle::Style_NoChange,  TTK_STATE_READONLY, 0 },
     {QStyle::Style_Enabled|QStyle::Style_HasFocus,  TTK_STATE_FOCUS, 0 },
     {QStyle::Style_Enabled|QStyle::Style_MouseOver, TTK_STATE_ACTIVE, 0 },
     {QStyle::Style_Enabled,                         0, 0 }
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    {QStyle::State_None,                            TTK_STATE_DISABLED, 0 },
+    {QStyle::State_Enabled|QStyle::State_NoChange,  TTK_STATE_READONLY, 0 },
+    {QStyle::State_Enabled|QStyle::State_HasFocus,  TTK_STATE_FOCUS, 0 },
+    {QStyle::State_Enabled|QStyle::State_MouseOver, TTK_STATE_ACTIVE, 0 },
+    {QStyle::State_Enabled,                         0, 0 }
+#endif /* TILEQT_QT_VERSION_4 */
 };
 
 typedef struct {
@@ -55,13 +64,22 @@ static void EntryFieldElementDraw(
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
+    TILEQT_PAINT_BACKGROUND(b.width, b.height);
+#ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags = Ttk_StateTableLookup(entry_statemap, state);
-    painter.fillRect(0, 0, b.width, b.height,
-                     qApp->palette().active().base());
-    // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
     wc->TileQt_Style->drawPrimitive(QStyle::PE_PanelLineEdit, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
           QStyleOption(1,1));
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    QStyleOptionFrame option;
+    option.rect = QRect(0, 0, b.width, b.height);
+    option.lineWidth = 1;
+    option.state |= 
+      (QStyle::StateFlag) Ttk_StateTableLookup(entry_statemap, state);
+    wc->TileQt_Style->drawPrimitive(QStyle::PE_PanelLineEdit, &option,
+                                    &painter);
+#endif /* TILEQT_QT_VERSION_4 */
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);

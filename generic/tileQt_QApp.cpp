@@ -119,6 +119,9 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp) {
 #ifdef TILEQT_QT_VERSION_3
   wc->TileQt_QWidget_Widget->polish();
 #endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+  wc->TileQt_QWidget_Widget->ensurePolished();
+#endif /* TILEQT_QT_VERSION_4 */
 #ifdef TILEQT_QT_VERSION_3
   wc->TileQt_QSlider_Hor_Widget       = new QSlider(Qt::Horizontal,
                                         wc->TileQt_QWidget_Widget, "hslider");
@@ -138,6 +141,10 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp) {
   wc->TileQt_QProgressBar_Hor_Widget  = new QProgressBar;
   wc->TileQt_QProgressBar_Hor_Widget->setRange (0, 100);
   wc->TileQt_QProgressBar_Hor_Widget->setTextVisible(false);
+  wc->TileQt_QSlider_Hor_Widget->setRange (0, 100);
+  wc->TileQt_QSlider_Ver_Widget->setRange (0, 100);
+  wc->TileQt_QSlider_Hor_Widget->ensurePolished();
+  wc->TileQt_QSlider_Ver_Widget->ensurePolished();
 #endif /* TILEQT_QT_VERSION_4 */
 
   wc->TileQt_QTabBar_Widget           = 
@@ -152,9 +159,12 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp) {
 #ifdef TILEQT_QT_VERSION_3
   wc->TileQt_QScrollBar_Widget->setMinValue(0);
   wc->TileQt_QScrollBar_Widget->setMaxValue(65535);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+  wc->TileQt_QScrollBar_Widget->setRange(0, 65535);
+#endif /* TILEQT_QT_VERSION_4 */
   wc->TileQt_QScrollBar_Widget->setValue(65535);
   wc->TileQt_QScrollBar_Widget->setPageStep(1);
-#endif /* TILEQT_QT_VERSION_3 */
   /* Register a Client Message handler, so as to catch style changes... */
   Atom TileQt_KDE_DESKTOP_WINDOW = XInternAtom(wc->TileQt_MainDisplay,
                                    "KDE_DESKTOP_WINDOW" , false);

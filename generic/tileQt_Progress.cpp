@@ -57,21 +57,39 @@ static void ProgressTroughElementDraw(
     Tcl_MutexLock(&tileqtMutex);
     QProgressBar& widget = *wc->TileQt_QProgressBar_Hor_Widget;
     if (orient == TTK_ORIENT_HORIZONTAL) {
+#ifdef TILEQT_QT_VERSION_3
       widget.resize(b.width, b.height);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+      widget.setOrientation(Qt::Horizontal);
+#endif /* TILEQT_QT_VERSION_4 */
     } else {
+#ifdef TILEQT_QT_VERSION_3
       widget.resize(b.height, b.width);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+      widget.setOrientation(Qt::Vertical);
+#endif /* TILEQT_QT_VERSION_4 */
     }
     widget.reset();
+#ifdef TILEQT_QT_VERSION_3
     widget.setCenterIndicator(false);
     widget.setPercentageVisible(false);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    widget.resize(b.width, b.height);
+    widget.setTextVisible(false);
+#endif /* TILEQT_QT_VERSION_4 */
     if (state & TTK_STATE_DISABLED) widget.setEnabled(false);
     QPixmap pixmap = QPixmap::grabWidget(&widget);
+#ifdef TILEQT_QT_VERSION_3
     if (orient == TTK_ORIENT_VERTICAL) {
-      // Qt does not support vertical progress bars. Rotate it :-)
+      // Qt 3.x does not support vertical progress bars. Rotate it :-)
       QWMatrix matrix;
       matrix.rotate(270);
       pixmap = pixmap.xForm(matrix);
     }
+#endif /* TILEQT_QT_VERSION_3 */
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);
@@ -122,6 +140,9 @@ static void ProgressBarElementGeometry(
 
     Tcl_MutexLock(&tileqtMutex);
     QProgressBar& widget = *wc->TileQt_QProgressBar_Hor_Widget;
+#ifdef TILEQT_QT_VERSION_4
+    widget.setOrientation(Qt::Horizontal);
+#endif /* TILEQT_QT_VERSION_4 */
     if (orient == TTK_ORIENT_HORIZONTAL) {
       *widthPtr   = length/4 /*widget.sizeHint().width()*/;
       *heightPtr  = widget.sizeHint().height();
@@ -155,49 +176,86 @@ static void ProgressBarElementDraw(
     QProgressBar& widget = *wc->TileQt_QProgressBar_Hor_Widget;
     double percentage = value/maximum*100.0;
     if (orient == TTK_ORIENT_HORIZONTAL) {
+#ifdef TILEQT_QT_VERSION_4
+      widget.setOrientation(Qt::Horizontal);
+#endif /* TILEQT_QT_VERSION_4 */
       if (!determinate) {
         widget.resize(b.width, height);
+#ifdef TILEQT_QT_VERSION_3
         widget.setTotalSteps(0);
+#endif /* TILEQT_QT_VERSION_3 */
         percentage = 1.0;
         width = b.width;
         dest_x = b.x;
       } else {
         widget.resize(width, height);
+#ifdef TILEQT_QT_VERSION_3
         widget.setTotalSteps(100);
+#endif /* TILEQT_QT_VERSION_3 */
       }
     } else {
+#ifdef TILEQT_QT_VERSION_4
+      widget.setOrientation(Qt::Vertical);
+#endif /* TILEQT_QT_VERSION_4 */
       if (!determinate) {
+#ifdef TILEQT_QT_VERSION_3
         widget.resize(b.height, width);
         widget.setTotalSteps(0);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+        widget.resize(b.width, height);
+#endif /* TILEQT_QT_VERSION_4 */
         percentage = 1.0;
         height = b.height;
         dest_y = b.y;
       } else {
+#ifdef TILEQT_QT_VERSION_3
         widget.resize(height, width);
         widget.setTotalSteps(100);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+        widget.resize(width, height);
+#endif /* TILEQT_QT_VERSION_4 */
       }
     }
+#ifdef TILEQT_QT_VERSION_3
     widget.setProgress((int)(percentage));
+    widget.setFrameStyle(QFrame::NoFrame);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    widget.setValue((int)(percentage));
+#endif /* TILEQT_QT_VERSION_4 */
     if (state & TTK_STATE_DISABLED) {
       widget.setEnabled(false);
     } else {
       widget.setEnabled(true);
     }
     if (determinate) {
+#ifdef TILEQT_QT_VERSION_3
       widget.setCenterIndicator(true);
       widget.setPercentageVisible(true);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+      widget.setTextVisible(true);
+#endif /* TILEQT_QT_VERSION_4 */
     } else {
+#ifdef TILEQT_QT_VERSION_3
       widget.setCenterIndicator(false);
       widget.setPercentageVisible(false);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+      widget.setTextVisible(false);
+#endif /* TILEQT_QT_VERSION_4 */
     }
-    widget.setFrameStyle(QFrame::NoFrame);
     QPixmap pixmap = QPixmap::grabWidget(&widget);
+#ifdef TILEQT_QT_VERSION_3
     if (orient == TTK_ORIENT_VERTICAL) {
-      // Qt does not support vertical progress bars. Rotate it :-)
+      // Qt 3.x does not support vertical progress bars. Rotate it :-)
       QWMatrix matrix;
       matrix.rotate(270);
       pixmap = pixmap.xForm(matrix);
     }
+#endif /* TILEQT_QT_VERSION_3 */
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                            src_x, src_y, width, height, dest_x, dest_y);
     Tcl_MutexUnlock(&tileqtMutex);

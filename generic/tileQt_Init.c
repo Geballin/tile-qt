@@ -465,18 +465,18 @@ Tileqt_Init(Tcl_Interp *interp)
     TileQt_Init_Button(interp, wc, themePtr);
     TileQt_Init_CheckButton(interp, wc, themePtr);
     TileQt_Init_RadioButton(interp, wc, themePtr);
-#ifdef TILEQT_QT_VERSION_3
     TileQt_Init_Menubutton(interp, wc, themePtr);
     TileQt_Init_ToolButton(interp, wc, themePtr);
     TileQt_Init_Entry(interp, wc, themePtr);
     TileQt_Init_Combobox(interp, wc, themePtr);
     TileQt_Init_Labelframe(interp, wc, themePtr);
+#ifdef TILEQT_QT_VERSION_3
     TileQt_Init_Scrollbar(interp, wc, themePtr);
     TileQt_Init_Notebook(interp, wc, themePtr);
-    TileQt_Init_TreeView(interp, wc, themePtr);
-    TileQt_Init_Progress(interp, wc, themePtr);
     TileQt_Init_Scale(interp, wc, themePtr);
 #endif /* TILEQT_QT_VERSION_3 */
+    TileQt_Init_TreeView(interp, wc, themePtr);
+    TileQt_Init_Progress(interp, wc, themePtr);
     //TileQt_Init_Arrows(interp, wc, themePtr);
     Tcl_CreateExitHandler(&TileQt_ExitProc, 0);
     //Tcl_CreateThreadExitHandler(&TileQt_ExitProc, 0);
