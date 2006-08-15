@@ -14,6 +14,7 @@
  */
 
 #include "tileQt_QtHeaders.h"
+#include "tileQt_Elements.h"
 
 #define NULL_Q_APP {printf("NULL qApp\n");fflush(NULL);return;}
 #define NULL_PROXY_WIDGET(widget) \
@@ -64,10 +65,11 @@ TCL_DECLARE_MUTEX(tileqtMutex);
 
 /* Helper Functions */
 #ifdef TILEQT_QT_VERSION_3
-extern QStyle::SFlags TileQt_TileStateToSFlags(unsigned int state);
+extern void TileQt_QtStateInfo(QStyle::SFlags, Tk_Window);
 #endif /* TILEQT_QT_VERSION_3 */
 extern void TileQt_StateInfo(int, Tk_Window);
 extern void TileQt_CopyQtPixmapOnToDrawable(QPixmap&, Drawable, Tk_Window,
                                             int, int, int, int, int, int);
 extern void TileQt_StoreStyleNameLowers(TileQt_WidgetCache *wc);
 extern bool TileQt_ThemeIs(TileQt_WidgetCache *wc, const char* name);
+extern unsigned int TileQt_StateTableLookup(Ttk_StateTable *, unsigned int);

@@ -168,7 +168,7 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -button] \
          selected        [currentThemeColour -active   -button] \
       ]
-      style default TButton      -width -11 -padding {4 4 4 4}
+      style default TButton      -width -11 -padding {2}
 
       style map TCheckbutton -foreground [list \
          active          [currentThemeColour -active   -buttonText] \

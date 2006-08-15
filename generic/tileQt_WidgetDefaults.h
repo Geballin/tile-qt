@@ -17,6 +17,7 @@
 #define DEFAULT_ARROW_SIZE "15"
 #define MIN_THUMB_SIZE 8
 #define BorderBorderWidth               "0"
+#define PushButtonUniformPadding        3
 #define RadioButtonHorizontalPadding    0
 #define CheckButtonHorizontalPadding    0
 #define EntryUniformPadding             0

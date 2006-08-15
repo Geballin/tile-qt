@@ -176,7 +176,7 @@ static void NotebookTabElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(notebook_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(notebook_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_TabBarTab, &painter,
           wc->TileQt_QTabBar_Widget, QRect(0, 0, width, height),
           qApp->palette().active(), sflags, QStyleOption(tab));
@@ -184,7 +184,7 @@ static void NotebookTabElementDraw(
 #ifdef TILEQT_QT_VERSION_4
     QStyleOption option;
     option.initFrom(wc->TileQt_QTabBar_Widget); option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(notebook_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(notebook_statemap, state);
     option.rect = QRect(0, 0, width, height);
     wc->TileQt_Style->drawControl(QStyle::CE_TabBarTab, &option,
                                   &painter, wc->TileQt_QTabBar_Widget);
@@ -257,7 +257,7 @@ static void NotebookClientElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(notebook_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(notebook_statemap, state);
     wc->TileQt_Style->drawPrimitive(QStyle::PE_PanelTabWidget, &painter,
             QRect(0, 0, b.width, b.height),
             qApp->palette().active(), sflags);
@@ -268,7 +268,7 @@ static void NotebookClientElementDraw(
     option.rect = QRect(0, 0, b.width, b.height);
     option.lineWidth = 1;
     option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(notebook_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(notebook_statemap, state);
     wc->TileQt_Style->drawPrimitive(QStyle::PE_FrameTabWidget, &option,
                                     &painter);
 #endif /* TILEQT_QT_VERSION_4 */

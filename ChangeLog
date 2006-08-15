@@ -1,3 +1,20 @@
+2006-15-08  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * generic/tileQt_Button.cpp:
+        * generic/tileQtNotebook.cpp: Use TileQt_QtStateInfo instead of
+        Ttk_StateTableLookup. Changes in TButton layout to support a focus ring.
+        (Bug reported by Mark Garvey <Mark.Garvey@bruker-biospin.de>)
+
+        * generic/tileQt_Utilities.h:
+        * generic/tileQt_Utilities.cpp: Added functions TileQt_QtStateInfo &
+        TileQt_StateTableLookup (as a custom Ttk_StateTableLookup). Also, fixed
+        TileQt_StateInfo to print all states, and not just one.
+
+        * generic/*.cpp: I have misanderstood the way
+        Ttk_StateTableLookup works, and probably this is the main reason for 
+        missing some effects on some widgets. This originated from discussions
+        with Mark Garvey <Mark.Garvey@bruker-biospin.de>, where buttons didn't
+        show a ring when they had focus.
+
 2006-27-06  Georgios Petasis  <petasis@iit.demokritos.gr>
         * generic/*.cpp: Completed port to Qt 4.x. Unfortunatelly, due to some
         Qt bugs, scrollbars, notebooks and sliders are not functional yet under
