@@ -39,6 +39,15 @@ static Ttk_StateTable notebook_statemap[] =
 #endif /* TILEQT_QT_VERSION_4 */
 };
 
+#ifdef TILEQT_QT_VERSION_3
+#define PM(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, \
+                                              wc->TileQt_QTabBar_Widget))
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+#define PM(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, 0, \
+                                              wc->TileQt_QTabBar_Widget))
+#endif /* TILEQT_QT_VERSION_4 */
+
 typedef struct {
 } NotebookTabElement;
 
@@ -53,44 +62,10 @@ static void NotebookTabElementGeometry(
 {
     if (qApp == NULL) NULL_Q_APP;
     NULL_PROXY_WIDGET(TileQt_QTabBar_Widget);
-    // Qt defines some tab-related pixel metrics in QStyle:
-    // PM_TabBarTabShiftHorizontal - horizontal pixel shift when a tab is selected.
-    // PM_TabBarTabShiftVertical - vertical pixel shift when a tab is selected.
-    // PM_TabBarBaseOverlap - number of pixels the tab bar overlaps the tab bar base.
-    // PM_TabBarBaseHeight - height of the area between the tab bar and the tab pages.
-    // PM_TabBarTabOverlap - number of pixels the tabs should overlap.
-    // PM_TabBarTabHSpace - extra space added to the tab width.
-    // PM_TabBarTabVSpace - extra space added to the tab height.
-#ifdef TILEQT_QT_VERSION_3
-#define PM(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, \
-                                              wc->TileQt_QTabBar_Widget))
-#endif /* TILEQT_QT_VERSION_3 */
-#ifdef TILEQT_QT_VERSION_4
-#define PM(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, 0, \
-                                              wc->TileQt_QTabBar_Widget))
-#endif /* TILEQT_QT_VERSION_4 */
     Tcl_MutexLock(&tileqtMutex);
     int PM_TabBarTabVSpace          = PM(PM_TabBarTabVSpace),
         PM_TabBarTabHSpace          = PM(PM_TabBarTabHSpace);
-    //    PM_TabBarBaseHeight         = PM(PM_TabBarBaseHeight);
-    //    PM_TabBarTabShiftHorizontal = PM(PM_TabBarTabShiftHorizontal),
-    //    PM_TabBarTabShiftVertical   = PM(PM_TabBarTabShiftVertical),
-    //    PM_TabBarBaseOverlap        = PM(PM_TabBarBaseOverlap),
-    //    PM_TabBarTabOverlap         = PM(PM_TabBarTabOverlap),
-    //    PM_TabBarTabHSpace          = PM(PM_TabBarTabHSpace),
-    //    
     Tcl_MutexUnlock(&tileqtMutex);
-    //printf("PM_TabBarTabShiftHorizontal=%d, PM_TabBarTabShiftVertical=%d, "
-    //       "PM_TabBarBaseOverlap=%d, PM_TabBarTabOverlap=%d, "
-    //       "PM_TabBarTabHSpace=%d, PM_TabBarTabVSpace=%d, "
-    //       "PM_TabBarBaseHeight=%d\n",
-    //       PM_TabBarTabShiftHorizontal, PM_TabBarTabShiftVertical,
-    //       PM_TabBarBaseOverlap, PM_TabBarTabOverlap,
-    //       PM_TabBarTabHSpace, PM_TabBarTabVSpace, PM_TabBarBaseHeight);
-    //QTab tab;
-    //QRect rc = tab.rect();
-    //*widthPtr   = rc.width();
-    //*heightPtr  = rc.height();
     *paddingPtr = Ttk_MakePadding(
            PM_TabBarTabHSpace/2,
            PM_TabBarTabVSpace/2,
@@ -104,26 +79,19 @@ static void NotebookTabElementDraw(
 {
     if (qApp == NULL) NULL_Q_APP;
     NULL_PROXY_WIDGET(TileQt_QTabBar_Widget);
+    int width = b.width, height = b.height;
     Tcl_MutexLock(&tileqtMutex);
-    int PM_TabBarTabShiftVertical   = PM(PM_TabBarTabShiftVertical),
-        PM_TabBarBaseOverlap        = PM(PM_TabBarBaseOverlap),
-        PM_TabBarTabOverlap         = PM(PM_TabBarTabOverlap),
-        PM_TabBarBaseHeight         = PM(PM_TabBarBaseHeight);
+    int PM_DefaultFrameWidth  = PM(PM_DefaultFrameWidth);
+
+    if (TileQt_ThemeIs(wc, "bluecurve")) {
+      PM_DefaultFrameWidth = 2;
+    }
 
     // TileQt_StateInfo(state, tkwin);
-    int width = b.width, 
-        height = b.height,
-        x = 0, d_x = b.x;
-    if (PM_TabBarBaseHeight) {
-      height += PM_TabBarBaseOverlap;
-    } else {
-      height += PM_TabBarTabShiftVertical;
-    }
 #ifdef TILEQT_QT_VERSION_3
     QTab* tab = new QTab;
     QTab* tab1 = NULL, *tab2 = NULL;
 #endif /* TILEQT_QT_VERSION_3 */
-    bool selected = state & TTK_STATE_SELECTED;
     if ((state & TTK_STATE_USER1) && (state & TTK_STATE_USER2)) {
       /* Only tab */
 #ifdef TILEQT_QT_VERSION_3
@@ -143,13 +111,6 @@ static void NotebookTabElementDraw(
       wc->TileQt_QTabBar_Widget->addTab(tab1);
       wc->TileQt_QTabBar_Widget->addTab(tab);
 #endif /* TILEQT_QT_VERSION_3 */
-      if (selected) {
-        d_x -= PM_TabBarTabOverlap;
-        width += PM_TabBarTabOverlap;
-      } else {
-        x += PM_TabBarTabOverlap;
-        width += PM_TabBarTabOverlap;
-      }
     } else {
       /* A regular tab, in the middle of tab bar */
 #ifdef TILEQT_QT_VERSION_3
@@ -159,13 +120,6 @@ static void NotebookTabElementDraw(
       tab2 = new QTab;
       wc->TileQt_QTabBar_Widget->addTab(tab2);
 #endif /* TILEQT_QT_VERSION_3 */
-      if (selected) {
-        d_x -= PM_TabBarTabOverlap;
-        width += PM_TabBarTabOverlap;
-      } else {
-        x += PM_TabBarTabOverlap;
-        width += PM_TabBarTabOverlap;
-      }
     }
 #ifdef TILEQT_QT_VERSION_3
     if (state & TTK_STATE_DISABLED) tab->setEnabled(false);
@@ -174,7 +128,7 @@ static void NotebookTabElementDraw(
     
     QPixmap      pixmap(width, height);
     QPainter     painter(&pixmap);
-    TILEQT_PAINT_BACKGROUND(b.width, b.height);
+    TILEQT_PAINT_BACKGROUND(width, height);
 #ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags = TileQt_StateTableLookup(notebook_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_TabBarTab, &painter,
@@ -190,11 +144,7 @@ static void NotebookTabElementDraw(
                                   &painter, wc->TileQt_QTabBar_Widget);
 #endif /* TILEQT_QT_VERSION_4 */
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
-                                    x, 0, width, height, d_x, b.y);
-    if (x > 0) {
-      TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin, 0, height-2, x,
-                                      2, b.x+width-2, b.y+height-2);
-    }
+           0, 0, width, height, b.x, b.y + PM_DefaultFrameWidth);
 #ifdef TILEQT_QT_VERSION_3
     if ((state & TTK_STATE_USER1) && (state & TTK_STATE_USER2)) {
       wc->TileQt_QTabBar_Widget->removeTab(tab);

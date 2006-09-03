@@ -153,7 +153,8 @@ bool TileQt_ThemeIs(TileQt_WidgetCache *wc, const char* name) {
  * TileQt_StateTableLookup --
  * Look up an index from a statically allocated state table.
  */
-int TileQt_StateTableLookup(Ttk_StateTable *map, unsigned int state) {
+unsigned int TileQt_StateTableLookup(Ttk_StateTable *map, unsigned int state) {
+    return Ttk_StateTableLookup(map, state);
     int value = 0;
     while (map->onBits || map->offBits) {
       if (state & map->onBits) value |= map->index;

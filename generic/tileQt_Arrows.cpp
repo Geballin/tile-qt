@@ -72,7 +72,7 @@ ArrowElementDraw(void *clientData, void *elementRecord,
     if (qApp == NULL) NULL_Q_APP;
     //ArrowElement *arrow = (ArrowElement *) elementRecord;
     int direction = *(int *)clientData;
-    QStyle::SFlags sflags = Ttk_StateTableLookup(arrow_statemap ,state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(arrow_statemap ,state);
     QStyle::PrimitiveElement element = QStyle::PE_ArrowUp;
     //if (state == GTK_STATE_INSENSITIVE)
     //        sflags |= QStyle::Style_Off;

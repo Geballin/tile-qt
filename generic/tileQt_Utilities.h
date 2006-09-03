@@ -16,7 +16,7 @@
 #include "tileQt_QtHeaders.h"
 #include "tileQt_Elements.h"
 
-#define NULL_Q_APP {printf("NULL qApp\n");fflush(NULL);return;}
+#define NULL_Q_APP {/*printf("NULL qApp\n");fflush(NULL);*/return;}
 #define NULL_PROXY_WIDGET(widget) \
    TileQt_WidgetCache *wc = (TileQt_WidgetCache *) clientData;\
    if (wc == NULL) {\
@@ -57,6 +57,13 @@
                          qApp->palette().color(QPalette::Normal, \
                                                QPalette::Window));\
     }
+#endif /* TILEQT_QT_VERSION_4 */
+
+#ifdef TILEQT_QT_VERSION_3
+#define PMW(pm, w) (wc->TileQt_Style->pixelMetric(QStyle::pm, w))
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+#define PMW(pm, w) (wc->TileQt_Style->pixelMetric(QStyle::pm, 0, w))
 #endif /* TILEQT_QT_VERSION_4 */
 
 TCL_DECLARE_MUTEX(tileqtMutex);

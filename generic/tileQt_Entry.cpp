@@ -66,7 +66,7 @@ static void EntryFieldElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(entry_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(entry_statemap, state);
     wc->TileQt_Style->drawPrimitive(QStyle::PE_PanelLineEdit, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
           QStyleOption(1,1));
@@ -76,7 +76,7 @@ static void EntryFieldElementDraw(
     option.rect = QRect(0, 0, b.width, b.height);
     option.lineWidth = 1;
     option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(entry_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(entry_statemap, state);
     wc->TileQt_Style->drawPrimitive(QStyle::PE_PanelLineEdit, &option,
                                     &painter);
 #endif /* TILEQT_QT_VERSION_4 */

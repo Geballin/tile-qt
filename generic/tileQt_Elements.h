@@ -43,5 +43,11 @@ extern int TileQt_Init_Progress(Tcl_Interp *interp,
                                   TileQt_WidgetCache **, Ttk_Theme themePtr);
 extern int TileQt_Init_Scale(Tcl_Interp *interp,
                                   TileQt_WidgetCache **, Ttk_Theme themePtr);
+extern int TileQt_Init_Paned(Tcl_Interp *interp,
+                                  TileQt_WidgetCache **, Ttk_Theme themePtr);
+extern int TileQt_Init_SizeGrip(Tcl_Interp *interp,
+                                  TileQt_WidgetCache **, Ttk_Theme themePtr);
+extern int TileQt_Init_Separator(Tcl_Interp *interp,
+                                  TileQt_WidgetCache **, Ttk_Theme themePtr);
 extern int TileQt_Init_Arrows(Tcl_Interp *interp,
                                   TileQt_WidgetCache **, Ttk_Theme themePtr);

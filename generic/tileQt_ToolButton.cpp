@@ -89,7 +89,7 @@ static void ToolButtonElementDraw(
     }
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(toolbutton_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(toolbutton_statemap, state);
     QStyle::SCFlags scflags = QStyle::SC_ToolButton;
     QStyle::SCFlags activeflags = QStyle::SC_None;
     if (state & TTK_STATE_PRESSED) activeflags |= QStyle::SC_ToolButton;
@@ -100,12 +100,12 @@ static void ToolButtonElementDraw(
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionToolButton option;
     option.initFrom(&button); option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(toolbutton_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(toolbutton_statemap, state);
     wc->TileQt_Style->drawComplexControl(QStyle::CC_ToolButton, &option,
                                   &painter, &button);
 #endif /* TILEQT_QT_VERSION_4 */
     // printf("state=%d, qt style=%d\n", state,
-    //        Ttk_StateTableLookup(toolbutton_statemap, state));
+    //        TileQt_StateTableLookup(toolbutton_statemap, state));
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);

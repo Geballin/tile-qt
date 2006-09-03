@@ -106,7 +106,7 @@ static void RadioButtonIndicatorElementDraw(
     button.resize(b.width - RadioButtonHorizontalPadding, b.height);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(radiobutton_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(radiobutton_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_RadioButton, &painter, &button,
           QRect(0, 0, b.width - RadioButtonHorizontalPadding, b.height),
           qApp->palette().active(), sflags);
@@ -114,7 +114,7 @@ static void RadioButtonIndicatorElementDraw(
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionButton option;
     option.initFrom(&button); option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(radiobutton_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(radiobutton_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_RadioButton, &option,
                                   &painter, &button);
 #endif /* TILEQT_QT_VERSION_4 */
@@ -171,7 +171,7 @@ static void RadioButtonBorderElementDraw(
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(radiobutton_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(radiobutton_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_RadioButtonLabel, &painter,&button,
           QRect(0, 0, b.width, b.height),
           qApp->palette().active(), sflags);
@@ -179,7 +179,7 @@ static void RadioButtonBorderElementDraw(
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionButton option;
     option.initFrom(&button); option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(radiobutton_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(radiobutton_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_RadioButtonLabel, &option,
                                   &painter, &button);
 #endif /* TILEQT_QT_VERSION_4 */

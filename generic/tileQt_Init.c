@@ -354,7 +354,13 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
     int len;
     const char* str = Tcl_GetStringFromObj(objv[1], &len);
     QString style = QString::fromUtf8(str, len);
+    QStyle *new_style = QStyleFactory::create(style);
     QStyle *todelete = NULL;
+    if (new_style == NULL) {
+      Tcl_SetResult(interp, "unknwon style: \"", TCL_STATIC);
+      Tcl_AppendResult(interp, str, "\"", NULL);
+      return TCL_ERROR;
+    }
     //qApp->setStyle(style);
     /* Is this style the qApp style? */
     if (wc->TileQt_Style_Owner) todelete = wc->TileQt_Style;
@@ -428,6 +434,79 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
   return TCL_OK;
 }; /* Tileqt_SetStyle */
 
+int Tileqt_GetPixelMetric(ClientData clientData, Tcl_Interp *interp,
+                                 int objc, Tcl_Obj *const objv[]) {
+/*
+  PM_TabBarTabOverlap         - number of pixels the tabs should overlap.
+  PM_TabBarTabHSpace          - extra space added to the tab width.
+  PM_TabBarTabVSpace          - extra space added to the tab height.
+  PM_TabBarBaseHeight         - height of the area between the tab bar and the
+                                tab pages.
+  PM_TabBarBaseOverlap        - number of pixels the tab bar overlaps the
+                                tab bar base.
+  PM_TabBarScrollButtonWidth
+  PM_TabBarTabShiftHorizontal - horizontal pixel shift when a tab is selected.
+  PM_TabBarTabShiftVertical   - vertical pixel shift when a tab is selected.
+*/
+  static char *Methods[] = {
+    "-PM_TabBarTabOverlap",       "-PM_TabBarTabHSpace",
+    "-PM_TabBarTabVSpace",        "-PM_TabBarBaseHeight",
+    "-PM_TabBarBaseOverlap",      "-PM_TabBarTabShiftHorizontal",
+    "-PM_TabBarTabShiftVertical", "-PM_TabBarScrollButtonWidth",
+    "-PM_DefaultFrameWidth",
+    (char *) NULL
+  };
+  enum methods {
+    PM_TabBarTabOverlap,       PM_TabBarTabHSpace,
+    PM_TabBarTabVSpace,        PM_TabBarBaseHeight,
+    PM_TabBarBaseOverlap,      PM_TabBarTabShiftHorizontal,
+    PM_TabBarTabShiftVertical, PM_TabBarScrollButtonWidth,
+    PM_DefaultFrameWidth
+  };
+  int index, pixels = 0;
+  TileQt_WidgetCache **wc_array = (TileQt_WidgetCache **) clientData;
+  TileQt_WidgetCache *wc = wc_array[0];
+  if (objc != 2) {
+    Tcl_WrongNumArgs(interp, 1, objv, "pixel_metric_identifier");
+    return TCL_ERROR;
+  }
+  if (!qApp) {
+    Tcl_SetResult(interp, "", TCL_STATIC);
+    return TCL_OK;
+  }
+  if (Tcl_GetIndexFromObj(interp, objv[1], (const char **) Methods,
+                            "method", 0, &index) != TCL_OK) {
+    Tcl_MutexUnlock(&tileqtMutex); return TCL_ERROR;
+  }
+#ifdef TILEQT_QT_VERSION_3
+#define PM(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, \
+                                              wc->TileQt_QTabBar_Widget))
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+#define PM(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, 0, \
+                                              wc->TileQt_QTabBar_Widget))
+#endif /* TILEQT_QT_VERSION_4 */
+  Tcl_MutexLock(&tileqtMutex);
+  switch ((enum methods) index) {
+    case PM_TabBarTabOverlap:  {pixels = PM(PM_TabBarTabOverlap);break;}
+    case PM_TabBarTabHSpace:   {pixels = PM(PM_TabBarTabHSpace);break;}
+    case PM_TabBarTabVSpace:   {pixels = PM(PM_TabBarTabVSpace);break;}
+    case PM_TabBarBaseHeight:  {pixels = PM(PM_TabBarBaseHeight);break;}
+    case PM_TabBarBaseOverlap: {pixels = PM(PM_TabBarBaseOverlap);break;}
+    case PM_TabBarTabShiftHorizontal: {pixels = PM(PM_TabBarTabShiftHorizontal);
+                                       break;}
+    case PM_TabBarTabShiftVertical:   {pixels = PM(PM_TabBarTabShiftVertical);
+                                       break;}
+    case PM_TabBarScrollButtonWidth:  {pixels = PM(PM_TabBarScrollButtonWidth);
+                                       break;}
+    case PM_DefaultFrameWidth:        {pixels = PM(PM_DefaultFrameWidth);
+                                       break;}
+  }
+  Tcl_MutexUnlock(&tileqtMutex);
+  Tcl_SetObjResult(interp, Tcl_NewIntObj(pixels));
+  return TCL_OK;
+}; /* Tileqt_GetPixelMetric */
+
 extern "C" int DLLEXPORT
 Tileqt_Init(Tcl_Interp *interp)
 {
@@ -477,6 +556,9 @@ Tileqt_Init(Tcl_Interp *interp)
 #endif /* TILEQT_QT_VERSION_3 */
     TileQt_Init_TreeView(interp, wc, themePtr);
     TileQt_Init_Progress(interp, wc, themePtr);
+    TileQt_Init_Paned(interp, wc, themePtr);
+    TileQt_Init_SizeGrip(interp, wc, themePtr);
+    //TileQt_Init_Separator(interp, wc, themePtr);
     //TileQt_Init_Arrows(interp, wc, themePtr);
     Tcl_CreateExitHandler(&TileQt_ExitProc, 0);
     //Tcl_CreateThreadExitHandler(&TileQt_ExitProc, 0);
@@ -498,6 +580,9 @@ Tileqt_Init(Tcl_Interp *interp)
     Tcl_CreateObjCommand(interp,
                          "tile::theme::tileqt::setPalette",
                          Tileqt_SetPalette, (ClientData) wc, NULL);
+    Tcl_CreateObjCommand(interp,
+                         "tile::theme::tileqt::getPixelMetric",
+                         Tileqt_GetPixelMetric, (ClientData) wc, NULL);
     /* Save the name of the current theme... */
     strcpy(tmpScript, "namespace eval tile::theme::tileqt { variable theme ");
     if (qApp) {

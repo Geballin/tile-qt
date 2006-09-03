@@ -26,3 +26,4 @@
 #define NotebookUniformPadding          4
 #define NotebookClientUniformPadding    4
 #define TreeViewUniformPadding          4
+#define PanedUniformPadding             0

@@ -23,6 +23,7 @@ namespace eval tile::theme::tileqt {
       {light, 3rd revision} -
       phase -
       baghira -
+      serenity -
       help 
       {
         # 3 Arrows...
@@ -46,7 +47,9 @@ namespace eval tile::theme::tileqt {
         };# style layout Vertical.TScrollbar
       }
       keramik -
-      thinkeramik {
+      shinekeramik -
+      thinkeramik -
+      *keramik {
         # 3 Arrows...
         style layout Horizontal.TScrollbar {
           Scrollbar.background
@@ -256,8 +259,15 @@ namespace eval tile::theme::tileqt {
          selected        [currentThemeColour -active   -highlight] \
       ]
       style default TMenubutton  -width -11 -padding {3 2 3 2}
-      #style default TNotebook    -expandtab {2 2 2 2}
-      #style default TNotebook    -expandtab {1 0 1 0}
+
+      set tab_overlap      [getPixelMetric -PM_TabBarTabOverlap]
+      set tab_base_overlap [getPixelMetric -PM_TabBarBaseOverlap]
+      # tabmargins {left top right bottom}
+      style default TNotebook -tabmargins \
+        [list $tab_overlap 0 $tab_overlap $tab_base_overlap] \
+        -tabposition nw
+      style map TNotebook.Tab -expand [list selected \
+        [list $tab_overlap 0 $tab_overlap $tab_base_overlap]]
 
       style map TRadiobutton -foreground [list \
          active          [currentThemeColour -active   -buttonText] \
@@ -288,7 +298,20 @@ namespace eval tile::theme::tileqt {
          selected        [currentThemeColour -active   -button] \
       ]
       style default Toolbutton -padding {2 2 2 2}
+
+      style default TPaned -background [currentThemeColour -background]
+      style default Horizontal.Sash -background [currentThemeColour -background]
+      style default Vertical.Sash -background [currentThemeColour -background]
     };# style theme settings tileqt
+
+    # puts "\nPixel Metric Information:"
+    # foreach pm {PM_TabBarTabOverlap       PM_TabBarTabHSpace
+    #             PM_TabBarTabVSpace        PM_TabBarBaseHeight
+    #             PM_TabBarBaseOverlap      PM_TabBarTabShiftHorizontal
+    #             PM_TabBarTabShiftVertical PM_TabBarScrollButtonWidth
+    #             PM_DefaultFrameWidth} {
+    #   puts "$pm: [getPixelMetric -$pm]"
+    # }
   };# updateStyles
 
   proc kdeLocate_kdeglobals {} {
@@ -521,52 +544,77 @@ namespace eval tile::theme::tileqt {
     ## Create a notebook widget...
     ttk::notebook $win.nb -padding 6
     set tab1 [ttk::frame $win.nb.tab1]
-    $win.nb add $tab1 -text "Tab 1" -underline 0 -sticky news
+    $win.nb add $tab1 -text "Tab 1" -underline 4 -sticky news
     set tab2 [ttk::frame $win.nb.tab2]
-    $win.nb add $tab2 -text "Tab 2" -underline 0 -sticky news
+    $win.nb add $tab2 -text "Tab 2" -underline 4 -sticky news
     set tab3 [ttk::frame $win.nb.tab3]
-    $win.nb add $tab3 -text "Tab 3" -underline 0 -sticky news
+    $win.nb add $tab3 -text "Tab 3" -underline 4 -sticky news
     set tab4 [ttk::frame $win.nb.tab4]
-    $win.nb add $tab4 -text "Tab 4" -underline 0 -sticky news
-    ## Fill only tab1...
+    $win.nb add $tab4 -text "Tab 4" -underline 4 -sticky news
+    ## Fill tab1...
     #####################
+    ttk::paned $tab1.paned -orient horizontal
     ## Add a set of radiobuttons to the left...
-    ttk::labelframe $tab1.buttons -text "Buttons:"
-      ttk::radiobutton $tab1.buttons.b1 -text "Selection 1" -variable \
+    ttk::labelframe $tab1.paned.buttons -text " Button Group "
+      ttk::radiobutton $tab1.paned.buttons.b1 -text "Radio button" -variable \
          tile::theme::tileqt::temp(selectionVariable) -value 1
-      ttk::radiobutton $tab1.buttons.b2 -text "Selection 2" -variable \
+      ttk::radiobutton $tab1.paned.buttons.b2 -text "Radio button" -variable \
          tile::theme::tileqt::temp(selectionVariable) -value 2
-      ttk::radiobutton $tab1.buttons.b3 -text "Selection 3" -variable \
+      ttk::radiobutton $tab1.paned.buttons.b3 -text "Radio button" -variable \
          tile::theme::tileqt::temp(selectionVariable) -value 3
-      ttk::checkbutton $tab1.buttons.b4 -text "Check Button"
-      grid $tab1.buttons.b1 -sticky snew
-      grid $tab1.buttons.b2 -sticky snew
-      grid $tab1.buttons.b3 -sticky snew
-      grid $tab1.buttons.b4 -sticky snew
+      ttk::separator $tab1.paned.buttons.sep -orient horizontal
+      ttk::checkbutton $tab1.paned.buttons.b4 -text "Checkbox"
+      $tab1.paned.buttons.b4 state selected
+      set tile::theme::tileqt::temp(selectionVariable) 1
+      grid $tab1.paned.buttons.b1 -sticky snew -padx 2 -pady 2
+      grid $tab1.paned.buttons.b2 -sticky snew -padx 2 -pady 2
+      grid $tab1.paned.buttons.b3 -sticky snew -padx 2 -pady 2
+      grid $tab1.paned.buttons.sep -sticky snew -padx 2 -pady 2
+      grid $tab1.paned.buttons.b4 -sticky snew -padx 2 -pady 2
+      grid columnconfigure $tab1.paned.buttons 0 -weight 1
+    $tab1.paned add $tab1.paned.buttons
     ## Add a set of other widgets (like progress, combo, scale, etc).
-    ttk::frame $tab1.widgets
-      ttk::progressbar $tab1.widgets.progress -orient horizontal -maximum 100 \
-        -variable tile::theme::tileqt::temp(progress)
-      grid $tab1.widgets.progress -sticky snew -padx 1 -pady 1
-      ttk::scale $tab1.widgets.scale -orient horizontal -from 0 -to 100 \
+    ttk::frame $tab1.paned.widgets
+      ttk::progressbar $tab1.paned.widgets.progress -orient horizontal \
+        -maximum 100 -variable tile::theme::tileqt::temp(progress)
+      grid $tab1.paned.widgets.progress -sticky snew -padx 2 -pady 2
+      ttk::scale $tab1.paned.widgets.scale -orient horizontal -from 0 -to 100 \
         -variable tile::theme::tileqt::temp(progress)
       set tile::theme::tileqt::temp(progress) 70
-      grid $tab1.widgets.scale -sticky snew -padx 1 -pady 1
-      ttk::entry $tab1.widgets.entry -textvariable \
+      grid $tab1.paned.widgets.scale -sticky snew -padx 2 -pady 2
+      ttk::entry $tab1.paned.widgets.entry -textvariable \
         tile::theme::tileqt::temp(entry)
       set tile::theme::tileqt::temp(entry) {Entry Widget}
-      grid $tab1.widgets.entry -sticky snew -padx 1 -pady 1
-      ttk::button $tab1.widgets.button -text Button
-      grid $tab1.widgets.button -sticky snew -padx 1 -pady 1
-      ttk::combobox $tab1.widgets.combo -values {{Selection 1} {Selection 2}}
-      $tab1.widgets.combo set {Selection 1}
-      grid $tab1.widgets.combo -sticky snew -padx 1 -pady 1
-    grid $tab1.buttons $tab1.widgets -padx 2 -pady 2 -sticky snew
+      grid $tab1.paned.widgets.entry -sticky snew -padx 2 -pady 2
+      ttk::button $tab1.paned.widgets.button -text Button
+      grid $tab1.paned.widgets.button -sticky snew -padx 2 -pady 2
+      ttk::combobox $tab1.paned.widgets.combo -values \
+        {{Selection 1} {Selection 2} {Selection 3} {Selection 4}}
+      $tab1.paned.widgets.combo set {Selection 1}
+      grid $tab1.paned.widgets.combo -sticky snew -padx 2 -pady 2
+      grid columnconfigure $tab1.paned.widgets 0 -weight 1
+    $tab1.paned add $tab1.paned.widgets
+
+    grid $tab1.paned -padx 2 -pady 2 -sticky snew
+    ttk::sizegrip $tab1.sg
     ttk::scrollbar $tab1.hsb -orient horizontal
-    grid $tab1.hsb -columnspan 2 -padx 2 -pady 2 -sticky snew
+    grid $tab1.hsb $tab1.sg -padx 2 -pady 2 -sticky snew
     ttk::scrollbar $tab1.vsb -orient vertical
-    grid $tab1.vsb -row 0 -column 3 -padx 2 -pady 2 -sticky snew
-    grid columnconfigure $tab1 1 -weight 1
+    grid $tab1.vsb -row 0 -column 1 -padx 2 -pady 2 -sticky snew
+    grid columnconfigure $tab1 0 -weight 1
+    grid rowconfigure $tab1 0 -weight 1
+
+    ## Fill tab2...
+    #####################
+    ttk::paned $tab2.paned -orient vertical
+      ttk::label $tab2.paned.label -text {Label Widget}
+    $tab2.paned add $tab2.paned.label
+      ttk::treeview $tab2.paned.tree -height 4
+    $tab2.paned add $tab2.paned.tree
+    grid $tab2.paned -padx 2 -pady 2 -sticky snew
+    grid columnconfigure $tab2 0 -weight 1
+    grid rowconfigure $tab2 0 -weight 1
+
     pack $win.nb -fill both -expand 1
   };# selectStyleDlg_previewWidgets
 

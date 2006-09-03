@@ -102,7 +102,7 @@ static void CheckButtonIndicatorElementDraw(
     button.resize(b.width - CheckButtonHorizontalPadding, b.height);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(checkbutton_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(checkbutton_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_CheckBox, &painter, &button,
           QRect(0, 0, b.width - CheckButtonHorizontalPadding, b.height),
           qApp->palette().active(), sflags);
@@ -110,7 +110,7 @@ static void CheckButtonIndicatorElementDraw(
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionButton option;
     option.initFrom(&button); option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(checkbutton_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(checkbutton_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_CheckBox, &option,
                                   &painter, &button);
 #endif /* TILEQT_QT_VERSION_4 */
@@ -167,7 +167,7 @@ static void CheckButtonBorderElementDraw(
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(checkbutton_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(checkbutton_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_CheckBoxLabel, &painter, &button,
           QRect(0, 0, b.width, b.height),
           qApp->palette().active(), sflags);
@@ -175,7 +175,7 @@ static void CheckButtonBorderElementDraw(
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionButton option;
     option.initFrom(&button); option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(checkbutton_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(checkbutton_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_CheckBoxLabel, &option,
                                   &painter, &button);
 #endif /* TILEQT_QT_VERSION_4 */

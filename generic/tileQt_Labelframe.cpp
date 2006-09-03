@@ -60,7 +60,7 @@ static void LabelframeBorderElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(labelframe_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(labelframe_statemap, state);
     sflags |= QStyle::Style_Sunken;
     wc->TileQt_Style->drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
@@ -72,7 +72,7 @@ static void LabelframeBorderElementDraw(
     option.rect = QRect(0, 0, b.width, b.height);
     option.lineWidth = 1;
     option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(labelframe_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(labelframe_statemap, state);
     wc->TileQt_Style->drawPrimitive(QStyle::PE_FrameGroupBox, &option,
                                     &painter);
 #endif /* TILEQT_QT_VERSION_4 */

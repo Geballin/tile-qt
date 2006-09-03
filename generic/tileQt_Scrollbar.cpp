@@ -77,7 +77,7 @@ static void ScrollbarTroughElementDraw(
     int width, height;
     //TileQt_QScrollBar_Widget->resize(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(scrollbar_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(scrollbar_statemap, state);
 #endif /* TILEQT_QT_VERSION_3 */
     if (orient == TTK_ORIENT_HORIZONTAL) {
       width = 2*b.width; height = b.height;
@@ -120,7 +120,7 @@ static void ScrollbarTroughElementDraw(
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionSlider option;
     option.initFrom(wc->TileQt_QScrollBar_Widget); option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(scrollbar_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(scrollbar_statemap, state);
     wc->TileQt_Style->drawComplexControl(QStyle::CC_ScrollBar, &option,
                                   &painter, wc->TileQt_QScrollBar_Widget);
 #endif /* TILEQT_QT_VERSION_4 */
@@ -199,7 +199,7 @@ static void ScrollbarThumbElementDraw(
     QPixmap      pixmap = QPixmap::grabWindow(Tk_WindowId(tkwin));
     QPainter     painter(&pixmap);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(scrollbar_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(scrollbar_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) sflags |= QStyle::Style_Horizontal;
     wc->TileQt_Style->drawPrimitive(QStyle::PE_ScrollBarSlider, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
@@ -214,7 +214,7 @@ static void ScrollbarThumbElementDraw(
     }
     QStyleOptionSlider option;
     option.initFrom(wc->TileQt_QScrollBar_Widget); option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(scrollbar_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(scrollbar_statemap, state);
     option.subControls = QStyle::SC_ScrollBarGroove;
     wc->TileQt_Style->drawComplexControl(QStyle::CC_ScrollBar, &option,
                                   &painter, wc->TileQt_QScrollBar_Widget);
@@ -266,7 +266,8 @@ static void ScrollbarUpArrowElementGeometry(
       *widthPtr = rc.width();
       *heightPtr = rc.height();
       /* Qt Style Fixes: */
-      if (TileQt_ThemeIs(wc, "keramik") || TileQt_ThemeIs(wc, "thinkeramik")) {
+      if (TileQt_ThemeIs(wc, "keramik") || TileQt_ThemeIs(wc, "thinkeramik") ||
+          TileQt_ThemeIs(wc, "shinekeramik")) {
         // Keramic & ThinKeramic are buggy: Their subcontrol metrics are for 2
         // buttons, not one. Find the smallest dimension, and return a
         // rectangle.
@@ -304,7 +305,7 @@ static void ScrollbarUpArrowElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(scrollbar_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(scrollbar_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) sflags |= QStyle::Style_Horizontal;
     wc->TileQt_Style->drawPrimitive(QStyle::PE_ScrollBarSubLine, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
@@ -319,7 +320,7 @@ static void ScrollbarUpArrowElementDraw(
     }
     QStyleOptionSlider option;
     option.initFrom(wc->TileQt_QScrollBar_Widget); option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(scrollbar_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(scrollbar_statemap, state);
     option.subControls = QStyle::SC_ScrollBarSubLine;
     wc->TileQt_Style->drawComplexControl(QStyle::CC_ScrollBar, &option,
                                   &painter, wc->TileQt_QScrollBar_Widget);
@@ -375,7 +376,8 @@ static void ScrollbarDownArrowElementGeometry(
       *heightPtr = rc.height();
       /* Qt Style Fixes: */
       // printf("%s\n", wc->TileQt_Style->name());
-      if (TileQt_ThemeIs(wc, "keramik") || TileQt_ThemeIs(wc, "thinkeramik")) {
+      if (TileQt_ThemeIs(wc, "keramik") || TileQt_ThemeIs(wc, "thinkeramik") ||
+          TileQt_ThemeIs(wc, "shinekeramik")) {
         // Keramic & ThinKeramic are buggy: Their subcontrol metrics are for 2
         // buttons, not one. Find the smallest dimension, and return a
         // rectangle.
@@ -418,7 +420,7 @@ static void ScrollbarDownArrowElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(scrollbar_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(scrollbar_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) sflags |= QStyle::Style_Horizontal;
     wc->TileQt_Style->drawPrimitive(QStyle::PE_ScrollBarAddLine, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
@@ -433,7 +435,7 @@ static void ScrollbarDownArrowElementDraw(
     }
     QStyleOptionSlider option;
     option.initFrom(wc->TileQt_QScrollBar_Widget); option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(scrollbar_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(scrollbar_statemap, state);
     option.subControls = QStyle::SC_ScrollBarAddLine;
     wc->TileQt_Style->drawComplexControl(QStyle::CC_ScrollBar, &option,
                                   &painter, wc->TileQt_QScrollBar_Widget);
@@ -481,7 +483,7 @@ static void ScrollbarDownSubArrowElementDraw(
       if (qApp == NULL) NULL_Q_APP;
       NULL_PROXY_ORIENTED_WIDGET(TileQt_QScrollBar_Widget);
 #ifdef TILEQT_QT_VERSION_3
-      QStyle::SFlags sflags = Ttk_StateTableLookup(scrollbar_statemap, state);
+      QStyle::SFlags sflags = TileQt_StateTableLookup(scrollbar_statemap, state);
 #endif /* TILEQT_QT_VERSION_3 */
       Tcl_MutexLock(&tileqtMutex);
       if (orient == TTK_ORIENT_HORIZONTAL) {

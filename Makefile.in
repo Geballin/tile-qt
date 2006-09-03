@@ -29,6 +29,9 @@ PKG_OBJECTS	= \
     tileQt_TreeView.$(OBJEXT) \
     tileQt_Progress.$(OBJEXT) \
     tileQt_Scale.$(OBJEXT) \
+    tileQt_Paned.$(OBJEXT) \
+    tileQt_SizeGrip.$(OBJEXT) \
+    tileQt_Separator.$(OBJEXT) \
     tileQt_Arrows.$(OBJEXT)
     
 #========================================================================

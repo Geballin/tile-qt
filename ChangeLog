@@ -1,3 +1,25 @@
+2006-03-09  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * ================= Release 0.4 beta 1 =================
+        * generic/tileQt_Paned.cpp:      Added support for the paned, separator,
+        * generic/tileQt_Separator.cpp:  and sizegrip widgets. However, the
+        * generic/tileQt_SizeGrip.cpp:   separator support is disabled, as only
+        a couple of Qt styles support PE_Separator, and it will be removed in
+        Qt 4 (already renamed to PE_Q3Separator). Qt does not have a separator
+        widget: separators are emulated through QFrame widgets, with a frame
+        type of H/VLine. Not easy to support...
+
+        * generic/tileQtNotebook.cpp: Various improvements in how tabs are
+        drawn. 
+
+        * library/tileqt.tcl: Changed updateStyles to use the new getPixelMetric
+        command, to set a proper style for notebook tabs. Now, updateStyles
+        declares the -tabmargins option in the TNotebook and -expand in the
+        TNotebook.Tab styles. Many thanks to Joe English for explaining what
+        these options do and how can be used...
+
+        * generic/tileQt_Init.c: Added a new function (Tileqt_GetPixelMetric)
+        and a new Tcl command (tile::theme::tileqt::getPixelMetric).
+
 2006-15-08  Georgios Petasis  <petasis@iit.demokritos.gr>
         * generic/tileQt_Button.cpp:
         * generic/tileQtNotebook.cpp: Use TileQt_QtStateInfo instead of

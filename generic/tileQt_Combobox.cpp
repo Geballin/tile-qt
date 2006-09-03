@@ -115,7 +115,7 @@ static void ComboboxFieldElementDraw(
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
     widget->setBackgroundOrigin(QWidget::ParentOrigin);
-    QStyle::SFlags sflags = Ttk_StateTableLookup(combotext_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(combotext_statemap, state);
     QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow|
                               QStyle::SC_ComboBoxEditField;
     QStyle::SCFlags activeflags = QStyle::SC_ComboBoxFrame;
@@ -126,7 +126,7 @@ static void ComboboxFieldElementDraw(
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionComboBox option;
     option.initFrom(widget); option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(combotext_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(combotext_statemap, state);
     wc->TileQt_Style->drawComplexControl(QStyle::CC_ComboBox, &option,
                                          &painter, widget);
 #endif /* TILEQT_QT_VERSION_4 */
@@ -200,7 +200,7 @@ static void ComboboxArrowElementDraw(
     // QPainter     painter(&pixmap);
     // QComboBox& widget = *TileQt_QComboBox_RO_Widget;
     // widget.resize(b.x+b.width, b.y+b.height);
-    // QStyle::SFlags sflags = Ttk_StateTableLookup(combobox_statemap, state);
+    // QStyle::SFlags sflags = TileQt_StateTableLookup(combobox_statemap, state);
     // QStyle::SCFlags scflags = QStyle::SC_ComboBoxArrow;
     // QStyle::SCFlags activeflags = QStyle::SC_None;
     // 

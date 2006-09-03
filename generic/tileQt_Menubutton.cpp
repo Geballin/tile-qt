@@ -82,7 +82,7 @@ static void MenubuttonDropdownElementDraw(
     // QPainter     painter(&pixmap);
     // QComboBox& widget = *TileQt_QComboBox_RO_Widget;
     // widget.resize(b.x+b.width, b.y+b.height);
-    // QStyle::SFlags sflags = Ttk_StateTableLookup(menubutton_statemap, state);
+    // QStyle::SFlags sflags = TileQt_StateTableLookup(menubutton_statemap, state);
     // QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow;
     // QStyle::SCFlags activeflags = QStyle::SC_None;
     // 
@@ -105,7 +105,7 @@ static void MenubuttonDropdownElementDraw(
     // widget->resize(b.width, b.height);
     // QStyleOptionComboBox option;
     // option.initFrom(widget); option.state |= 
-    //   (QStyle::StateFlag) Ttk_StateTableLookup(menubutton_statemap, state);
+    //   (QStyle::StateFlag) TileQt_StateTableLookup(menubutton_statemap, state);
     // option.subControls = QStyle::SC_ComboBoxArrow;
     // option.rect = QRect (0, 0, b.width, b.height);
     // wc->TileQt_Style->drawComplexControl(QStyle::CC_ComboBox, &option,
@@ -182,7 +182,7 @@ static void MenubuttonElementDraw(
     widget.resize(b.width, b.height);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(menubutton_statemap, state);
+    QStyle::SFlags sflags = TileQt_StateTableLookup(menubutton_statemap, state);
     QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow|
                               QStyle::SC_ComboBoxEditField;
     QStyle::SCFlags activeflags = QStyle::SC_ComboBoxFrame;
@@ -194,7 +194,7 @@ static void MenubuttonElementDraw(
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionComboBox option;
     option.initFrom(&widget); option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(menubutton_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(menubutton_statemap, state);
     wc->TileQt_Style->drawComplexControl(QStyle::CC_ComboBox, &option,
                                          &painter, &widget);
 #endif /* TILEQT_QT_VERSION_4 */

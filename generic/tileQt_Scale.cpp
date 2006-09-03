@@ -239,7 +239,7 @@ static void ScaleSliderElementDraw(
     // as (due to Qt bug ?), it doesn't work...
     QPixmap pixmap = QPixmap::grabWidget(widget);
 
-    //QStyle::SFlags sflags = Ttk_StateTableLookup(scale_statemap, state);
+    //QStyle::SFlags sflags = TileQt_StateTableLookup(scale_statemap, state);
     //QStyle::SCFlags activeflags = QStyle::SC_SliderHandle;
     //qApp->style().drawComplexControl(QStyle::CC_Slider, &painter, widget,
     //      QRect(0, 0, widget->width(), widget->height()),

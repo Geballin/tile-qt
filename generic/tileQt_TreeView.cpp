@@ -71,7 +71,7 @@ static void TreeViewFieldElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags =Ttk_StateTableLookup(treeview_field_statemap, state);
+    QStyle::SFlags sflags =TileQt_StateTableLookup(treeview_field_statemap, state);
     sflags |= QStyle::Style_Horizontal;
     wc->TileQt_Style->drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
@@ -84,7 +84,7 @@ static void TreeViewFieldElementDraw(
     option.rect = QRect(0, 0, b.width, b.height);
     option.lineWidth = 1;
     option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(treeview_field_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(treeview_field_statemap, state);
     wc->TileQt_Style->drawPrimitive(QStyle::PE_FrameGroupBox, &option,
                                     &painter);
 #endif /* TILEQT_QT_VERSION_4 */
@@ -150,7 +150,7 @@ static void TreeViewClientElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags =Ttk_StateTableLookup(treeview_client_statemap,state);
+    QStyle::SFlags sflags =TileQt_StateTableLookup(treeview_client_statemap,state);
     sflags |= QStyle::Style_Horizontal;
     wc->TileQt_Style->drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
@@ -163,7 +163,7 @@ static void TreeViewClientElementDraw(
     option.rect = QRect(0, 0, b.width, b.height);
     option.lineWidth = 1;
     option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(treeview_client_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(treeview_client_statemap, state);
     wc->TileQt_Style->drawPrimitive(QStyle::PE_FrameGroupBox, &option,
                                     &painter);
 #endif /* TILEQT_QT_VERSION_4 */
@@ -229,7 +229,7 @@ static void TreeHeadingBorderElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = Ttk_StateTableLookup(treeheading_border_statemap,
+    QStyle::SFlags sflags = TileQt_StateTableLookup(treeheading_border_statemap,
                                                  state);
     sflags |= QStyle::Style_Horizontal;
     wc->TileQt_Style->drawPrimitive(QStyle::PE_HeaderSection, &painter,
@@ -239,7 +239,7 @@ static void TreeHeadingBorderElementDraw(
     QStyleOptionHeader option;
     option.rect = QRect(0, 0, b.width, b.height);
     option.state |= 
-      (QStyle::StateFlag) Ttk_StateTableLookup(treeview_client_statemap, state);
+      (QStyle::StateFlag) TileQt_StateTableLookup(treeview_client_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_HeaderSection, &option,
                                   &painter);
 #endif /* TILEQT_QT_VERSION_4 */
