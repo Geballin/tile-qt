@@ -1,3 +1,12 @@
+2006-10-09  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * generic/tileQt_Combobox.cpp: Fixed a bug in combotext_statemap, for
+        the TTK_STATE_PRESSED state.
+
+        * generic/tileQt_Utilities.h: Added new definition for drawing
+        * generic/tileQt_Entry.cpp:   background with the base colour (used for
+        entry widgets) - TILEQT_PAINT_BACKGROUND_BASE. Now, the entry widget use
+        this macro for drawing its background. Bug reported by Csaba Nemethi.
+
 2006-03-09  Georgios Petasis  <petasis@iit.demokritos.gr>
         * ================= Release 0.4 beta 1 =================
         * generic/tileQt_Paned.cpp:      Added support for the paned, separator,

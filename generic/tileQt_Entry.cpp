@@ -64,7 +64,7 @@ static void EntryFieldElementDraw(
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    TILEQT_PAINT_BACKGROUND(b.width, b.height);
+    TILEQT_PAINT_BACKGROUND_BASE(b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags = TileQt_StateTableLookup(entry_statemap, state);
     wc->TileQt_Style->drawPrimitive(QStyle::PE_PanelLineEdit, &painter,

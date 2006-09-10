@@ -26,14 +26,14 @@ static Ttk_StateTable combotext_statemap[] =
 #ifdef TILEQT_QT_VERSION_3
     {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0 },
     {QStyle::Style_Enabled|QStyle::Style_HasFocus,  TTK_STATE_FOCUS, 0 },
-    {QStyle::Style_Enabled|QStyle::Style_MouseOver, TTK_STATE_PRESSED, 0 },
+    {QStyle::Style_Enabled|QStyle::Style_Down,      TTK_STATE_PRESSED, 0 },
     {QStyle::Style_Enabled|QStyle::Style_MouseOver, TTK_STATE_ACTIVE, 0 },
     {QStyle::Style_Enabled,                         0, 0 }
 #endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     {QStyle::State_None,                            TTK_STATE_DISABLED, 0 },
     {QStyle::State_Enabled|QStyle::State_HasFocus,  TTK_STATE_FOCUS, 0 },
-    {QStyle::State_Enabled|QStyle::State_MouseOver, TTK_STATE_PRESSED, 0 },
+    {QStyle::State_Enabled|QStyle::State_Down,      TTK_STATE_PRESSED, 0 },
     {QStyle::State_Enabled|QStyle::State_MouseOver, TTK_STATE_ACTIVE, 0 },
     {QStyle::State_Enabled,                         0, 0 }
 #endif /* TILEQT_QT_VERSION_4 */

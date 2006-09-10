@@ -44,6 +44,16 @@
         painter.fillRect(0, 0, width, height, \
                          qApp->palette().active().background());\
     }
+#define TILEQT_PAINT_BACKGROUND_BASE(width, height) \
+    if (wc->TileQt_QPixmap_BackgroundTile && \
+        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) { \
+        painter.fillRect(0, 0, width, height, \
+                         QBrush(QColor(255,255,255), \
+                         *(wc->TileQt_QPixmap_BackgroundTile))); \
+    } else { \
+        painter.fillRect(0, 0, width, height, \
+                         qApp->palette().active().base());\
+    }
 #endif /* TILEQT_QT_VERSION_3 */
 
 #ifdef TILEQT_QT_VERSION_4
@@ -56,6 +66,16 @@
         painter.fillRect(0, 0, width, height, \
                          qApp->palette().color(QPalette::Normal, \
                                                QPalette::Window));\
+    }
+#define TILEQT_PAINT_BACKGROUND_BASE(width, height) \
+    if (!(wc->TileQt_QPixmap_BackgroundTile.isNull())) { \
+        painter.fillRect(0, 0, width, height, \
+                         QBrush(QColor(255,255,255), \
+                         wc->TileQt_QPixmap_BackgroundTile)); \
+    } else { \
+        painter.fillRect(0, 0, width, height, \
+                         qApp->palette().color(QPalette::Normal, \
+                                               QPalette::Base));\
     }
 #endif /* TILEQT_QT_VERSION_4 */
 
