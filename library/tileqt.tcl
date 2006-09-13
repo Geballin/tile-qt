@@ -262,10 +262,17 @@ namespace eval tile::theme::tileqt {
 
       set tab_overlap      [getPixelMetric -PM_TabBarTabOverlap]
       set tab_base_overlap [getPixelMetric -PM_TabBarBaseOverlap]
+      # puts "tab_overlap=$tab_overlap, tab_base_overlap=$tab_base_overlap"
+      switch -exact [getStyleHint -SH_TabBar_Alignment] {
+        Qt::AlignLeft   {set tabposition nw}
+        Qt::AlignCenter {set tabposition n}
+        Qt::AlignRight  {set tabposition ne}
+        default         {set tabposition nw}
+      }
       # tabmargins {left top right bottom}
       style default TNotebook -tabmargins \
         [list $tab_overlap 0 $tab_overlap $tab_base_overlap] \
-        -tabposition nw
+        -tabposition $tabposition
       style map TNotebook.Tab -expand [list selected \
         [list $tab_overlap 0 $tab_overlap $tab_base_overlap]]
 

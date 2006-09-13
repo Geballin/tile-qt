@@ -1,3 +1,12 @@
+2006-14-09  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * generic/tileQtNotebook.cpp: Fixed some bugs in Qt 4.x drawing.
+        Now, notebooks are usuable under Qt 4.x.
+
+        * generic/tileQt_Init.c: Added a new function (Tileqt_GetStyleHint)
+        and a new Tcl command (tile::theme::tileqt::getStyleHint). Currently,
+        only option -SH_TabBar_Alignment is supported, which returns tab
+        alignment in a notebook widget.
+
 2006-10-09  Georgios Petasis  <petasis@iit.demokritos.gr>
         * generic/tileQt_Combobox.cpp: Fixed a bug in combotext_statemap, for
         the TTK_STATE_PRESSED state.

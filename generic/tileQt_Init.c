@@ -359,6 +359,7 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
     if (new_style == NULL) {
       Tcl_SetResult(interp, "unknwon style: \"", TCL_STATIC);
       Tcl_AppendResult(interp, str, "\"", NULL);
+      Tcl_MutexUnlock(&tileqtMutex);
       return TCL_ERROR;
     }
     //qApp->setStyle(style);
@@ -422,7 +423,6 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
   memcpy(wc_array[1], wc_array[0], sizeof(TileQt_WidgetCache));
   wc_array[0]->orientation = TTK_ORIENT_HORIZONTAL;
   wc_array[1]->orientation = TTK_ORIENT_VERTICAL;
-  Tcl_MutexUnlock(&tileqtMutex);
   /* Save the name of the current theme... */
   Tcl_SetVar(interp, "tile::theme::tileqt::theme",
 #ifdef TILEQT_QT_VERSION_3                    
@@ -431,6 +431,7 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
 #ifdef TILEQT_QT_VERSION_4                    
              wc->TileQt_Style->objectName().toUtf8().data(), TCL_GLOBAL_ONLY);
 #endif /* TILEQT_QT_VERSION_4 */
+  Tcl_MutexUnlock(&tileqtMutex);
   return TCL_OK;
 }; /* Tileqt_SetStyle */
 
@@ -476,22 +477,29 @@ int Tileqt_GetPixelMetric(ClientData clientData, Tcl_Interp *interp,
   }
   if (Tcl_GetIndexFromObj(interp, objv[1], (const char **) Methods,
                             "method", 0, &index) != TCL_OK) {
-    Tcl_MutexUnlock(&tileqtMutex); return TCL_ERROR;
+    return TCL_ERROR;
   }
 #ifdef TILEQT_QT_VERSION_3
 #define PM(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, \
                                               wc->TileQt_QTabBar_Widget))
 #endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
-#define PM(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, 0, \
+#ifndef QStyleOptionTabV2
+#define QStyleOptionTabV2 QStyleOptionTab
+#endif /* QStyleOptionTabV2 */
+#define PM(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, &option, \
                                               wc->TileQt_QTabBar_Widget))
 #endif /* TILEQT_QT_VERSION_4 */
   Tcl_MutexLock(&tileqtMutex);
+#ifdef TILEQT_QT_VERSION_4
+  QStyleOptionTabV2 option;
+  option.initFrom(wc->TileQt_QTabBar_Widget);
+#endif /* TILEQT_QT_VERSION_4 */
   switch ((enum methods) index) {
-    case PM_TabBarTabOverlap:  {pixels = PM(PM_TabBarTabOverlap);break;}
-    case PM_TabBarTabHSpace:   {pixels = PM(PM_TabBarTabHSpace);break;}
-    case PM_TabBarTabVSpace:   {pixels = PM(PM_TabBarTabVSpace);break;}
-    case PM_TabBarBaseHeight:  {pixels = PM(PM_TabBarBaseHeight);break;}
+    case PM_TabBarTabOverlap:  {pixels = PM(PM_TabBarTabOverlap); break;}
+    case PM_TabBarTabHSpace:   {pixels = PM(PM_TabBarTabHSpace);  break;}
+    case PM_TabBarTabVSpace:   {pixels = PM(PM_TabBarTabVSpace);  break;}
+    case PM_TabBarBaseHeight:  {pixels = PM(PM_TabBarBaseHeight); break;}
     case PM_TabBarBaseOverlap: {pixels = PM(PM_TabBarBaseOverlap);break;}
     case PM_TabBarTabShiftHorizontal: {pixels = PM(PM_TabBarTabShiftHorizontal);
                                        break;}
@@ -506,6 +514,60 @@ int Tileqt_GetPixelMetric(ClientData clientData, Tcl_Interp *interp,
   Tcl_SetObjResult(interp, Tcl_NewIntObj(pixels));
   return TCL_OK;
 }; /* Tileqt_GetPixelMetric */
+
+int Tileqt_GetStyleHint(ClientData clientData, Tcl_Interp *interp,
+                                 int objc, Tcl_Obj *const objv[]) {
+/*
+  SH_TabBar_Alignment         - The alignment for tabs in a QTabWidget.
+                                Possible values are Qt::AlignLeft,
+                                Qt::AlignCenter and Qt::AlignRight.
+*/
+  static char *Methods[] = {
+    "-SH_TabBar_Alignment",
+    (char *) NULL
+  };
+  enum methods {
+    SH_TabBar_Alignment
+  };
+  int index, hint = 0;
+  QStyle::StyleHint stylehint;
+  char *pstr = "";
+  TileQt_WidgetCache **wc_array = (TileQt_WidgetCache **) clientData;
+  TileQt_WidgetCache *wc = wc_array[0];
+  if (objc != 2) {
+    Tcl_WrongNumArgs(interp, 1, objv, "style_hint_identifier");
+    return TCL_ERROR;
+  }
+  if (!qApp) {
+    Tcl_SetResult(interp, "", TCL_STATIC);
+    return TCL_OK;
+  }
+  if (Tcl_GetIndexFromObj(interp, objv[1], (const char **) Methods,
+                            "method", 0, &index) != TCL_OK) {
+    return TCL_ERROR;
+  }
+#ifdef TILEQT_QT_VERSION_3
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+#endif /* TILEQT_QT_VERSION_4 */
+  switch ((enum methods) index) {
+    case SH_TabBar_Alignment:  {stylehint = QStyle::SH_TabBar_Alignment; break;}
+  }
+  Tcl_MutexLock(&tileqtMutex);
+  hint = wc->TileQt_Style->styleHint(stylehint);
+  Tcl_MutexUnlock(&tileqtMutex);
+  switch (hint) {
+    case Qt::AlignLeft:   {pstr = "Qt::AlignLeft";   break;}
+    case Qt::AlignCenter: {pstr = "Qt::AlignCenter"; break;}
+    case Qt::AlignRight:  {pstr = "Qt::AlignRight";  break;}
+    default: {
+      Tcl_SetObjResult(interp, Tcl_NewIntObj(hint));
+      return TCL_OK;
+    }
+  }
+  Tcl_SetResult(interp, pstr, TCL_STATIC);
+  return TCL_OK;
+}; /* Tileqt_GetStyleHint */
 
 extern "C" int DLLEXPORT
 Tileqt_Init(Tcl_Interp *interp)
@@ -549,9 +611,9 @@ Tileqt_Init(Tcl_Interp *interp)
     TileQt_Init_Entry(interp, wc, themePtr);
     TileQt_Init_Combobox(interp, wc, themePtr);
     TileQt_Init_Labelframe(interp, wc, themePtr);
+    TileQt_Init_Notebook(interp, wc, themePtr);
 #ifdef TILEQT_QT_VERSION_3
     TileQt_Init_Scrollbar(interp, wc, themePtr);
-    TileQt_Init_Notebook(interp, wc, themePtr);
     TileQt_Init_Scale(interp, wc, themePtr);
 #endif /* TILEQT_QT_VERSION_3 */
     TileQt_Init_TreeView(interp, wc, themePtr);
@@ -583,6 +645,9 @@ Tileqt_Init(Tcl_Interp *interp)
     Tcl_CreateObjCommand(interp,
                          "tile::theme::tileqt::getPixelMetric",
                          Tileqt_GetPixelMetric, (ClientData) wc, NULL);
+    Tcl_CreateObjCommand(interp,
+                         "tile::theme::tileqt::getStyleHint",
+                         Tileqt_GetStyleHint, (ClientData) wc, NULL);
     /* Save the name of the current theme... */
     strcpy(tmpScript, "namespace eval tile::theme::tileqt { variable theme ");
     if (qApp) {
