@@ -181,6 +181,7 @@ static void MenubuttonElementDraw(
 #endif /* TILEQT_QT_VERSION_3 */
     widget.resize(b.width, b.height);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
+    TILEQT_SET_FOCUS(state);
 #ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags = TileQt_StateTableLookup(menubutton_statemap, state);
     QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow|
@@ -198,6 +199,7 @@ static void MenubuttonElementDraw(
     wc->TileQt_Style->drawComplexControl(QStyle::CC_ComboBox, &option,
                                          &painter, &widget);
 #endif /* TILEQT_QT_VERSION_4 */
+    TILEQT_CLEAR_FOCUS(state);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);

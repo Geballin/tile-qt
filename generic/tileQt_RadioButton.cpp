@@ -105,6 +105,7 @@ static void RadioButtonIndicatorElementDraw(
     QRadioButton button(wc->TileQt_QWidget_Widget);
     button.resize(b.width - RadioButtonHorizontalPadding, b.height);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
+    TILEQT_SET_FOCUS(state);
 #ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags = TileQt_StateTableLookup(radiobutton_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_RadioButton, &painter, &button,
@@ -118,6 +119,7 @@ static void RadioButtonIndicatorElementDraw(
     wc->TileQt_Style->drawControl(QStyle::CE_RadioButton, &option,
                                   &painter, &button);
 #endif /* TILEQT_QT_VERSION_4 */
+    TILEQT_CLEAR_FOCUS(state);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);
@@ -169,6 +171,7 @@ static void RadioButtonBorderElementDraw(
     button.resize(b.width, b.height);
     //button.setGeometry(b.x, b.y, b.width, b.height);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
+    TILEQT_SET_FOCUS(state);
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
 #ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags = TileQt_StateTableLookup(radiobutton_statemap, state);
@@ -183,6 +186,7 @@ static void RadioButtonBorderElementDraw(
     wc->TileQt_Style->drawControl(QStyle::CE_RadioButtonLabel, &option,
                                   &painter, &button);
 #endif /* TILEQT_QT_VERSION_4 */
+    TILEQT_CLEAR_FOCUS(state);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.x);
     /* Because we have drawn only the label of the radio button, the drawn area

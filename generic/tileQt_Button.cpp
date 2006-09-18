@@ -87,6 +87,7 @@ static void ButtonElementDraw(
     //    button.setDown(false);
     //}
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
+    TILEQT_SET_FOCUS(state);
 #ifdef TILEQT_QT_VERSION_3
     // TileQt_StateInfo(state, tkwin);
     QStyle::SFlags sflags = TileQt_StateTableLookup(pushbutton_statemap, state);
@@ -101,6 +102,7 @@ static void ButtonElementDraw(
     wc->TileQt_Style->drawControl(QStyle::CE_PushButton, &option,
                                   &painter, &button);
 #endif /* TILEQT_QT_VERSION_4 */
+    TILEQT_CLEAR_FOCUS(state);
     // printf("state=%d, qt style=%d\n", state,
     //        TileQt_StateTableLookup(pushbutton_statemap, state));
 

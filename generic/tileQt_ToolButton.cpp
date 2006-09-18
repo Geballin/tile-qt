@@ -88,6 +88,7 @@ static void ToolButtonElementDraw(
         button.setDown(false);
     }
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
+    TILEQT_SET_FOCUS(state);
 #ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags = TileQt_StateTableLookup(toolbutton_statemap, state);
     QStyle::SCFlags scflags = QStyle::SC_ToolButton;
@@ -106,6 +107,7 @@ static void ToolButtonElementDraw(
 #endif /* TILEQT_QT_VERSION_4 */
     // printf("state=%d, qt style=%d\n", state,
     //        TileQt_StateTableLookup(toolbutton_statemap, state));
+    TILEQT_CLEAR_FOCUS(state);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);

@@ -6,7 +6,19 @@ namespace eval tile::theme::tileqt {
     variable theme
     if {![info exists theme]} {return}
     style theme use tileqt
+    # puts "=================================================="
     # puts "Current Qt Theme: [currentThemeName] ($theme)"
+    # puts "Tab alignment:    [getStyleHint   -SH_TabBar_Alignment]"
+    # puts "Tab base overlap: [getPixelMetric -PM_TabBarBaseOverlap]"
+    # puts "Tab overlap:      [getPixelMetric -PM_TabBarTabOverlap]"
+    # foreach sc {SC_ScrollBarAddLine SC_ScrollBarSubLine
+    #             SC_ScrollBarAddPage SC_ScrollBarSubPage
+    #             SC_ScrollBarFirst   SC_ScrollBarLast
+    #             SC_ScrollBarSlider  SC_ScrollBarGroove} {
+    #   foreach {x y w h} [getSubControlMetrics -$sc] {break}
+    #   puts "$sc: x=$x, y=$y, w=$w, h=$h"
+    # }
+    # puts "=================================================="
     switch -glob -- [string tolower $theme] {
       b3 -
       default -
@@ -265,6 +277,7 @@ namespace eval tile::theme::tileqt {
       # puts "tab_overlap=$tab_overlap, tab_base_overlap=$tab_base_overlap"
       switch -exact [getStyleHint -SH_TabBar_Alignment] {
         Qt::AlignLeft   {set tabposition nw}
+        Qt::AlignHCenter - Qt::AlignVCenter -
         Qt::AlignCenter {set tabposition n}
         Qt::AlignRight  {set tabposition ne}
         default         {set tabposition nw}

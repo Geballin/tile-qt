@@ -60,15 +60,24 @@ image create photo help_image -data $help_image_data
 
 set win {}
 set row 0; set column 0
-foreach widget {button checkbutton radiobutton entry menubutton combobox
-                scrollbar scale progressbar notebook paned labelframe} {
-  foreach state {active disabled focus pressed selected readonly} {
-    if {$widget == "labelframe"} {
-      set w [ttk::$widget $win.${widget}_$state -class Toolbar]
-      ttk::menubutton $w.mb -text Toolbar
-      pack $w.mb -fill both
-    } else {
-      set w [ttk::$widget $win.${widget}_$state]
+set widgets {button checkbutton radiobutton entry menubutton combobox rcombobox
+             scrollbar scale progressbar notebook paned labelframe}
+set states {active disabled focus pressed selected readonly background
+             alternate}
+foreach widget $widgets {
+  foreach state $states {
+    switch $widget {
+      labelframe {
+        set w [ttk::$widget $win.${widget}_$state -class Toolbar]
+        ttk::menubutton $w.mb -text Toolbar -width 8
+        pack $w.mb -fill both
+      }
+      rcombobox {
+        set w [ttk::combobox $win.${widget}_$state -state readonly]
+      }
+      default {
+        set w [ttk::$widget $win.${widget}_$state]
+      }
     }
     catch { $w configure -from 0 -to 100 }
     catch { $w configure -value 35 }
@@ -92,8 +101,14 @@ foreach widget {button checkbutton radiobutton entry menubutton combobox
     } else {
       $w state $state
     }
+    switch -glob $widget {
+      *combobox - menubutton - entry {
+        $w configure -width 8
+      }
+    }
     grid $w -row $row -column $column -sticky snw -padx 1 -pady 1
     incr column
+    #if {$column > 4} {incr row; set column 0}
   }
   incr row
   set column 0
@@ -109,5 +124,5 @@ ttk::labelframe $win.themes -text Themes:
   ttk::button $win.themes.exit -text Exit -image exit_image \
     -compound left -command exit
   grid $win.themes.exit -columnspan 8 -padx 5 -pady 10
-grid $win.themes -columnspan 6 -padx 2 -pady 2
+grid $win.themes -columnspan [llength $states] -padx 2 -pady 2
 grab set $win.themes

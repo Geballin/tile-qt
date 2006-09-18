@@ -81,6 +81,7 @@ typedef struct TileQt_WidgetCache {
   QSlider*       TileQt_QSlider_Hor_Widget;
   QSlider*       TileQt_QSlider_Ver_Widget;
   QProgressBar*  TileQt_QProgressBar_Hor_Widget;
+  QTabWidget*    TileQt_QTabWidget_Widget;
   QTabBar*       TileQt_QTabBar_Widget;
 #ifdef TILEQT_QT_VERSION_3
   const QPixmap* TileQt_QPixmap_BackgroundTile;
@@ -93,5 +94,22 @@ typedef struct TileQt_WidgetCache {
   Tcl_Interp*    TileQt_MainInterp;
   int orientation;
 } TileQt_WidgetCache;
+
+class TileQt_Widget : protected QWidget {
+  public:
+#ifdef TILEQT_QT_VERSION_3
+    void set_visible(void)   {QWidget::setWState(WState_Visible);}
+    void clear_visible(void) {QWidget::clearWState(WState_Visible);}
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+    void set_visible(void)   {}
+    void clear_visible(void) {}
+#endif /* TILEQT_QT_VERSION_4 */
+}; /* TileQt_Widget */
+
+class TileQt_QTabWidget : protected QTabWidget {
+  public:
+    QTabBar* get_tab_bar(void) const {return tabBar();}
+}; /* TileQt_QTabWidget */
 
 #endif

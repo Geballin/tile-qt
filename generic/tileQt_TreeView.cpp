@@ -70,6 +70,7 @@ static void TreeViewFieldElementDraw(
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
+    TILEQT_SET_FOCUS(state);
 #ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags =TileQt_StateTableLookup(treeview_field_statemap, state);
     sflags |= QStyle::Style_Horizontal;
@@ -88,6 +89,7 @@ static void TreeViewFieldElementDraw(
     wc->TileQt_Style->drawPrimitive(QStyle::PE_FrameGroupBox, &option,
                                     &painter);
 #endif /* TILEQT_QT_VERSION_4 */
+    TILEQT_CLEAR_FOCUS(state);
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);

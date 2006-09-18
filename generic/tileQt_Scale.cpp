@@ -122,7 +122,9 @@ static void ScaleTroughElementDraw(
 #endif /* TILEQT_QT_VERSION_4 */
     // We cannot use qApp->style().drawComplexControl(QStyle::CC_Slider,...),
     // as (due to Qt bug ?), it doesn't work...
+    TILEQT_SET_FOCUS(state);
     QPixmap pixmap = QPixmap::grabWidget(widget);
+    TILEQT_CLEAR_FOCUS(state);
 
     // Try to redraw the whole window, to avoid drawing problems...
     // int bg_width = Tk_Width(tkwin), bg_height = Tk_Height(tkwin);

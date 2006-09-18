@@ -70,6 +70,7 @@ static void PanedSashGripElementDraw(
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
+    TILEQT_SET_FOCUS(state);
 #ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags = TileQt_StateTableLookup(paned_statemap, state);
     if (orient == TTK_ORIENT_HORIZONTAL) {
@@ -86,6 +87,7 @@ static void PanedSashGripElementDraw(
     wc->TileQt_Style->drawControl(QStyle::CE_Splitter, &option,
                                     &painter);
 #endif /* TILEQT_QT_VERSION_4 */
+    TILEQT_CLEAR_FOCUS(state);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
     Tcl_MutexUnlock(&tileqtMutex);

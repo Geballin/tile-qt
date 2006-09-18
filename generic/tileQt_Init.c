@@ -15,6 +15,20 @@
 
 static int TileQt_QAppCreated = 0;
 
+/*
+ * Override QWidget::hasFocus, to return our values, as non-visible windows
+ * never get focus, so hasFocus always returns false.
+ */
+static bool TileQt_HasFocus = false;
+bool QWidget::hasFocus() const {
+  return TileQt_HasFocus;
+}
+void TileQt_SetFocus(bool focus) {
+  Tcl_MutexLock(&tileqtMutex);
+  TileQt_HasFocus = focus;
+  Tcl_MutexUnlock(&tileqtMutex);
+}; /* TileQt_SetFocus */
+
 extern TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp);
 extern void TileQt_DestroyQApp(void);
 
@@ -391,7 +405,7 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
     wc->TileQt_QSlider_Hor_Widget->setStyle(wc->TileQt_Style);
     wc->TileQt_QSlider_Ver_Widget->setStyle(wc->TileQt_Style);
     wc->TileQt_QProgressBar_Hor_Widget->setStyle(wc->TileQt_Style);
-    wc->TileQt_QTabBar_Widget->setStyle(wc->TileQt_Style);
+    wc->TileQt_QTabWidget_Widget->setStyle(wc->TileQt_Style);
     wc->TileQt_QPixmap_BackgroundTile = 
 #ifdef TILEQT_QT_VERSION_3
                      (wc->TileQt_QWidget_Widget)->paletteBackgroundPixmap();
@@ -482,6 +496,8 @@ int Tileqt_GetPixelMetric(ClientData clientData, Tcl_Interp *interp,
 #ifdef TILEQT_QT_VERSION_3
 #define PM(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, \
                                               wc->TileQt_QTabBar_Widget))
+#define PM2(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, \
+                                              wc->TileQt_QTabWidget_Widget))
 #endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
 #ifndef QStyleOptionTabV2
@@ -489,6 +505,8 @@ int Tileqt_GetPixelMetric(ClientData clientData, Tcl_Interp *interp,
 #endif /* QStyleOptionTabV2 */
 #define PM(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, &option, \
                                               wc->TileQt_QTabBar_Widget))
+#define PM2(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, &option, \
+                                              wc->TileQt_QTabWidget_Widget))
 #endif /* TILEQT_QT_VERSION_4 */
   Tcl_MutexLock(&tileqtMutex);
 #ifdef TILEQT_QT_VERSION_4
@@ -496,11 +514,11 @@ int Tileqt_GetPixelMetric(ClientData clientData, Tcl_Interp *interp,
   option.initFrom(wc->TileQt_QTabBar_Widget);
 #endif /* TILEQT_QT_VERSION_4 */
   switch ((enum methods) index) {
-    case PM_TabBarTabOverlap:  {pixels = PM(PM_TabBarTabOverlap); break;}
-    case PM_TabBarTabHSpace:   {pixels = PM(PM_TabBarTabHSpace);  break;}
-    case PM_TabBarTabVSpace:   {pixels = PM(PM_TabBarTabVSpace);  break;}
-    case PM_TabBarBaseHeight:  {pixels = PM(PM_TabBarBaseHeight); break;}
-    case PM_TabBarBaseOverlap: {pixels = PM(PM_TabBarBaseOverlap);break;}
+    case PM_TabBarTabOverlap:  {pixels = PM(PM_TabBarTabOverlap);  break;}
+    case PM_TabBarTabHSpace:   {pixels = PM(PM_TabBarTabHSpace);   break;}
+    case PM_TabBarTabVSpace:   {pixels = PM(PM_TabBarTabVSpace);   break;}
+    case PM_TabBarBaseOverlap: {pixels = PM(PM_TabBarBaseOverlap); break;}
+    case PM_TabBarBaseHeight:  {pixels = PM2(PM_TabBarBaseHeight); break;}
     case PM_TabBarTabShiftHorizontal: {pixels = PM(PM_TabBarTabShiftHorizontal);
                                        break;}
     case PM_TabBarTabShiftVertical:   {pixels = PM(PM_TabBarTabShiftVertical);
@@ -518,7 +536,7 @@ int Tileqt_GetPixelMetric(ClientData clientData, Tcl_Interp *interp,
 int Tileqt_GetStyleHint(ClientData clientData, Tcl_Interp *interp,
                                  int objc, Tcl_Obj *const objv[]) {
 /*
-  SH_TabBar_Alignment         - The alignment for tabs in a QTabWidget.
+  SH_TabBar_Alignment         - The alignment for tabs in a QTabBar.
                                 Possible values are Qt::AlignLeft,
                                 Qt::AlignCenter and Qt::AlignRight.
 */
@@ -557,9 +575,17 @@ int Tileqt_GetStyleHint(ClientData clientData, Tcl_Interp *interp,
   hint = wc->TileQt_Style->styleHint(stylehint);
   Tcl_MutexUnlock(&tileqtMutex);
   switch (hint) {
-    case Qt::AlignLeft:   {pstr = "Qt::AlignLeft";   break;}
-    case Qt::AlignCenter: {pstr = "Qt::AlignCenter"; break;}
-    case Qt::AlignRight:  {pstr = "Qt::AlignRight";  break;}
+    case Qt::AlignLeft:    {pstr = "Qt::AlignLeft";    break;}
+    case Qt::AlignRight:   {pstr = "Qt::AlignRight";   break;}
+    case Qt::AlignCenter:  {pstr = "Qt::AlignCenter";  break;}
+#ifdef TILEQT_QT_VERSION_3
+    case Qt::AlignAuto:    {pstr = "Qt::AlignAuto";    break;}
+#endif /* TILEQT_QT_VERSION_3 */
+    case Qt::AlignJustify: {pstr = "Qt::AlignJustify"; break;}
+    case Qt::AlignTop:     {pstr = "Qt::AlignTop";     break;}
+    case Qt::AlignBottom:  {pstr = "Qt::AlignBottom";  break;}
+    case Qt::AlignVCenter: {pstr = "Qt::AlignVCenter"; break;}
+    case Qt::AlignHCenter: {pstr = "Qt::AlignHCenter"; break;}
     default: {
       Tcl_SetObjResult(interp, Tcl_NewIntObj(hint));
       return TCL_OK;
@@ -568,6 +594,110 @@ int Tileqt_GetStyleHint(ClientData clientData, Tcl_Interp *interp,
   Tcl_SetResult(interp, pstr, TCL_STATIC);
   return TCL_OK;
 }; /* Tileqt_GetStyleHint */
+
+int Tileqt_GetSubControlMetrics(ClientData clientData, Tcl_Interp *interp,
+                                 int objc, Tcl_Obj *const objv[]) {
+  /*
+   * QStyle::SC_ScrollBarAddLine - scrollbar add line (i.e. down/right arrow). 
+   * QStyle::SC_ScrollBarSubLine - scrollbar sub line (i.e. up/left arrow). 
+   * QStyle::SC_ScrollBarAddPage - scrollbar add page (i.e. page down). 
+   * QStyle::SC_ScrollBarSubPage - scrollbar sub page (i.e. page up). 
+   * QStyle::SC_ScrollBarFirst   - scrollbar first line (i.e. home). 
+   * QStyle::SC_ScrollBarLast    - scrollbar last line (i.e. end). 
+   * QStyle::SC_ScrollBarSlider  - scrollbar slider handle. 
+   * QStyle::SC_ScrollBarGroove  - special subcontrol which contains the area
+   *                               in which the slider handle may move.
+   */
+  static char *Methods[] = {
+    "-SC_ScrollBarAddLine",       "-SC_ScrollBarSubLine",
+    "-SC_ScrollBarAddPage",       "-SC_ScrollBarSubPage",
+    "-SC_ScrollBarFirst",         "-SC_ScrollBarLast",
+    "-SC_ScrollBarSlider",        "-SC_ScrollBarGroove",
+    (char *) NULL
+  };
+  enum methods {
+    SC_ScrollBarAddLine,       SC_ScrollBarSubLine,
+    SC_ScrollBarAddPage,       SC_ScrollBarSubPage,
+    SC_ScrollBarFirst,         SC_ScrollBarLast,
+    SC_ScrollBarSlider,        SC_ScrollBarGroove
+  };
+  int index;
+  Tcl_Obj *result;
+  TileQt_WidgetCache **wc_array = (TileQt_WidgetCache **) clientData;
+  TileQt_WidgetCache *wc = wc_array[0];
+  if (objc != 2) {
+    Tcl_WrongNumArgs(interp, 1, objv, "sub_control_identifier");
+    return TCL_ERROR;
+  }
+  if (!qApp) {
+    Tcl_SetResult(interp, "", TCL_STATIC);
+    return TCL_OK;
+  }
+  if (Tcl_GetIndexFromObj(interp, objv[1], (const char **) Methods,
+                            "method", 0, &index) != TCL_OK) {
+    return TCL_ERROR;
+  }
+  QStyle::ComplexControl control = QStyle::CC_ScrollBar;
+  QWidget *widget = 0;
+  QStyle::SubControl subcontrol = QStyle::SC_None;
+#ifdef TILEQT_QT_VERSION_4
+  QStyleOptionComplex *option = NULL;
+#endif /* TILEQT_QT_VERSION_4 */
+
+  if ((enum methods) index >= SC_ScrollBarAddLine &&
+      (enum methods) index <= SC_ScrollBarGroove) {
+    widget  = wc->TileQt_QScrollBar_Widget;
+    control = QStyle::CC_ScrollBar;
+#ifdef TILEQT_QT_VERSION_4
+    option  = new QStyleOptionComplex();
+    if (option) option->initFrom(widget);
+#endif /* TILEQT_QT_VERSION_4 */
+  }
+  switch ((enum methods) index) {
+    case SC_ScrollBarAddLine: {
+      subcontrol = QStyle::SC_ScrollBarAddLine; break;
+    }
+    case SC_ScrollBarSubLine: {
+      subcontrol = QStyle::SC_ScrollBarSubLine; break;
+    }
+    case SC_ScrollBarAddPage: {
+      subcontrol = QStyle::SC_ScrollBarAddPage; break;
+    }
+    case SC_ScrollBarSubPage: {
+      subcontrol = QStyle::SC_ScrollBarSubPage; break;
+    }
+    case SC_ScrollBarFirst: {
+      subcontrol = QStyle::SC_ScrollBarFirst;   break;
+    }
+    case SC_ScrollBarLast: {
+      subcontrol = QStyle::SC_ScrollBarLast;    break;
+    }
+    case SC_ScrollBarSlider: {
+      subcontrol = QStyle::SC_ScrollBarSlider;  break;
+    }
+    case SC_ScrollBarGroove: {
+      subcontrol = QStyle::SC_ScrollBarGroove;  break;
+    }
+  }
+  Tcl_MutexLock(&tileqtMutex);
+#ifdef TILEQT_QT_VERSION_3
+  QRect rc = wc->TileQt_Style->
+    querySubControlMetrics(control, widget, subcontrol);
+#endif /* TILEQT_QT_VERSION_3 */
+#ifdef TILEQT_QT_VERSION_4
+  QRect rc = wc->TileQt_Style->
+    subControlRect(control, option, subcontrol, widget);
+  if (option) delete option;
+#endif /* TILEQT_QT_VERSION_4 */
+  Tcl_MutexUnlock(&tileqtMutex);
+  result = Tcl_NewListObj(0, NULL);
+  Tcl_ListObjAppendElement(interp, result, Tcl_NewIntObj(rc.x()));
+  Tcl_ListObjAppendElement(interp, result, Tcl_NewIntObj(rc.y()));
+  Tcl_ListObjAppendElement(interp, result, Tcl_NewIntObj(rc.width()));
+  Tcl_ListObjAppendElement(interp, result, Tcl_NewIntObj(rc.height()));
+  Tcl_SetObjResult(interp, result);
+  return TCL_OK;
+}; /* Tileqt_GetSubControlMetrics */
 
 extern "C" int DLLEXPORT
 Tileqt_Init(Tcl_Interp *interp)
@@ -648,6 +778,9 @@ Tileqt_Init(Tcl_Interp *interp)
     Tcl_CreateObjCommand(interp,
                          "tile::theme::tileqt::getStyleHint",
                          Tileqt_GetStyleHint, (ClientData) wc, NULL);
+    Tcl_CreateObjCommand(interp,
+                         "tile::theme::tileqt::getSubControlMetrics",
+                         Tileqt_GetSubControlMetrics, (ClientData) wc, NULL);
     /* Save the name of the current theme... */
     strcpy(tmpScript, "namespace eval tile::theme::tileqt { variable theme ");
     if (qApp) {

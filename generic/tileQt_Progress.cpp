@@ -81,7 +81,9 @@ static void ProgressTroughElementDraw(
     widget.setTextVisible(false);
 #endif /* TILEQT_QT_VERSION_4 */
     if (state & TTK_STATE_DISABLED) widget.setEnabled(false);
+    TILEQT_SET_FOCUS(state);
     QPixmap pixmap = QPixmap::grabWidget(&widget);
+    TILEQT_CLEAR_FOCUS(state);
 #ifdef TILEQT_QT_VERSION_3
     if (orient == TTK_ORIENT_VERTICAL) {
       // Qt 3.x does not support vertical progress bars. Rotate it :-)

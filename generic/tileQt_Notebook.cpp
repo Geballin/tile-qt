@@ -186,6 +186,7 @@ static void NotebookTabElementDraw(
     QPixmap      pixmap(width, height);
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(width, height);
+    TILEQT_SET_FOCUS(state);
 #ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags = TileQt_StateTableLookup(notebook_statemap, state);
     wc->TileQt_Style->drawControl(QStyle::CE_TabBarTab, &painter,
@@ -199,7 +200,7 @@ static void NotebookTabElementDraw(
     wc->TileQt_Style->drawControl(QStyle::CE_TabBarTabShape, &option,
                                   &painter, wc->TileQt_QTabBar_Widget);
 #endif /* TILEQT_QT_VERSION_4 */
-    
+    TILEQT_CLEAR_FOCUS(state);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
            0, 0, width, height, b.x, b.y + PM_DefaultFrameWidth);
 #ifdef TILEQT_QT_VERSION_3
@@ -246,13 +247,13 @@ static void NotebookClientElementGeometry(
     int *widthPtr, int *heightPtr, Ttk_Padding *paddingPtr)
 {
     if (qApp == NULL) NULL_Q_APP;
-    NULL_PROXY_WIDGET(TileQt_QTabBar_Widget);
+    NULL_PROXY_WIDGET(TileQt_QTabWidget_Widget);
     int tabBarBaseHeight =
         wc->TileQt_Style->pixelMetric(QStyle::PM_TabBarBaseHeight,
 #ifdef TILEQT_QT_VERSION_4
                                       0,
 #endif /* TILEQT_QT_VERSION_4 */
-                                      wc->TileQt_QTabBar_Widget);
+                                      wc->TileQt_QTabWidget_Widget);
     *paddingPtr = Ttk_MakePadding(NotebookClientUniformPadding,
            NotebookClientUniformPadding + tabBarBaseHeight,
            NotebookClientUniformPadding, NotebookClientUniformPadding);
@@ -288,7 +289,7 @@ static void NotebookClientElementDraw(
 #ifdef TILEQT_QT_VERSION_4
                                       0,
 #endif /* TILEQT_QT_VERSION_4 */
-                                      wc->TileQt_QTabBar_Widget);
+                                      wc->TileQt_QTabWidget_Widget);
     if (tabBarBaseHeight) {
       TILEQT_PAINT_BACKGROUND(b.width, tabBarBaseHeight);
 #ifdef TILEQT_QT_VERSION_3

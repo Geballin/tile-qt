@@ -33,6 +33,12 @@
 #define ENSURE_WIDGET_STYLE(widget) \
    if (&(widget.style()) != wc->TileQt_Style) widget.setStyle(wc->TileQt_Style);
 
+
+#define TILEQT_SET_FOCUS(state) \
+   if (state & TTK_STATE_FOCUS) {TileQt_SetFocus(true);}
+#define TILEQT_CLEAR_FOCUS(state) \
+   if (state & TTK_STATE_FOCUS) {TileQt_SetFocus(false);}
+
 #ifdef TILEQT_QT_VERSION_3
 #define TILEQT_PAINT_BACKGROUND(width, height) \
     if (wc->TileQt_QPixmap_BackgroundTile && \
@@ -100,3 +106,4 @@ extern void TileQt_CopyQtPixmapOnToDrawable(QPixmap&, Drawable, Tk_Window,
 extern void TileQt_StoreStyleNameLowers(TileQt_WidgetCache *wc);
 extern bool TileQt_ThemeIs(TileQt_WidgetCache *wc, const char* name);
 extern unsigned int TileQt_StateTableLookup(Ttk_StateTable *, unsigned int);
+extern void TileQt_SetFocus(bool focus);
