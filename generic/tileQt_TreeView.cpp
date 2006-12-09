@@ -69,7 +69,7 @@ static void TreeViewFieldElementDraw(
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    TILEQT_PAINT_BACKGROUND(b.width, b.height);
+    TILEQT_PAINT_BACKGROUND_BASE(b.width, b.height);
     TILEQT_SET_FOCUS(state);
 #ifdef TILEQT_QT_VERSION_3
     QStyle::SFlags sflags =TileQt_StateTableLookup(treeview_field_statemap, state);
@@ -79,6 +79,9 @@ static void TreeViewFieldElementDraw(
           QStyleOption(/*lineWidth*/1, /*midLineWidth*/0,
                        /*frameShape*/QFrame::StyledPanel,
                        /*frameShadow*/QFrame::Sunken));
+    wc->TileQt_Style->drawPrimitive(QStyle::PE_PanelLineEdit, &painter,
+          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
+          QStyleOption(1,1));
 #endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionFrame option;
@@ -150,9 +153,11 @@ static void TreeViewClientElementDraw(
     Tcl_MutexLock(&tileqtMutex);
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
-    TILEQT_PAINT_BACKGROUND(b.width, b.height);
+    TILEQT_PAINT_BACKGROUND_BASE(b.width, b.height);
+#if 0
 #ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags =TileQt_StateTableLookup(treeview_client_statemap,state);
+    QStyle::SFlags sflags =
+                   TileQt_StateTableLookup(treeview_client_statemap, state);
     sflags |= QStyle::Style_Horizontal;
     wc->TileQt_Style->drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
           QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
@@ -164,11 +169,12 @@ static void TreeViewClientElementDraw(
     QStyleOptionFrame option;
     option.rect = QRect(0, 0, b.width, b.height);
     option.lineWidth = 1;
-    option.state |= 
-      (QStyle::StateFlag) TileQt_StateTableLookup(treeview_client_statemap, state);
+    option.state |= (QStyle::StateFlag) 
+                    TileQt_StateTableLookup(treeview_client_statemap, state);
     wc->TileQt_Style->drawPrimitive(QStyle::PE_FrameGroupBox, &option,
                                     &painter);
 #endif /* TILEQT_QT_VERSION_4 */
+#endif
     // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
@@ -304,8 +310,8 @@ int TileQt_Init_TreeView(Tcl_Interp *interp,
      */
     Ttk_RegisterElement(interp, themePtr, "Treeview.field",
             &TreeViewFieldElementSpec, (void *) wc[0]);
-    Ttk_RegisterElement(interp, themePtr, "Treeview.client",
-            &TreeViewClientElementSpec, (void *) wc[0]);
+    //Ttk_RegisterElement(interp, themePtr, "Treeview.client",
+    //        &TreeViewClientElementSpec, (void *) wc[0]);
     Ttk_RegisterElement(interp, themePtr, "Treeheading.border",
             &TreeHeadingBorderElementSpec, (void *) wc[0]);
     

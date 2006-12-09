@@ -1,7 +1,21 @@
 #!/usr/bin/wish
 cd [file dirname [info script]]
+package require Tk
 
-set PACKAGES {qt-devel qt3-devel qt4-devel tk tcl}
+## Process the current Tcl interpreter...
+puts "Examining current interpreter: \"[info nameofexe]-[info patchlevel]\"..."
+foreach {package file} [list tcl tclConfig.sh \
+                             tk  tkConfig.sh] {
+  set lib [file dirname [file normalize [info library]]]
+  if {[file exists $lib/$file]} {
+    puts "    Found usuable $file: ([file join $lib/$file])"
+    set Package($package)  $package
+    set Location($package) [file dirname $lib]
+    set Version($package)  [info patchlevel]
+  }
+}
+
+set PACKAGES {qt-devel qt3-devel qt4-devel tk-devel tcl-devel}
 ## Examine packages to locate the installed Qt/Tk packages
 foreach package $PACKAGES {
   puts "Examining RPM package: \"$package\"..."
@@ -29,7 +43,6 @@ foreach package $PACKAGES {
 # parray Location
 # parray Version
 
-package require Tk
 wm title . "TileQt Configure Caller!"
 grid [label .message -text "Utility for configuring TileQt!" \
         -font {arial 12 bold}] \
@@ -66,7 +79,12 @@ proc configure {} {
                                       --with-qt-dir=$::L_Qt >&@ stdout
 }
 proc make {} { if {[file exists Makefile]} { exec make >&@ stdout } }
-proc install {} { if {[file exists Makefile]} { exec make install >&@ stdout } }
+proc install {} { if {[file exists Makefile]} {
+  foreach file [glob -nocomplain *tileqt*[info sharedlibextension]] {
+    catch {exec ldd -r -d $file >&@ stdout}
+  }
+  exec make install >&@ stdout } 
+}
 proc demo {} { if {[file exists demos/demo.tcl]} { exec $::L_Tk/bin/wish demos/demo.tcl >&@ stdout } }
 proc clean {} { if {[file exists Makefile]} { exec make distclean >&@ stdout } }
 

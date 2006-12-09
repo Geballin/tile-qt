@@ -1,3 +1,16 @@
+2006-09-12  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * configure.in:
+        * Makefile.in: Various fixes in the build process. -rpath is now used,
+        which allows tileqt to run if the tile library is within a directory not
+        in LD_LIBRARY_PATH.
+
+        * config-rpm.tcl: Updated script to allow tileqt compilation even when
+        the rpms tcl-devel and tk-devel have not been installed, but the files
+        tclConfig.sh & tkConfig.sh can be found from the interpreter the script
+        runs within. This is a typical situation when the ActiveTcl distribution
+        has been installed and its wish is used to run the config-rpm.tcl
+        script.
+
 2006-18-09  Georgios Petasis  <petasis@iit.demokritos.gr>
         * generic/*.cpp: Make use of TileQt_SetFocus, through new macros.
         (TILEQT_SET_FOCUS/TILEQT_CLEAR_FOCUS). Now, comboboxes are drawn

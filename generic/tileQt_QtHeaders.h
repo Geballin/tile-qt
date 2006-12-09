@@ -83,6 +83,7 @@ typedef struct TileQt_WidgetCache {
   QProgressBar*  TileQt_QProgressBar_Hor_Widget;
   QTabWidget*    TileQt_QTabWidget_Widget;
   QTabBar*       TileQt_QTabBar_Widget;
+  QListView*     TileQt_QListView_Widget;
 #ifdef TILEQT_QT_VERSION_3
   const QPixmap* TileQt_QPixmap_BackgroundTile;
 #endif /* TILEQT_QT_VERSION_3 */

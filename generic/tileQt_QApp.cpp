@@ -47,6 +47,7 @@ static void TileQt_InterpDeleteProc(ClientData clientData, Tcl_Interp *interp) {
   if (wc->TileQt_QSlider_Ver_Widget)      delete wc->TileQt_QSlider_Ver_Widget;
   if (wc->TileQt_QProgressBar_Hor_Widget) delete wc->TileQt_QProgressBar_Hor_Widget;
   if (wc->TileQt_QTabWidget_Widget)       delete wc->TileQt_QTabWidget_Widget;
+  if (wc->TileQt_QListView_Widget)        delete wc->TileQt_QListView_Widget;
   if (wc->TileQt_QWidget_Widget)          delete wc->TileQt_QWidget_Widget;
   if (wc->TileQt_QWidget_WidgetParent)    delete wc->TileQt_QWidget_WidgetParent;
   if (wc->TileQt_smw)                     delete wc->TileQt_smw;
@@ -158,6 +159,7 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp) {
       ((TileQt_Widget*) wc->TileQt_QTabBar_Widget)->set_visible();
     }
   }
+  wc->TileQt_QListView_Widget = new QListView(wc->TileQt_QWidget_Widget);
   wc->TileQt_QPixmap_BackgroundTile   =
 #ifdef TILEQT_QT_VERSION_3
                      (wc->TileQt_QWidget_Widget)->paletteBackgroundPixmap();
