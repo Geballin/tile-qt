@@ -1,3 +1,8 @@
+2007-03-01  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * library/tileqt.tcl: Fixed a bug in kdeLocate_kdeglobals, where tileqt
+        failed to initialise when KDE was not installed (and thus kde-config
+        command was not available). Bug reported by Mark Garvey.
+
 2006-09-12  Georgios Petasis  <petasis@iit.demokritos.gr>
         * configure.in:
         * Makefile.in: Various fixes in the build process. -rpath is now used,

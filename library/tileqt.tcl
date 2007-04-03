@@ -348,7 +348,9 @@ namespace eval tile::theme::tileqt {
         }
       }
       if {[string length $cmd]} {
-        lappend KDE_dirs [eval exec $cmd]
+        if {![catch {eval exec $cmd} dir]} {
+          lappend KDE_dirs $dir
+        }
       }
     }
     # Now, examine all the paths found to locate the kdeglobals file.

@@ -1,4 +1,6 @@
-#!/usr/bin/wish
+#!/bin/sh
+# The next line is executed by /bin/sh, but not tcl \
+exec wish "$0" ${1+"$@"}
 cd [file dirname [info script]]
 package require Tk
 
