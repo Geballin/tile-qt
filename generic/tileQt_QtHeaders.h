@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2006 by:
+ * Copyright (C) 2004-2008 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -59,7 +59,6 @@
 #include <QtGui>
 #endif /* QT_VERSION >= 0x040000 && QT_VERSION < 0x050000 */
 #include <tk.h>
-#include "tkMacros.h"
 
 #ifdef TILEQT_QT_VERSION_4
 #include <QX11Info>

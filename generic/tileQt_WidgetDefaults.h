@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2006 by:
+ * Copyright (C) 2004-2008 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -16,7 +16,7 @@
 #define DEFAULT_BORDERWIDTH "2"
 #define DEFAULT_ARROW_SIZE "15"
 #define MIN_THUMB_SIZE 8
-#define BorderBorderWidth               "0"
+#define BorderBorderWidth              "0"
 #define PushButtonUniformPadding        3
 #define RadioButtonHorizontalPadding    0
 #define CheckButtonHorizontalPadding    0

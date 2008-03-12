@@ -1,7 +1,7 @@
 /*
  * $Id$
  *
- * Copyright (C) 2004-2006 Georgios Petasis
+ * Copyright (C) 2004-2008 Georgios Petasis
  *
  * The Tile-Qt theme is a Tk/Tile theme that uses Qt/KDE for drawing.
  */
@@ -9,8 +9,7 @@
 #include "tileQt_QtHeaders.h"
 #include "tileQt_Utilities.h"
 #include "tileQt_Elements.h"
-#include <tk.h>
-#include "tkTheme.h"
+#include "tileQt_TkHeaders.h"
 #include <string.h>
 
 static int TileQt_QAppCreated = 0;

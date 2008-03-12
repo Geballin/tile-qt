@@ -5,9 +5,10 @@
 #========================================================================
 # IMPORTANT:
 # Change the following variable to point in the directory hosting the file
-# tkTheme.h, from the tile package sources!
+# ttkTheme.h, from the tile package sources!
 #========================================================================
-TILE_INCLUDES = -I/disk2b/local/sources/tcl/tile/generic/
+TILE_INCLUDES = -I/disk2b/local/sources/tcl/tile/generic/ \
+                -I/disk2b/local/sources/tcl/tk/generic/ttk
 
 #========================================================================
 

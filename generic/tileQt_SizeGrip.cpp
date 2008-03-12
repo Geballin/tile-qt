@@ -5,7 +5,7 @@
  * This file is part of the Tile-Qt package, a Tk/Tile based theme that uses
  * Qt/KDE for drawing.
  *
- * Copyright (C) 2004-2006 by:
+ * Copyright (C) 2004-2008 by:
  * Georgios Petasis, petasis@iit.demokritos.gr,
  * Software and Knowledge Engineering Laboratory,
  * Institute of Informatics and Telecommunications,
@@ -14,8 +14,7 @@
  */
 
 #include "tileQt_Utilities.h"
-#include <tk.h>
-#include "tkTheme.h"
+#include "tileQt_TkHeaders.h"
 #include "tileQt_WidgetDefaults.h"
 
 /*

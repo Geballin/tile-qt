@@ -71,7 +71,7 @@ proc configure {} {
   ## Run 'moc' to get Qt version...
   catch {exec $::L_Qt/bin/moc -v} result
   if {[string match {*(Qt 4.*)} $result]} {
-    set configure configure-qt4
+  #  set configure configure-qt4
   }
   log "/bin/sh $configure --prefix=$::L_Tk --with-tcl=$::L_Tcl/lib \
                                       --with-tk=$::L_Tk/lib \
@@ -88,7 +88,7 @@ proc install {} { if {[file exists Makefile]} {
   exec make install >&@ stdout } 
 }
 proc demo {} { if {[file exists demos/demo.tcl]} { exec $::L_Tk/bin/wish demos/demo.tcl >&@ stdout } }
-proc clean {} { if {[file exists Makefile]} { exec make distclean >&@ stdout } }
+proc clean {} { clearlog; if {[file exists Makefile]} { exec make distclean >&@ stdout } }
 
 ## The buttons section...
 grid [button .configure -text "Run Configure!" -command configure -width 15] \
