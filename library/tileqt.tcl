@@ -183,7 +183,7 @@ namespace eval ttk::theme::tileqt {
          pressed         [currentThemeColour -active   -button] \
          selected        [currentThemeColour -active   -button] \
       ]
-      ttk::style configure TButton      -width -11 -padding {2}
+      ttk::style configure TButton -anchor center -width -11 -padding {2}
 
       ttk::style map TCheckbutton -foreground [list \
          active          [currentThemeColour -active   -buttonText] \
@@ -243,7 +243,7 @@ namespace eval ttk::theme::tileqt {
       ttk::style configure TEntry       -padding {3 4 3 3}
       
       ttk::style configure TLabelframe  -background [currentThemeColour \
-                         -background] -padding 0
+                         -background] -labeloutside false -padding 0
       
       ttk::style map TMenubutton -foreground [list \
          active          [currentThemeColour -active   -buttonText] \
@@ -317,7 +317,7 @@ namespace eval ttk::theme::tileqt {
          pressed         [currentThemeColour -active   -button] \
          selected        [currentThemeColour -active   -button] \
       ]
-      ttk::style configure Toolbutton -padding {2 2 2 2}
+      ttk::style configure Toolbutton -anchor center -padding {2 2 2 2}
 
       ttk::style configure TPaned -background [currentThemeColour -background]
       ttk::style configure Horizontal.Sash -background [currentThemeColour \

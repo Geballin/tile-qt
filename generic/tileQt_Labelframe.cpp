@@ -97,7 +97,6 @@ static Ttk_ElementSpec LabelframeBorderElementSpec = {
 TTK_BEGIN_LAYOUT(LabelframeLayout)
     /* Note: labelframe widget does its own layout */
     TTK_NODE("Labelframe.border", TTK_FILL_BOTH)
-    TTK_NODE("Labelframe.text", TTK_FILL_BOTH)
 TTK_END_LAYOUT
 
 int TileQt_Init_Labelframe(Tcl_Interp *interp,
