@@ -12,15 +12,15 @@ eval destroy [winfo children .]		;# in case script is re-sourced
 variable demodir [file dirname [info script]]
 lappend auto_path . $demodir
 package require tile
-tile::setTheme tileqt
+ttk::setTheme tileqt
 foreach {arg val} $argv {
   switch -glob -- $arg {
-    -st* {tile::theme::tileqt::applyStyle $val}
+    -st* {ttk::theme::tileqt::applyStyle $val}
   }
 }
 
 source [file join $demodir iconlib.tcl]
-source [file join $demodir toolbutton.tcl]
+# source [file join $demodir toolbutton.tcl]
 source [file join $demodir repeater.tcl]
 
 # This forces an update of the available packages list.
@@ -78,7 +78,7 @@ array set ::THEMES $THEMELIST;
 
 # Add in any available loadable themes:
 #
-foreach name [tile::availableThemes] {
+foreach name [ttk::themes] {
     if {![info exists ::THEMES($name)]} {
 	lappend THEMELIST $name [set ::THEMES($name) [string totitle $name]]
     }
@@ -170,9 +170,9 @@ proc scrolled {class w args} {
     return $sf
 }
 
-## tile::scrolled -- create a widget with attached Tile scrollbars.
+## ttk::scrolled -- create a widget with attached Tile scrollbars.
 #
-proc tile::scrolled {class w args} {
+proc ttk::scrolled {class w args} {
     set sf "${w}_sf"
 
     ttk::frame $sf
@@ -184,7 +184,7 @@ proc tile::scrolled {class w args} {
     return $sf
 }
 
-## configure.scrolled -- common factor of [scrolled] and [tile::scrolled]
+## configure.scrolled -- common factor of [scrolled] and [ttk::scrolled]
 #
 proc configure.scrolled {sf w} {
     $w configure -xscrollcommand [list $sf.hsb set]
@@ -294,10 +294,10 @@ proc makeThemeControl {c} {
     ttk::labelframe $c -text "Theme"
     foreach {theme name} $::THEMELIST {
 	set b [ttk::radiobutton $c.s$theme -text $name \
-		   -variable ::tile::currentTheme -value $theme \
-		   -command [list tile::setTheme $theme]]
+		   -variable ::ttk::currentTheme -value $theme \
+		   -command [list ttk::setTheme $theme]]
 	pack $b -side top -expand false -fill x
-	if {[lsearch -exact [package names] tile::theme::$theme] == -1} {
+	if {[lsearch -exact [package names] ttk::theme::$theme] == -1} {
 	    $c.s$theme state disabled
 	}
     }
@@ -316,7 +316,7 @@ ttk::notebook::enableTraversal $nb
 #
 
 
-set pw [ttk::paned $nb.client -orient horizontal]
+set pw [ttk::panedwindow $nb.client -orient horizontal]
 $nb add $pw -text "Demo" -underline 0 -padding 6
 set l [ttk::labelframe $pw.l -text "Themed" -padding 6 -underline 1]
 set r [labelframe $pw.r -text "Standard" -padx 6 -pady 6]
@@ -355,7 +355,7 @@ set ::entryText "Entry widget"
 ttk::entry $l.e -textvariable ::entryText
 $l.e selection range 6 end 
 
-set ltext [tile::scrolled text $l.t -width 12 -height 5 -wrap none]
+set ltext [ttk::scrolled text $l.t -width 12 -height 5 -wrap none]
 
 grid $l.cb  -sticky ew
 grid $l.rb1 -sticky ew
@@ -422,7 +422,7 @@ $r.t insert end $txt
 proc scales.pane {scales} {
     ttk::frame $scales
 
-    ttk::paned $scales.pw -orient horizontal
+    ttk::panedwindow $scales.pw -orient horizontal
     set l [ttk::labelframe $scales.styled -text "Themed" -padding 6]
     set r [labelframe $scales.orig -text "Standard" -padx 6 -pady 6]
 
@@ -771,7 +771,7 @@ proc repeatDemo {} {
     if {![catch { wm deiconify $top ; raise $top }]} { return }
     toplevel $top
     wm title $top "Repeating button"
-    keynav::enableMnemonics $top
+    #keynav::enableMnemonics $top
 
     set f [ttk::frame .repeatDemo.f]
     ttk::button $f.b -class Repeater -text "Press and hold" \
@@ -822,8 +822,8 @@ pack [ttk::sizegrip $statusbar.grip] -side right -anchor se
 #
 bind $::ROOT <KeyPress-Escape>	[list event generate $cmd.close <<Invoke>>]
 bind $::ROOT <<Help>>		[list event generate $cmd.help <<Invoke>>]
-keynav::enableMnemonics $::ROOT
-keynav::defaultButton $cmd.help
+# keynav::enableMnemonics $::ROOT
+# keynav::defaultButton $cmd.help
 
 ### Menubar.
 #
@@ -861,9 +861,9 @@ proc makeThemeMenu {menu} {
     menu $menu
     foreach {theme name} $::THEMELIST {
 	$menu add radiobutton -label $name \
-	    -variable ::tile::currentTheme -value $theme \
-	    -command [list tile::setTheme $theme]
-	if {[lsearch -exact [package names] tile::theme::$theme] == -1} {
+	    -variable ::ttk::currentTheme -value $theme \
+	    -command [list ttk::setTheme $theme]
+	if {[lsearch -exact [package names] ttk::theme::$theme] == -1} {
 	    $menu entryconfigure end -state disabled
 	}
     }
@@ -887,7 +887,7 @@ wm iconname $ROOT "Tile demo"
 update; wm deiconify $ROOT
 
 ## Test the theme configuration panel...
-namespace eval tile::theme::tileqt {
+namespace eval ttk::theme::tileqt {
   if {1 && ![info exists ::testConfigurationPanel]} {
     toplevel .themeConfPanel
     wm withdraw .themeConfPanel

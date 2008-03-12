@@ -1,3 +1,10 @@
+2008-03012  Georgios Petasis  <petasis@iit.demokritos.gr>
+        * Makefile.in:
+	* pkgIndex.tcl.in:
+	* generic/tileQt_Init.c:
+	* library/tileqt.tcl: Initial attempt to port tileqt to Tk 8.5, to use
+	the included tile package.
+
 2007-03-01  Georgios Petasis  <petasis@iit.demokritos.gr>
         * library/tileqt.tcl: Fixed a bug in kdeLocate_kdeglobals, where tileqt
         failed to initialise when KDE was not installed (and thus kde-config

@@ -4,7 +4,7 @@
 ##
 ###############################################################################
 package require tile
-tile::setTheme tileqt
+ttk::setTheme tileqt
 
 set win {}
 label $win.lbl_option   -text Option:
@@ -33,18 +33,18 @@ foreach {option explanation} {
                 linkVisited     {Returns the visited link text color.}} {
   label $win.$option -text "-$option:" -anchor w
   
-  set active_colour [tile::theme::tileqt::currentThemeColour -$option]
+  set active_colour [ttk::theme::tileqt::currentThemeColour -$option]
   label $win.${option}_active_colour -background $active_colour \
     -relief raised -borderwidth 1
   label $win.${option}_active_colour_value -text $active_colour
 
-  set disabled_colour [tile::theme::tileqt::currentThemeColour \
+  set disabled_colour [ttk::theme::tileqt::currentThemeColour \
                              -disabled -$option]
   label $win.${option}_disabled_colour -background $disabled_colour \
     -relief raised -borderwidth 1
   label $win.${option}_disabled_colour_value -text $disabled_colour
 
-  set inactive_colour [tile::theme::tileqt::currentThemeColour \
+  set inactive_colour [ttk::theme::tileqt::currentThemeColour \
                              -inactive -$option]
   label $win.${option}_inactive_colour -background $inactive_colour \
     -relief raised -borderwidth 1

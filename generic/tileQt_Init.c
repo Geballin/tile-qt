@@ -34,10 +34,10 @@ extern void TileQt_DestroyQApp(void);
 
 static char initScript[] =
     "namespace eval tileqt { };"
-    "namespace eval tile::theme::tileqt { variable version "
+    "namespace eval ttk::theme::tileqt { variable version "
                                                    PACKAGE_VERSION " };"
-    "tcl_findLibrary tileqt $tile::theme::tileqt::version "
-    "$tile::theme::tileqt::version tileqt.tcl TILEQT_LIBRARY tileqt::library;";
+    "tcl_findLibrary tileqt $ttk::theme::tileqt::version "
+    "$ttk::theme::tileqt::version tileqt.tcl TILEQT_LIBRARY tileqt::library;";
 
 /*
  * Exit Handler.
@@ -438,7 +438,7 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
   wc_array[0]->orientation = TTK_ORIENT_HORIZONTAL;
   wc_array[1]->orientation = TTK_ORIENT_VERTICAL;
   /* Save the name of the current theme... */
-  Tcl_SetVar(interp, "tile::theme::tileqt::theme",
+  Tcl_SetVar(interp, "ttk::theme::tileqt::theme",
 #ifdef TILEQT_QT_VERSION_3                    
              wc->TileQt_Style->name(), TCL_GLOBAL_ONLY);
 #endif /* TILEQT_QT_VERSION_3 */
@@ -758,31 +758,31 @@ Tileqt_Init(Tcl_Interp *interp)
     /*
      * Register the TileQt package...
      */
-    Tcl_CreateObjCommand(interp, "tile::theme::tileqt::currentThemeName",
+    Tcl_CreateObjCommand(interp, "ttk::theme::tileqt::currentThemeName",
                          Tileqt_ThemeName, (ClientData) wc, NULL);
     Tcl_CreateObjCommand(interp,
-                         "tile::theme::tileqt::currentThemeColour",
+                         "ttk::theme::tileqt::currentThemeColour",
                          Tileqt_ThemeColour, (ClientData) wc, NULL);
     Tcl_CreateObjCommand(interp,
-                         "tile::theme::tileqt::availableStyles_AsReturned",
+                         "ttk::theme::tileqt::availableStyles_AsReturned",
                          Tileqt_AvailableStyles, (ClientData) wc, NULL);
     Tcl_CreateObjCommand(interp,
-                         "tile::theme::tileqt::setStyle",
+                         "ttk::theme::tileqt::setStyle",
                          Tileqt_SetStyle, (ClientData) wc, NULL);
     Tcl_CreateObjCommand(interp,
-                         "tile::theme::tileqt::setPalette",
+                         "ttk::theme::tileqt::setPalette",
                          Tileqt_SetPalette, (ClientData) wc, NULL);
     Tcl_CreateObjCommand(interp,
-                         "tile::theme::tileqt::getPixelMetric",
+                         "ttk::theme::tileqt::getPixelMetric",
                          Tileqt_GetPixelMetric, (ClientData) wc, NULL);
     Tcl_CreateObjCommand(interp,
-                         "tile::theme::tileqt::getStyleHint",
+                         "ttk::theme::tileqt::getStyleHint",
                          Tileqt_GetStyleHint, (ClientData) wc, NULL);
     Tcl_CreateObjCommand(interp,
-                         "tile::theme::tileqt::getSubControlMetrics",
+                         "ttk::theme::tileqt::getSubControlMetrics",
                          Tileqt_GetSubControlMetrics, (ClientData) wc, NULL);
     /* Save the name of the current theme... */
-    strcpy(tmpScript, "namespace eval tile::theme::tileqt { variable theme ");
+    strcpy(tmpScript, "namespace eval ttk::theme::tileqt { variable theme ");
     if (qApp) {
 #ifdef TILEQT_QT_VERSION_3                    
       strcat(tmpScript, qApp->style().name());
@@ -802,7 +802,7 @@ Tileqt_Init(Tcl_Interp *interp)
     if (Tcl_Eval(interp, initScript) != TCL_OK) {
       return TCL_ERROR;
     }
-    Tcl_PkgProvide(interp, "tile::theme::tileqt", PACKAGE_VERSION);
+    Tcl_PkgProvide(interp, "ttk::theme::tileqt", PACKAGE_VERSION);
     Tcl_PkgProvide(interp, PACKAGE_NAME, PACKAGE_VERSION);
     return TCL_OK;
 }; /* TileQt_Init */

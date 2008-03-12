@@ -1,6 +1,6 @@
 #
 # @configure_input@
 #
-package ifneeded tile::theme::tileqt @PACKAGE_VERSION@ [subst {
+package ifneeded ttk::theme::tileqt @PACKAGE_VERSION@ [subst {
     load [file join $dir @PKG_LIB_FILE@] tileqt
 }]

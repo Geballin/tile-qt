@@ -42,16 +42,16 @@
 # style; see demo.tcl.)
 #
 
-style theme settings "step" {
+ttk::style theme settings "default" {
 
 #
-# First, we use [style layout] to define what elements to
+# First, we use [ttk::style layout] to define what elements to
 # use and how they're arranged.  Toolbuttons are pretty
 # simple, consisting of a border, some internal padding,
 # and a label.  (See also the TScrollbar layout definition 
 # in demos/blue.tcl for a more complicated layout spec.)
 #
-    style layout Toolbutton {
+    ttk::style layout Toolbutton {
         Toolbutton.border -children {
             Toolbutton.padding -children {
                 Toolbutton.label
@@ -67,17 +67,18 @@ style theme settings "step" {
 # For many options (like -background), the defaults
 # inherited from the parent style are sufficient.
 #
-    style default Toolbutton -width 0 -padding 1 -relief flat -borderwidth 2
+    ttk::style configure Toolbutton \
+    	-width 0 -padding 1 -relief flat -borderwidth 2
 
 #
-# Finally, use [style map] to specify state-specific 
+# Finally, use [ttk::style map] to specify state-specific 
 # resource values.  We want a flat relief if the widget is
 # disabled, sunken if it's selected (on) or pressed, 
 # and raised when it's active (the mouse pointer is
 # over the widget).  Each state-value pair is checked
 # in order, and the first matching state takes precedence.
 #
-    style map Toolbutton -relief {
+    ttk::style map Toolbutton -relief {
 	disabled 	flat
     	selected	sunken  
 	pressed 	sunken  

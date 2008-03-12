@@ -73,7 +73,7 @@ proc configure {} {
   if {[string match {*(Qt 4.*)} $result]} {
     set configure configure-qt4
   }
-  puts "/bin/sh $configure --prefix=$::L_Tk --with-tcl=$::L_Tcl/lib \
+  log "/bin/sh $configure --prefix=$::L_Tk --with-tcl=$::L_Tcl/lib \
                                       --with-tk=$::L_Tk/lib \
                                       --with-qt-dir=$::L_Qt"
   exec /bin/sh $configure --prefix=$::L_Tk --with-tcl=$::L_Tcl/lib \
@@ -99,3 +99,14 @@ grid [button .clean -text "Clean"              -command clean -width 15] \
      [button .demo  -text "Run Demo!"          -command demo -width 15] \
      [button .exit      -text "Exit"           -command exit -width 15] \
      -sticky snew -padx 10 -pady 2
+
+## The console section...
+grid [text .messages -height 6 -bg white] \
+     -columnspan 3 -sticky snew -padx 2 -pady 2
+
+proc log {msg} {
+  puts $msg
+  .messages insert end $msg\n
+  update
+}
+proc clearlog {} {.messages delete 1.0 end}

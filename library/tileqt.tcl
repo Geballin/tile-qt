@@ -1,11 +1,11 @@
-namespace eval tile::theme::tileqt {
+namespace eval ttk::theme::tileqt {
   variable PreviewInterp {}
 
   proc updateLayouts {} {
     ## Variable "theme" should be defined by the C part of the extension.
     variable theme
     if {![info exists theme]} {return}
-    style theme use tileqt
+    ttk::style theme use tileqt
     # puts "=================================================="
     # puts "Current Qt Theme: [currentThemeName] ($theme)"
     # puts "Tab alignment:    [getStyleHint   -SH_TabBar_Alignment]"
@@ -39,7 +39,7 @@ namespace eval tile::theme::tileqt {
       help 
       {
         # 3 Arrows...
-        style layout Horizontal.TScrollbar {
+        ttk::style layout Horizontal.TScrollbar {
           Scrollbar.background
           Horizontal.Scrollbar.trough -children {
               Horizontal.Scrollbar.leftarrow -side left
@@ -47,8 +47,8 @@ namespace eval tile::theme::tileqt {
               Horizontal.Scrollbar.leftarrow -side right
               Horizontal.Scrollbar.thumb -side left -expand true -sticky we
           }
-        };# style layout Horizontal.TScrollbar
-        style layout Vertical.TScrollbar {
+        };# ttk::style layout Horizontal.TScrollbar
+        ttk::style layout Vertical.TScrollbar {
           Scrollbar.background
           Vertical.Scrollbar.trough -children {
               Vertical.Scrollbar.uparrow -side top
@@ -56,14 +56,14 @@ namespace eval tile::theme::tileqt {
               Vertical.Scrollbar.uparrow -side bottom
               Vertical.Scrollbar.thumb -side top -expand true -sticky ns
           }
-        };# style layout Vertical.TScrollbar
+        };# ttk::style layout Vertical.TScrollbar
       }
       keramik -
       shinekeramik -
       thinkeramik -
       *keramik {
         # 3 Arrows...
-        style layout Horizontal.TScrollbar {
+        ttk::style layout Horizontal.TScrollbar {
           Scrollbar.background
           Horizontal.Scrollbar.trough -children {
               Horizontal.Scrollbar.leftarrow -side left
@@ -73,8 +73,8 @@ namespace eval tile::theme::tileqt {
               }
               Horizontal.Scrollbar.thumb -side left -expand true -sticky we
           }
-        };# style layout Horizontal.TScrollbar
-        style layout Vertical.TScrollbar {
+        };# ttk::style layout Horizontal.TScrollbar
+        ttk::style layout Vertical.TScrollbar {
           Scrollbar.background
           Vertical.Scrollbar.trough -children {
               Vertical.Scrollbar.uparrow -side top
@@ -84,26 +84,26 @@ namespace eval tile::theme::tileqt {
               }
               Vertical.Scrollbar.thumb -side top -expand true -sticky ns
           }
-        };# style layout Vertical.TScrollbar
+        };# ttk::style layout Vertical.TScrollbar
       }
       system -
       systemalt
       {
         ## 2 arrows at ONE edge of the scrollbar
-        style layout Horizontal.TScrollbar {
+        ttk::style layout Horizontal.TScrollbar {
           Horizontal.Scrollbar.trough -children {
               Horizontal.Scrollbar.rightarrow -side right
               Horizontal.Scrollbar.leftarrow -side right
               Horizontal.Scrollbar.thumb -side left -expand true -sticky we
           }
-        };# style layout Horizontal.TScrollbar
-        style layout Vertical.TScrollbar {
+        };# ttk::style layout Horizontal.TScrollbar
+        ttk::style layout Vertical.TScrollbar {
           Vertical.Scrollbar.trough -children {
               Vertical.Scrollbar.downarrow -side bottom
               Vertical.Scrollbar.uparrow -side bottom
               Vertical.Scrollbar.thumb -side top -expand true -sticky ns
           }
-        };# style layout Vertical.TScrollbar
+        };# ttk::style layout Vertical.TScrollbar
       }
       bluecurve -
       cde -
@@ -118,33 +118,33 @@ namespace eval tile::theme::tileqt {
       dotnet -
       default {
         ## Default layout: 2 arrows at the two edges of the scrollbar
-        style layout Horizontal.TScrollbar {
+        ttk::style layout Horizontal.TScrollbar {
           Horizontal.Scrollbar.trough -children {
               Horizontal.Scrollbar.leftarrow -side left
               Horizontal.Scrollbar.rightarrow -side right
               Horizontal.Scrollbar.thumb -side left -expand true -sticky we
           }
-        };# style layout Horizontal.TScrollbar
-        style layout Vertical.TScrollbar {
+        };# ttk::style layout Horizontal.TScrollbar
+        ttk::style layout Vertical.TScrollbar {
           Vertical.Scrollbar.trough -children {
               Vertical.Scrollbar.uparrow -side top
               Vertical.Scrollbar.downarrow -side bottom
               Vertical.Scrollbar.thumb -side top -expand true -sticky ns
           }
-        };# style layout Vertical.TScrollbar
+        };# ttk::style layout Vertical.TScrollbar
       }
     }
   }; # updateLayouts
 
   proc updateStyles {} {
-    style theme settings tileqt {
-      style default "." \
+    ttk::style theme settings tileqt {
+      ttk::style configure . \
          -background [currentThemeColour -active -background] \
          -foreground [currentThemeColour -active -foreground] \
          -selectforeground [currentThemeColour -highlightedText] \
          -selectbackground [currentThemeColour -highlight] \
          ;
-      style map "." -foreground [list \
+      ttk::style map . -foreground [list \
          active          [currentThemeColour -active   -foreground] \
          disabled        [currentThemeColour -disabled -foreground] \
          focus           [currentThemeColour -active   -foreground] \
@@ -170,7 +170,7 @@ namespace eval tile::theme::tileqt {
          selected        [currentThemeColour -active   -highlight] \
       ]
 
-      style map TButton -foreground [list \
+      ttk::style map TButton -foreground [list \
          active          [currentThemeColour -active   -buttonText] \
          disabled        [currentThemeColour -disabled -buttonText] \
          focus           [currentThemeColour -active   -buttonText] \
@@ -183,9 +183,9 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -button] \
          selected        [currentThemeColour -active   -button] \
       ]
-      style default TButton      -width -11 -padding {2}
+      ttk::style configure TButton      -width -11 -padding {2}
 
-      style map TCheckbutton -foreground [list \
+      ttk::style map TCheckbutton -foreground [list \
          active          [currentThemeColour -active   -buttonText] \
          disabled        [currentThemeColour -disabled -buttonText] \
          focus           [currentThemeColour -active   -buttonText] \
@@ -198,9 +198,9 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -button] \
          selected        [currentThemeColour -active   -button] \
       ]
-      style default TCheckbutton -padding {0 1 0 1}
+      ttk::style configure TCheckbutton -padding {0 1 0 1}
       
-      style map TCombobox -foreground [list \
+      ttk::style map TCombobox -foreground [list \
          active          [currentThemeColour -active   -buttonText] \
          disabled        [currentThemeColour -disabled -buttonText] \
          focus           [currentThemeColour -active   -buttonText] \
@@ -213,9 +213,9 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -button] \
          selected        [currentThemeColour -active   -button] \
       ]
-      style default TCombobox    -padding {1 2 1 1}
+      ttk::style configure TCombobox    -padding {1 2 1 1}
       
-      style map TEntry -foreground [list \
+      ttk::style map TEntry -foreground [list \
          active          [currentThemeColour -active   -text] \
          disabled        [currentThemeColour -disabled -text] \
          focus           [currentThemeColour -active   -text] \
@@ -240,12 +240,12 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -highlight] \
          selected        [currentThemeColour -active   -highlight] \
       ]
-      style default TEntry       -padding {3 4 3 3}
+      ttk::style configure TEntry       -padding {3 4 3 3}
       
-      style default TLabelframe  -background [currentThemeColour -background] \
-                                 -padding 0
+      ttk::style configure TLabelframe  -background [currentThemeColour \
+                         -background] -padding 0
       
-      style map TMenubutton -foreground [list \
+      ttk::style map TMenubutton -foreground [list \
          active          [currentThemeColour -active   -buttonText] \
          disabled        [currentThemeColour -disabled -buttonText] \
          focus           [currentThemeColour -active   -buttonText] \
@@ -270,7 +270,7 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -highlight] \
          selected        [currentThemeColour -active   -highlight] \
       ]
-      style default TMenubutton  -width -11 -padding {3 2 3 2}
+      ttk::style configure TMenubutton  -width -11 -padding {3 2 3 2}
 
       set tab_overlap      [getPixelMetric -PM_TabBarTabOverlap]
       set tab_base_overlap [getPixelMetric -PM_TabBarBaseOverlap]
@@ -283,13 +283,13 @@ namespace eval tile::theme::tileqt {
         default         {set tabposition nw}
       }
       # tabmargins {left top right bottom}
-      style default TNotebook -tabmargins \
+      ttk::style configure TNotebook -tabmargins \
         [list $tab_overlap 0 $tab_overlap $tab_base_overlap] \
         -tabposition $tabposition
-      style map TNotebook.Tab -expand [list selected \
+      ttk::style map TNotebook.Tab -expand [list selected \
         [list $tab_overlap 0 $tab_overlap $tab_base_overlap]]
 
-      style map TRadiobutton -foreground [list \
+      ttk::style map TRadiobutton -foreground [list \
          active          [currentThemeColour -active   -buttonText] \
          disabled        [currentThemeColour -disabled -buttonText] \
          focus           [currentThemeColour -active   -buttonText] \
@@ -302,9 +302,9 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -button] \
          selected        [currentThemeColour -active   -button] \
       ]
-      style default TRadiobutton -padding {0 1 0 1}
+      ttk::style configure TRadiobutton -padding {0 1 0 1}
 
-      style map Toolbutton -foreground [list \
+      ttk::style map Toolbutton -foreground [list \
          active          [currentThemeColour -active   -buttonText] \
          disabled        [currentThemeColour -disabled -buttonText] \
          focus           [currentThemeColour -active   -buttonText] \
@@ -317,12 +317,14 @@ namespace eval tile::theme::tileqt {
          pressed         [currentThemeColour -active   -button] \
          selected        [currentThemeColour -active   -button] \
       ]
-      style default Toolbutton -padding {2 2 2 2}
+      ttk::style configure Toolbutton -padding {2 2 2 2}
 
-      style default TPaned -background [currentThemeColour -background]
-      style default Horizontal.Sash -background [currentThemeColour -background]
-      style default Vertical.Sash -background [currentThemeColour -background]
-    };# style theme settings tileqt
+      ttk::style configure TPaned -background [currentThemeColour -background]
+      ttk::style configure Horizontal.Sash -background [currentThemeColour \
+          -background]
+      ttk::style configure Vertical.Sash -background [currentThemeColour \
+          -background]
+    };# ttk::style theme settings tileqt
 
     # puts "\nPixel Metric Information:"
     # foreach pm {PM_TabBarTabOverlap       PM_TabBarTabHSpace
@@ -473,7 +475,7 @@ namespace eval tile::theme::tileqt {
   ## applyStyle:
   #  This procedure can be used to apply any available Qt/KDE style.
   #  Ths "style" parameter must be a string from the style names returned by
-  #  tile::theme::tileqt::availableStyles.
+  #  ttk::theme::tileqt::availableStyles.
   proc applyStyle {style} {
     updateColourPalette
     setStyle $style
@@ -507,11 +509,11 @@ namespace eval tile::theme::tileqt {
       ttk::combobox $dlgFrame.style_selection.style -state readonly
       $dlgFrame.style_selection.style set [currentThemeName]
       bind $dlgFrame.style_selection.style <<ThemeChanged>> \
-        {%W set [tile::theme::tileqt::currentThemeName]}
+        {%W set [ttk::theme::tileqt::currentThemeName]}
       bind $dlgFrame.style_selection.style <Enter> \
-        {%W configure -values [tile::theme::tileqt::availableStyles]}
+        {%W configure -values [ttk::theme::tileqt::availableStyles]}
       ttk::button $dlgFrame.style_selection.apply -text Apply -command \
-       "tile::theme::tileqt::applyStyle \[$dlgFrame.style_selection.style get\]"
+       "ttk::theme::tileqt::applyStyle \[$dlgFrame.style_selection.style get\]"
       grid $dlgFrame.style_selection.style $dlgFrame.style_selection.apply \
         -padx 2 -sticky snew
       grid columnconfigure $dlgFrame.style_selection 0 -weight 1
@@ -536,16 +538,16 @@ namespace eval tile::theme::tileqt {
           wm withdraw .
           set auto_path \{$::auto_path\}
           package require tile
-          package require tile::theme::tileqt
-          tile::theme::tileqt::applyStyle \{[currentThemeName]\}
+          package require ttk::theme::tileqt
+          ttk::theme::tileqt::applyStyle \{[currentThemeName]\}
           toplevel .widgets -height 250 -width 400 \
                             -use [winfo id $dlgFrame.preview.container]
-          tile::theme::tileqt::selectStyleDlg_previewWidgets .widgets
+          ttk::theme::tileqt::selectStyleDlg_previewWidgets .widgets
         "
         bind $dlgFrame.preview.container <Destroy> \
-          "tile::theme::tileqt::destroyThemeConfigurationPanel"
+          "ttk::theme::tileqt::destroyThemeConfigurationPanel"
         bind $dlgFrame.style_selection.style <<ComboboxSelected>> \
-          {tile::theme::tileqt::updateThemeConfigurationPanel [%W get]}
+          {ttk::theme::tileqt::updateThemeConfigurationPanel [%W get]}
       }
       pack $dlgFrame.preview.container -padx 0 -pady 0 -fill both -expand 1
     pack $dlgFrame.preview -fill both -expand 1 -padx 2 -pady 2
@@ -559,7 +561,7 @@ namespace eval tile::theme::tileqt {
 
   proc updateThemeConfigurationPanel {style} {
     variable PreviewInterp
-    interp eval $PreviewInterp "tile::theme::tileqt::applyStyle \{$style\}"
+    interp eval $PreviewInterp "ttk::theme::tileqt::applyStyle \{$style\}"
   };# updateThemeConfigurationPanel
 
   proc selectStyleDlg_previewWidgets {{win {}}} {
@@ -575,49 +577,49 @@ namespace eval tile::theme::tileqt {
     $win.nb add $tab4 -text "Tab 4" -underline 4 -sticky news
     ## Fill tab1...
     #####################
-    ttk::paned $tab1.paned -orient horizontal
+    ttk::panedwindow $tab1.panedwindow -orient horizontal
     ## Add a set of radiobuttons to the left...
-    ttk::labelframe $tab1.paned.buttons -text " Button Group "
-      ttk::radiobutton $tab1.paned.buttons.b1 -text "Radio button" -variable \
-         tile::theme::tileqt::temp(selectionVariable) -value 1
-      ttk::radiobutton $tab1.paned.buttons.b2 -text "Radio button" -variable \
-         tile::theme::tileqt::temp(selectionVariable) -value 2
-      ttk::radiobutton $tab1.paned.buttons.b3 -text "Radio button" -variable \
-         tile::theme::tileqt::temp(selectionVariable) -value 3
-      ttk::separator $tab1.paned.buttons.sep -orient horizontal
-      ttk::checkbutton $tab1.paned.buttons.b4 -text "Checkbox"
-      $tab1.paned.buttons.b4 state selected
-      set tile::theme::tileqt::temp(selectionVariable) 1
-      grid $tab1.paned.buttons.b1 -sticky snew -padx 2 -pady 2
-      grid $tab1.paned.buttons.b2 -sticky snew -padx 2 -pady 2
-      grid $tab1.paned.buttons.b3 -sticky snew -padx 2 -pady 2
-      grid $tab1.paned.buttons.sep -sticky snew -padx 2 -pady 2
-      grid $tab1.paned.buttons.b4 -sticky snew -padx 2 -pady 2
-      grid columnconfigure $tab1.paned.buttons 0 -weight 1
-    $tab1.paned add $tab1.paned.buttons
+    ttk::labelframe $tab1.panedwindow.buttons -text " Button Group "
+      ttk::radiobutton $tab1.panedwindow.buttons.b1 -text "Radio button" -variable \
+         ttk::theme::tileqt::temp(selectionVariable) -value 1
+      ttk::radiobutton $tab1.panedwindow.buttons.b2 -text "Radio button" -variable \
+         ttk::theme::tileqt::temp(selectionVariable) -value 2
+      ttk::radiobutton $tab1.panedwindow.buttons.b3 -text "Radio button" -variable \
+         ttk::theme::tileqt::temp(selectionVariable) -value 3
+      ttk::separator $tab1.panedwindow.buttons.sep -orient horizontal
+      ttk::checkbutton $tab1.panedwindow.buttons.b4 -text "Checkbox"
+      $tab1.panedwindow.buttons.b4 state selected
+      set ttk::theme::tileqt::temp(selectionVariable) 1
+      grid $tab1.panedwindow.buttons.b1 -sticky snew -padx 2 -pady 2
+      grid $tab1.panedwindow.buttons.b2 -sticky snew -padx 2 -pady 2
+      grid $tab1.panedwindow.buttons.b3 -sticky snew -padx 2 -pady 2
+      grid $tab1.panedwindow.buttons.sep -sticky snew -padx 2 -pady 2
+      grid $tab1.panedwindow.buttons.b4 -sticky snew -padx 2 -pady 2
+      grid columnconfigure $tab1.panedwindow.buttons 0 -weight 1
+    $tab1.panedwindow add $tab1.panedwindow.buttons
     ## Add a set of other widgets (like progress, combo, scale, etc).
-    ttk::frame $tab1.paned.widgets
-      ttk::progressbar $tab1.paned.widgets.progress -orient horizontal \
-        -maximum 100 -variable tile::theme::tileqt::temp(progress)
-      grid $tab1.paned.widgets.progress -sticky snew -padx 2 -pady 2
-      ttk::scale $tab1.paned.widgets.scale -orient horizontal -from 0 -to 100 \
-        -variable tile::theme::tileqt::temp(progress)
-      set tile::theme::tileqt::temp(progress) 70
-      grid $tab1.paned.widgets.scale -sticky snew -padx 2 -pady 2
-      ttk::entry $tab1.paned.widgets.entry -textvariable \
-        tile::theme::tileqt::temp(entry)
-      set tile::theme::tileqt::temp(entry) {Entry Widget}
-      grid $tab1.paned.widgets.entry -sticky snew -padx 2 -pady 2
-      ttk::button $tab1.paned.widgets.button -text Button
-      grid $tab1.paned.widgets.button -sticky snew -padx 2 -pady 2
-      ttk::combobox $tab1.paned.widgets.combo -values \
+    ttk::frame $tab1.panedwindow.widgets
+      ttk::progressbar $tab1.panedwindow.widgets.progress -orient horizontal \
+        -maximum 100 -variable ttk::theme::tileqt::temp(progress)
+      grid $tab1.panedwindow.widgets.progress -sticky snew -padx 2 -pady 2
+      ttk::scale $tab1.panedwindow.widgets.scale -orient horizontal -from 0 -to 100 \
+        -variable ttk::theme::tileqt::temp(progress)
+      set ttk::theme::tileqt::temp(progress) 70
+      grid $tab1.panedwindow.widgets.scale -sticky snew -padx 2 -pady 2
+      ttk::entry $tab1.panedwindow.widgets.entry -textvariable \
+        ttk::theme::tileqt::temp(entry)
+      set ttk::theme::tileqt::temp(entry) {Entry Widget}
+      grid $tab1.panedwindow.widgets.entry -sticky snew -padx 2 -pady 2
+      ttk::button $tab1.panedwindow.widgets.button -text Button
+      grid $tab1.panedwindow.widgets.button -sticky snew -padx 2 -pady 2
+      ttk::combobox $tab1.panedwindow.widgets.combo -values \
         {{Selection 1} {Selection 2} {Selection 3} {Selection 4}}
-      $tab1.paned.widgets.combo set {Selection 1}
-      grid $tab1.paned.widgets.combo -sticky snew -padx 2 -pady 2
-      grid columnconfigure $tab1.paned.widgets 0 -weight 1
-    $tab1.paned add $tab1.paned.widgets
+      $tab1.panedwindow.widgets.combo set {Selection 1}
+      grid $tab1.panedwindow.widgets.combo -sticky snew -padx 2 -pady 2
+      grid columnconfigure $tab1.panedwindow.widgets 0 -weight 1
+    $tab1.panedwindow add $tab1.panedwindow.widgets
 
-    grid $tab1.paned -padx 2 -pady 2 -sticky snew
+    grid $tab1.panedwindow -padx 2 -pady 2 -sticky snew
     ttk::sizegrip $tab1.sg
     ttk::scrollbar $tab1.hsb -orient horizontal
     grid $tab1.hsb $tab1.sg -padx 2 -pady 2 -sticky snew
@@ -628,12 +630,12 @@ namespace eval tile::theme::tileqt {
 
     ## Fill tab2...
     #####################
-    ttk::paned $tab2.paned -orient vertical
-      ttk::label $tab2.paned.label -text {Label Widget}
-    $tab2.paned add $tab2.paned.label
-      ttk::treeview $tab2.paned.tree -height 4
-    $tab2.paned add $tab2.paned.tree
-    grid $tab2.paned -padx 2 -pady 2 -sticky snew
+    ttk::panedwindow $tab2.panedwindow -orient vertical
+      ttk::label $tab2.panedwindow.label -text {Label Widget}
+    $tab2.panedwindow add $tab2.panedwindow.label
+      ttk::treeview $tab2.panedwindow.tree -height 4
+    $tab2.panedwindow add $tab2.panedwindow.tree
+    grid $tab2.panedwindow -padx 2 -pady 2 -sticky snew
     grid columnconfigure $tab2 0 -weight 1
     grid rowconfigure $tab2 0 -weight 1
 

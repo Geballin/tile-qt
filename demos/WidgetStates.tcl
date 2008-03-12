@@ -4,10 +4,10 @@
 ##
 ###############################################################################
 package require tile
-tile::setTheme tileqt
+ttk::setTheme tileqt
 foreach {arg val} $argv {
   switch -glob -- $arg {
-    -st* {tile::theme::tileqt::applyStyle $val}
+    -st* {ttk::theme::tileqt::applyStyle $val}
   }
 }
 
@@ -61,7 +61,7 @@ image create photo help_image -data $help_image_data
 set win {}
 set row 0; set column 0
 set widgets {button checkbutton radiobutton entry menubutton combobox rcombobox
-             scrollbar scale progressbar notebook paned labelframe}
+             scrollbar scale progressbar notebook panedwindow labelframe}
 set states {active disabled focus pressed selected readonly background
              alternate}
 foreach widget $widgets {
@@ -89,13 +89,13 @@ foreach widget $widgets {
     catch { $w insert end "$state" }
     catch { $w selection range 0 5 }
     if {$widget == "notebook"} {
-      set pw [ttk::paned $w.client -orient horizontal]
+      set pw [ttk::panedwindow $w.client -orient horizontal]
       $w add $pw -text "Demo 1"
       $pw state $state
       ttk::label $pw.l -text "Notebook Page"
       pack $pw.l -fill both
       if {$state != "pressed"} {
-        set pw [ttk::paned $w.client2 -orient horizontal]
+        set pw [ttk::panedwindow $w.client2 -orient horizontal]
         $w add $pw -text "Demo 2"
       }
     } else {
@@ -115,10 +115,10 @@ foreach widget $widgets {
 }
 ttk::labelframe $win.themes -text Themes:
   set col -1; set row 0
-  foreach style [lsort [tile::theme::tileqt::availableStyles]] {
+  foreach style [lsort [ttk::theme::tileqt::availableStyles]] {
     if {$col > 6} {incr row; set col -1}
     grid [ttk::button $win.themes.[string tolower $style] -text $style \
-          -command "tile::theme::tileqt::applyStyle \{$style\}"] \
+          -command "ttk::theme::tileqt::applyStyle \{$style\}"] \
       -column [incr col] -row $row -sticky snew -padx 1 -pady 1
   }
   ttk::button $win.themes.exit -text Exit -image exit_image \
