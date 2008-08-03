@@ -42,18 +42,24 @@ PKG_OBJECTS	= \
 TILE_VERSION    = $(shell echo \
    "catch {package require tile};\
     puts [lindex [lsort [package versions tile]] end];exit" | $(TCLSH_PROG))
+## If version is 8.5, link directly to tk8.5.so. Else, link to the tile library
 TILE_LIB_DIR    = $(shell echo \
-   "catch {package require tile};\
-    set ::tile_version [lindex [lsort [package versions tile]] end];\
-    set ::script [package ifneeded tile [set ::tile_version]];\
-    if {[regexp  {TILE_LIBRARY[^\n;]+} [set ::script] ::line]} {\
-      set ::tile_lib [lindex [set ::line] end];\
-      puts [set ::tile_lib];\
-    } else {\
-      set ::tile_lib [lindex [set ::script] 1];\
-      puts [file dirname [set ::tile_lib]];\
-    };exit" | $(TCLSH_PROG))
+   "if {[package vsatisfies [info tclversion] 8.5]} {\
+     puts [file dirname [info library]];\
+   } else {\
+     catch {package require tile};\
+     set ::tile_version [lindex [lsort [package versions tile]] end];\
+     set ::script [package ifneeded tile [set ::tile_version]];\
+     if {[regexp  {TILE_LIBRARY[^\n;]+} [set ::script] ::line]} {\
+       set ::tile_lib [lindex [set ::line] end];\
+       puts [set ::tile_lib];\
+     } else {\
+       set ::tile_lib [lindex [set ::script] 1];\
+       puts [file dirname [set ::tile_lib]];\
+     }\
+   };exit" | $(TCLSH_PROG))
 TILE_LIBS       = -L$(TILE_LIB_DIR) -ltile$(TILE_VERSION)
+TILE_LIBS       =
     
 #========================================================================
 # PKG_TCL_SOURCES identifies Tcl runtime files that are associated with
@@ -126,7 +132,7 @@ RANLIB_STUB	= @RANLIB_STUB@
 SHLIB_CFLAGS	= @SHLIB_CFLAGS@
 SHLIB_LD	= @SHLIB_LD@
 SHLIB_LD_FLAGS	= @SHLIB_LD_FLAGS@
-SHLIB_LD_LIBS	= @SHLIB_LD_LIBS@
+SHLIB_LD_LIBS	= @SHLIB_LD_LIBS@ @TK_LIB_SPEC@
 STLIB_LD	= @STLIB_LD@
 TCL_DEFS	= @TCL_DEFS@
 TCL_BIN_DIR	= @TCL_BIN_DIR@

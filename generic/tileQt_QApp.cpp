@@ -218,7 +218,7 @@ static int TileQt_XErrorHandler(Display *displayPtr, XErrorEvent *errorPtr) {
 }; /* TileQt_XErrorHandler */
 
 static int TileQt_XEventHandler(ClientData clientData, XEvent *eventPtr) {
-  char *tcl_callback;
+  const char *tcl_callback;
   int status;
   if (eventPtr->type != ClientMessage) return 0;
   Atom TileQt_KIPC_COMM_ATOM = XInternAtom(eventPtr->xclient.display,

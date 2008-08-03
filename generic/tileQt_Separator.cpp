@@ -37,10 +37,11 @@ typedef struct {
     Tcl_Obj        *borderObj;
 } SeparatorElement;
 
+#define TO_CHAR_STAR (char *)
 static Ttk_ElementOptionSpec SeparatorElementOptions[] = {
-    { "-orient", TK_OPTION_ANY,
-        Tk_Offset(SeparatorElement, orientObj), "horizontal" },
-    { "-background", TK_OPTION_BORDER,
+    { TO_CHAR_STAR "-orient", TK_OPTION_ANY,
+        Tk_Offset(SeparatorElement, orientObj), TO_CHAR_STAR "horizontal" },
+    { TO_CHAR_STAR "-background", TK_OPTION_BORDER,
         Tk_Offset(SeparatorElement,borderObj), DEFAULT_BACKGROUND },
     {NULL}
 };

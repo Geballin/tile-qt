@@ -112,17 +112,19 @@ typedef struct {
     Tcl_Obj    *valueObj;
 } ProgressBarElement;
 
+#define TO_CHAR_STAR (char *)
+
 static Ttk_ElementOptionSpec ProgressBarElementOptions[] = {
-    { "-orient", TK_OPTION_ANY, Tk_Offset(ProgressBarElement, orientObj),
-      "horizontal"},
-    { "-length", TK_OPTION_PIXELS, Tk_Offset(ProgressBarElement, lengthObj),
-      "100" },
-    { "-mode", TK_OPTION_STRING_TABLE, Tk_Offset(ProgressBarElement, modeObj),
-      "determinate" },
-    { "-maximum", TK_OPTION_DOUBLE, Tk_Offset(ProgressBarElement, maximumObj),
-      "100" },
-    { "-value", TK_OPTION_DOUBLE, Tk_Offset(ProgressBarElement, valueObj),
-      "0.0" },
+    { TO_CHAR_STAR "-orient", TK_OPTION_ANY,
+      Tk_Offset(ProgressBarElement, orientObj), TO_CHAR_STAR "horizontal"},
+    { TO_CHAR_STAR "-length", TK_OPTION_PIXELS,
+      Tk_Offset(ProgressBarElement, lengthObj), TO_CHAR_STAR "100" },
+    { TO_CHAR_STAR "-mode", TK_OPTION_STRING_TABLE,
+      Tk_Offset(ProgressBarElement, modeObj), TO_CHAR_STAR "determinate" },
+    { TO_CHAR_STAR "-maximum", TK_OPTION_DOUBLE,
+      Tk_Offset(ProgressBarElement, maximumObj), TO_CHAR_STAR "100" },
+    { TO_CHAR_STAR "-value", TK_OPTION_DOUBLE,
+      Tk_Offset(ProgressBarElement, valueObj), TO_CHAR_STAR "0.0" },
     { NULL }
 };
 
