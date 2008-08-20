@@ -710,8 +710,6 @@ Tileqt_Init(Tcl_Interp *interp)
         return TCL_ERROR;
     if (Tk_InitStubs(interp,  TK_VERSION,  0) == NULL)
         return TCL_ERROR;
-    if (Ttk_InitStubs(interp) == NULL)
-        return TCL_ERROR;
 
     /* The first thing we must do, is to retrieve a valid display. */
     // Tcl_MutexLock(&tileqtMutex);
