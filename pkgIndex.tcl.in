@@ -1,6 +1,0 @@
-#
-# @configure_input@
-#
-package ifneeded ttk::theme::tileqt @PACKAGE_VERSION@ [subst {
-    load [file join $dir @PKG_LIB_FILE@] tileqt
-}]
