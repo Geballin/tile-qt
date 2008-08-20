@@ -80,7 +80,7 @@ int Tileqt_ThemeName(ClientData clientData, Tcl_Interp *interp,
 #endif /* TILEQT_QT_VERSION_4 */
                     , TCL_VOLATILE);
   } else {
-    Tcl_SetResult(interp, "", TCL_STATIC);
+    Tcl_SetResult(interp, (char *) "", TCL_STATIC);
   }
   Tcl_MutexUnlock(&tileqtMutex);
   return TCL_OK;
@@ -88,7 +88,7 @@ int Tileqt_ThemeName(ClientData clientData, Tcl_Interp *interp,
 
 int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
                                  int objc, Tcl_Obj *const objv[]) {
-  static char *Methods[] = {
+  static const char *Methods[] = {
     "-active",     "-disabled",        "-inactive",   "-normal",
     "-background", "-foreground",      "-button",     "-light",
     "-dark",       "-mid",             "-text",       "-base",
@@ -111,7 +111,7 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
   if (!qApp) {
-    Tcl_SetResult(interp, "", TCL_STATIC);
+    Tcl_SetResult(interp, (char *) "", TCL_STATIC);
     return TCL_OK;
   }
   Tcl_MutexLock(&tileqtMutex);
@@ -191,7 +191,7 @@ int Tileqt_ThemeColour(ClientData clientData, Tcl_Interp *interp,
 
 int Tileqt_SetPalette(ClientData clientData, Tcl_Interp *interp,
                                  int objc, Tcl_Obj *const objv[]) {
-  static char *Methods[] = {
+  static const char *Methods[] = {
     "-background",       "-foreground",
     "-buttonBackground", "-buttonForeground",
     "-selectBackground", "-selectForeground",
@@ -215,7 +215,7 @@ int Tileqt_SetPalette(ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
   if (!qApp) {
-    Tcl_SetResult(interp, "", TCL_STATIC);
+    Tcl_SetResult(interp, (char *) "", TCL_STATIC);
     return TCL_OK;
   }
   Tcl_MutexLock(&tileqtMutex);
@@ -351,7 +351,7 @@ int Tileqt_AvailableStyles(ClientData clientData, Tcl_Interp *interp,
     }
     Tcl_SetObjResult(interp, stylesObj);
   } else {
-    Tcl_SetResult(interp, "", TCL_STATIC);
+    Tcl_SetResult(interp, (char *) "", TCL_STATIC);
   }
   Tcl_MutexUnlock(&tileqtMutex);
   return TCL_OK;
@@ -370,7 +370,7 @@ int Tileqt_SetStyle(ClientData clientData, Tcl_Interp *interp,
     QStyle *new_style = QStyleFactory::create(style);
     QStyle *todelete = NULL;
     if (new_style == NULL) {
-      Tcl_SetResult(interp, "unknwon style: \"", TCL_STATIC);
+      Tcl_SetResult(interp, (char *) "unknwon style: \"", TCL_STATIC);
       Tcl_AppendResult(interp, str, "\"", NULL);
       Tcl_MutexUnlock(&tileqtMutex);
       return TCL_ERROR;
@@ -462,7 +462,7 @@ int Tileqt_GetPixelMetric(ClientData clientData, Tcl_Interp *interp,
   PM_TabBarTabShiftHorizontal - horizontal pixel shift when a tab is selected.
   PM_TabBarTabShiftVertical   - vertical pixel shift when a tab is selected.
 */
-  static char *Methods[] = {
+  static const char *Methods[] = {
     "-PM_TabBarTabOverlap",       "-PM_TabBarTabHSpace",
     "-PM_TabBarTabVSpace",        "-PM_TabBarBaseHeight",
     "-PM_TabBarBaseOverlap",      "-PM_TabBarTabShiftHorizontal",
@@ -485,7 +485,7 @@ int Tileqt_GetPixelMetric(ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
   if (!qApp) {
-    Tcl_SetResult(interp, "", TCL_STATIC);
+    Tcl_SetResult(interp, (char *) "", TCL_STATIC);
     return TCL_OK;
   }
   if (Tcl_GetIndexFromObj(interp, objv[1], (const char **) Methods,
@@ -539,7 +539,7 @@ int Tileqt_GetStyleHint(ClientData clientData, Tcl_Interp *interp,
                                 Possible values are Qt::AlignLeft,
                                 Qt::AlignCenter and Qt::AlignRight.
 */
-  static char *Methods[] = {
+  static const char *Methods[] = {
     "-SH_TabBar_Alignment",
     (char *) NULL
   };
@@ -548,7 +548,7 @@ int Tileqt_GetStyleHint(ClientData clientData, Tcl_Interp *interp,
   };
   int index, hint = 0;
   QStyle::StyleHint stylehint;
-  char *pstr = "";
+  const char *pstr = "";
   TileQt_WidgetCache **wc_array = (TileQt_WidgetCache **) clientData;
   TileQt_WidgetCache *wc = wc_array[0];
   if (objc != 2) {
@@ -556,7 +556,7 @@ int Tileqt_GetStyleHint(ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
   if (!qApp) {
-    Tcl_SetResult(interp, "", TCL_STATIC);
+    Tcl_SetResult(interp, (char *) "", TCL_STATIC);
     return TCL_OK;
   }
   if (Tcl_GetIndexFromObj(interp, objv[1], (const char **) Methods,
@@ -590,7 +590,7 @@ int Tileqt_GetStyleHint(ClientData clientData, Tcl_Interp *interp,
       return TCL_OK;
     }
   }
-  Tcl_SetResult(interp, pstr, TCL_STATIC);
+  Tcl_SetResult(interp, (char *) pstr, TCL_STATIC);
   return TCL_OK;
 }; /* Tileqt_GetStyleHint */
 
@@ -607,7 +607,7 @@ int Tileqt_GetSubControlMetrics(ClientData clientData, Tcl_Interp *interp,
    * QStyle::SC_ScrollBarGroove  - special subcontrol which contains the area
    *                               in which the slider handle may move.
    */
-  static char *Methods[] = {
+  static const char *Methods[] = {
     "-SC_ScrollBarAddLine",       "-SC_ScrollBarSubLine",
     "-SC_ScrollBarAddPage",       "-SC_ScrollBarSubPage",
     "-SC_ScrollBarFirst",         "-SC_ScrollBarLast",
@@ -629,7 +629,7 @@ int Tileqt_GetSubControlMetrics(ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
   if (!qApp) {
-    Tcl_SetResult(interp, "", TCL_STATIC);
+    Tcl_SetResult(interp, (char *) "", TCL_STATIC);
     return TCL_OK;
   }
   if (Tcl_GetIndexFromObj(interp, objv[1], (const char **) Methods,
@@ -709,6 +709,8 @@ Tileqt_Init(Tcl_Interp *interp)
     if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL)
         return TCL_ERROR;
     if (Tk_InitStubs(interp,  TK_VERSION,  0) == NULL)
+        return TCL_ERROR;
+    if (Ttk_InitStubs(interp) == NULL)
         return TCL_ERROR;
 
     /* The first thing we must do, is to retrieve a valid display. */
