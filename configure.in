@@ -187,11 +187,17 @@ TEA_PROG_WISH
 # Require Qt path to be specified
 #--------------------------------------------------------------------
 
-AC_ARG_WITH(qt,
-  [  --with-qt=DIR],
-  [QTDIR=$withval
-   AC_SUBST(QTDIR)],
-  [AC_MSG_ERROR(No Qt directory specified)])
+AC_ARG_WITH(qt-inc,
+  [  --with-qt-inc=DIR],
+  [QTINCDIR=$withval
+   AC_SUBST(QTINCDIR)],
+  [AC_MSG_ERROR(No Qt include directory specified)])
+
+AC_ARG_WITH(qt-lib,
+  [  --with-qt-lib=DIR],
+  [QTLIBDIR=$withval
+   AC_SUBST(QTLIBDIR)],
+  [AC_MSG_ERROR(No Qt library directory specified)])
 
 #--------------------------------------------------------------------
 # Finally, substitute all of the various values into the Makefile.
