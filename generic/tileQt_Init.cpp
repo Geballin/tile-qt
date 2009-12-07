@@ -35,8 +35,8 @@ static char initScript[] =
     "namespace eval tileqt { };"
     "namespace eval ttk::theme::tileqt { variable version "
                                                    PACKAGE_VERSION " };"
-    "tcl_findLibrary tileqt $ttk::theme::tileqt::version "
-    "$ttk::theme::tileqt::version tileqt.tcl TILEQT_LIBRARY tileqt::library;";
+    "source [file join $::tileqtdir tileqt.tcl];"
+    "unset ::tileqtdir;";
 
 /*
  * Exit Handler.
