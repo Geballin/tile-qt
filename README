@@ -1,0 +1,7 @@
+UNIX BUILD
+==========
+
+	$ cd tileqt
+	$ ./configure --prefix=... --with-tcl=... --with-tk=... --with-qt=...
+	$ make
+	$ make install
