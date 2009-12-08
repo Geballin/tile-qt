@@ -1,7 +1,9 @@
 UNIX BUILD
 ==========
 
-	$ cd tileqt
-	$ ./configure --prefix=... --with-tcl=... --with-tk=... --with-qt=...
-	$ make
-	$ make install
+$ ./configure --prefix=... --with-tcl=... --with-tk=... --with-qt-inc=... --with-qt-lib=...
+$ make
+$ make install
+
+Default value for qt-inc: /usr/include/qt4
+Default value for qt-lib: /usr/lib

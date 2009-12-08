@@ -188,16 +188,18 @@ TEA_PROG_WISH
 #--------------------------------------------------------------------
 
 AC_ARG_WITH(qt-inc,
-  [  --with-qt-inc=DIR],
+  [  --with-qt-inc=DIR       directory containing Qt headers (default: /usr/include/qt4],
   [QTINCDIR=$withval
    AC_SUBST(QTINCDIR)],
-  [AC_MSG_ERROR(No Qt include directory specified)])
+  [QTINCDIR=/usr/include/qt4
+   AC_SUBST(QTINCDIR)])
 
 AC_ARG_WITH(qt-lib,
-  [  --with-qt-lib=DIR],
+  [  --with-qt-lib=DIR       directory containing Qt libraries (default: /usr/lib],
   [QTLIBDIR=$withval
    AC_SUBST(QTLIBDIR)],
-  [AC_MSG_ERROR(No Qt library directory specified)])
+  [QTLIBDIR=/usr/lib
+   AC_SUBST(QTLIBDIR)])
 
 #--------------------------------------------------------------------
 # Finally, substitute all of the various values into the Makefile.
