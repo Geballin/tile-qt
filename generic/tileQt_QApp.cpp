@@ -92,6 +92,8 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp) {
     TileQt_qAppOwner = true;
     /* As Qt registers also its own XError handler, reset our own... */
     XSetErrorHandler(TileQt_XErrorHandler);
+    /* As Qt sets the locale, reset it to "C" */
+    setlocale(LC_ALL, "C");
   }
 #ifdef TILEQT_QT_VERSION_4
   wc->TileQt_Style = qApp->style();
