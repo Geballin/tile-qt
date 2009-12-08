@@ -16,56 +16,6 @@
 #include "tileQt_QtHeaders.h"
 #include "tileQt_TkHeaders.h"
 
-#ifdef TILEQT_QT_VERSION_3
-/*
- * TileQt_TileStateToSFlags
- * Convert tile states to Qt flags...
- */
-void TileQt_QtStateInfo(QStyle::SFlags state, Tk_Window tkwin) {
-    printf("Widget: %s\n  ", Tk_PathName(tkwin));
-    if (state & QStyle::Style_Default) 
-      printf("Style_Default %d ", QStyle::Style_Default);
-    if (state & QStyle::Style_Enabled) 
-      printf("Style_Enabled %d ", QStyle::Style_Enabled);
-    if (state & QStyle::Style_Raised) 
-      printf("Style_Raised %d ", QStyle::Style_Raised);
-    if (state & QStyle::Style_Sunken) 
-      printf("Style_Sunken %d ", QStyle::Style_Sunken);
-    if (state & QStyle::Style_Off) 
-      printf("Style_Off %d ", QStyle::Style_Off);
-    if (state & QStyle::Style_NoChange) 
-      printf("Style_NoChange %d ", QStyle::Style_NoChange);
-    if (state & QStyle::Style_On) 
-      printf("Style_On %d ", QStyle::Style_On);
-    if (state & QStyle::Style_Down) 
-      printf("Style_Down %d ", QStyle::Style_Down);
-    if (state & QStyle::Style_Horizontal) 
-      printf("Style_Horizontal %d ", QStyle::Style_Horizontal);
-    if (state & QStyle::Style_HasFocus) 
-      printf("Style_HasFocus %d ", QStyle::Style_HasFocus);
-    if (state & QStyle::Style_Top) 
-      printf("Style_Top %d ", QStyle::Style_Top);
-    if (state & QStyle::Style_Bottom) 
-      printf("Style_Bottom %d ", QStyle::Style_Bottom);
-    if (state & QStyle::Style_FocusAtBorder) 
-      printf("Style_FocusAtBorder %d ", QStyle::Style_FocusAtBorder);
-    if (state & QStyle::Style_AutoRaise)
-      printf("Style_AutoRaise %d ", QStyle::Style_AutoRaise);
-    if (state & QStyle::Style_MouseOver) 
-      printf("Style_MouseOver %d ", QStyle::Style_MouseOver);
-    if (state & QStyle::Style_Up) 
-      printf("Style_Up %d ", QStyle::Style_Up);
-    if (state & QStyle::Style_Selected) 
-      printf("Style_Selected %d ", QStyle::Style_Selected);
-    if (state & QStyle::Style_Active) 
-      printf("Style_Active %d ", QStyle::Style_Active);
-    if (state & QStyle::Style_ButtonDefault) 
-      printf("Style_ButtonDefault %d ", QStyle::Style_ButtonDefault);
-    printf(" state=%d\n", state);
-}; /* TileQt_QtStateInfo */
-
-#endif /* TILEQT_QT_VERSION_3 */
-
 void TileQt_StateInfo(int state, Tk_Window tkwin)
 {
     printf("Widget: %s\n  ", Tk_PathName(tkwin));
@@ -135,9 +85,6 @@ void TileQt_CopyQtPixmapOnToDrawable(QPixmap& pixmap, Drawable d,
 void TileQt_StoreStyleNameLowers(TileQt_WidgetCache *wc) {
   if (wc->lowerStyleName) delete wc->lowerStyleName;
   wc->lowerStyleName = new QString();
-#ifdef TILEQT_QT_VERSION_3
-  *(wc->lowerStyleName) = QString(wc->TileQt_Style->name()).lower();
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
   *(wc->lowerStyleName) = QString(wc->TileQt_Style->objectName()).toLower();
 #endif /* TILEQT_QT_VERSION_4 */

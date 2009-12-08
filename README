@@ -1,13 +1,20 @@
 UNIX BUILD
 ==========
 
-1) Copy Ttk headers
+Requirements
+------------
+
+You'll need the Qt4 development headers.
+
+Copy Ttk headers
+----------------
 
 tile-qt needs the 'ttkTheme.h' and 'ttkDecls.h' headers. These are not copied during
 install of Tk. Look for the files in the Tk sources and copy them to the
 directory containing the other Tk/ttk include files.
 
-2) Configure
+Configure
+---------
 
 Default configure
 
@@ -20,10 +27,12 @@ $ ./configure --prefix=... --with-tcl=... --with-tk=... --with-qt-inc=... --with
 Default value for qt-inc: /usr/include/qt4
 Default value for qt-lib: /usr/lib
 
-3) Make
+Build
+-----
 
 $ make
 
-4) Install
+Install
+-------
 
 $ make install

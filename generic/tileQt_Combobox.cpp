@@ -22,13 +22,6 @@
  */
 static Ttk_StateTable combotext_statemap[] =
 {
-#ifdef TILEQT_QT_VERSION_3
-    {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0 },
-    {QStyle::Style_Enabled|QStyle::Style_HasFocus,  TTK_STATE_FOCUS, 0 },
-    {QStyle::Style_Enabled|QStyle::Style_Down,      TTK_STATE_PRESSED, 0 },
-    {QStyle::Style_Enabled|QStyle::Style_MouseOver, TTK_STATE_ACTIVE, 0 },
-    {QStyle::Style_Enabled,                         0, 0 }
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     {QStyle::State_None,                            TTK_STATE_DISABLED, 0 },
     {QStyle::State_Enabled|QStyle::State_HasFocus,  TTK_STATE_FOCUS, 0 },
@@ -55,12 +48,6 @@ static void ComboboxFieldElementGeometry(
     Tcl_MutexLock(&tileqtMutex);
     // In order to get the correct padding, calculate the difference between the
     // frame & edit field rectangulars...
-#ifdef TILEQT_QT_VERSION_3
-    QRect fr_rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ComboBox,
-                  wc->TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxFrame);
-    QRect ef_rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ComboBox,
-                  wc->TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxEditField);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionComboBox option;
     option.initFrom(wc->TileQt_QComboBox_RO_Widget);
@@ -113,16 +100,6 @@ static void ComboboxFieldElementDraw(
     widget->resize(b.width, b.height);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
     TILEQT_SET_FOCUS(state);
-#ifdef TILEQT_QT_VERSION_3
-    widget->setBackgroundOrigin(QWidget::ParentOrigin);
-    QStyle::SFlags sflags = TileQt_StateTableLookup(combotext_statemap, state);
-    QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow|
-                              QStyle::SC_ComboBoxEditField;
-    QStyle::SCFlags activeflags = QStyle::SC_ComboBoxFrame;
-    wc->TileQt_Style->drawComplexControl(QStyle::CC_ComboBox, &painter, widget,
-          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
-          scflags, activeflags);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionComboBox option;
     option.initFrom(widget); option.state |= 
@@ -173,10 +150,6 @@ static void ComboboxArrowElementGeometry(
     if (qApp == NULL) NULL_Q_APP;
     NULL_PROXY_WIDGET(TileQt_QComboBox_RO_Widget);
     Tcl_MutexLock(&tileqtMutex);
-#ifdef TILEQT_QT_VERSION_3
-    QRect rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ComboBox,
-                   wc->TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxArrow);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionComboBox option;
     option.initFrom(wc->TileQt_QComboBox_RO_Widget);

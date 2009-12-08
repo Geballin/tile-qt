@@ -22,13 +22,6 @@
  */
 static Ttk_StateTable menubutton_statemap[] =
 {
-#ifdef TILEQT_QT_VERSION_3
-    {QStyle::Style_Default                          , TTK_STATE_DISABLED, 0},
-    {QStyle::Style_Enabled | QStyle::Style_Down     , TTK_STATE_PRESSED, 0},
-    {QStyle::Style_Enabled | QStyle::Style_MouseOver, TTK_STATE_ACTIVE, 0},
-    {QStyle::Style_Enabled | QStyle::Style_Active   , TTK_STATE_ALTERNATE, 0},
-    {QStyle::Style_Enabled, 0, 0 }
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     {QStyle::State_None                             , TTK_STATE_DISABLED, 0},
     {QStyle::State_Enabled | QStyle::State_Sunken   , TTK_STATE_PRESSED, 0},
@@ -52,10 +45,6 @@ static void MenubuttonDropdownElementGeometry(
     if (qApp == NULL) NULL_Q_APP;
     NULL_PROXY_WIDGET(TileQt_QComboBox_RO_Widget);
     Tcl_MutexLock(&tileqtMutex);
-#ifdef TILEQT_QT_VERSION_3
-    QRect rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ComboBox,
-                   wc->TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxArrow);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionComboBox option;
     option.initFrom(wc->TileQt_QComboBox_RO_Widget);
@@ -72,28 +61,6 @@ static void MenubuttonDropdownElementDraw(
     void *clientData, void *elementRecord, Tk_Window tkwin,
     Drawable d, Ttk_Box b, unsigned state)
 {
-#ifdef TILEQT_QT_VERSION_3
-    // if (qApp == NULL) NULL_Q_APP;
-    // There is no need to re-paint the button. It has been paint along with the
-    // field element (ComboboxFieldElementDraw). This is because Qt's Combobox
-    // is a complex widget.
-    // QPixmap      pixmap(b.x+b.width, b.y+b.height);
-    // QPainter     painter(&pixmap);
-    // QComboBox& widget = *TileQt_QComboBox_RO_Widget;
-    // widget.resize(b.x+b.width, b.y+b.height);
-    // QStyle::SFlags sflags = TileQt_StateTableLookup(menubutton_statemap, state);
-    // QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow;
-    // QStyle::SCFlags activeflags = QStyle::SC_None;
-    // 
-    // painter.fillRect(0, 0, b.width, b.height,
-    //                  qApp->palette().active().brush(QColorGroup::Background));
-    // // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    // qApp->style().drawComplexControl(QStyle::CC_ComboBox, &painter, &widget,
-    //       QRect(0, 0, b.x+b.width, b.y+b.height),
-    //       qApp->palette().active(), sflags, scflags, activeflags);
-    // TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
-    //                                 b.x, b.y, b.width, b.height, b.x, b.y);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     // if (qApp == NULL) NULL_Q_APP;
     // NULL_PROXY_WIDGET(TileQt_QWidget_Widget);
@@ -137,18 +104,6 @@ static void MenubuttonElementGeometry(
     if (qApp == NULL) NULL_Q_APP;
     NULL_PROXY_WIDGET(TileQt_QComboBox_RO_Widget);
     Tcl_MutexLock(&tileqtMutex);
-#ifdef TILEQT_QT_VERSION_3
-    // QComboBox    widget(TileQt_QWidget_Widget);
-    // *widthPtr   = widget.width();
-    // *heightPtr  = widget.height();
-    //*paddingPtr = Ttk_UniformPadding(0);
-    // In order to get the correct padding, calculate the difference between the
-    // frame & edit field rectangulars...
-    QRect fr_rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ComboBox,
-                  wc->TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxFrame);
-    QRect ef_rc = wc->TileQt_Style->querySubControlMetrics(QStyle::CC_ComboBox,
-                  wc->TileQt_QComboBox_RO_Widget, QStyle::SC_ComboBoxEditField);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionComboBox option;
     option.initFrom(wc->TileQt_QComboBox_RO_Widget);
@@ -175,22 +130,9 @@ static void MenubuttonElementDraw(
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     QComboBox&   widget = *wc->TileQt_QComboBox_RO_Widget;
-#ifdef TILEQT_QT_VERSION_3
-    widget.setBackgroundOrigin(QWidget::ParentOrigin);
-#endif /* TILEQT_QT_VERSION_3 */
     widget.resize(b.width, b.height);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
     TILEQT_SET_FOCUS(state);
-#ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = TileQt_StateTableLookup(menubutton_statemap, state);
-    QStyle::SCFlags scflags = QStyle::SC_ComboBoxFrame|QStyle::SC_ComboBoxArrow|
-                              QStyle::SC_ComboBoxEditField;
-    QStyle::SCFlags activeflags = QStyle::SC_ComboBoxFrame;
-    // printf("x=%d, y=%d, w=%d, h=%d\n", b.x, b.y, b.width, b.height);
-    wc->TileQt_Style->drawComplexControl(QStyle::CC_ComboBox, &painter, &widget,
-          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
-          scflags, activeflags);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionComboBox option;
     option.initFrom(&widget); option.state |= 

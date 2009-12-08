@@ -93,9 +93,6 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp) {
     /* As Qt registers also its own XError handler, reset our own... */
     XSetErrorHandler(TileQt_XErrorHandler);
   }
-#ifdef TILEQT_QT_VERSION_3
-  wc->TileQt_Style = &(qApp->style());
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
   wc->TileQt_Style = qApp->style();
 #endif /* TILEQT_QT_VERSION_4 */
@@ -103,11 +100,6 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp) {
   TileQt_StoreStyleNameLowers(wc);
   /* Create some needed widgets, which we will use for drawing. */
   wc->TileQt_QScrollBar_Widget        = new QScrollBar(0);
-#ifdef TILEQT_QT_VERSION_3
-  /* The following crashes wish at exit :-( */
-  wc->TileQt_QComboBox_RW_Widget      = new QComboBox(true,  0);
-  wc->TileQt_QComboBox_RO_Widget      = new QComboBox(false, 0);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
   wc->TileQt_QComboBox_RW_Widget      = new QComboBox;
   wc->TileQt_QComboBox_RO_Widget      = new QComboBox;
@@ -117,23 +109,9 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp) {
   wc->TileQt_QWidget_WidgetParent     = new QWidget(0);
   wc->TileQt_QWidget_Widget           = 
                                new QWidget(wc->TileQt_QWidget_WidgetParent);
-#ifdef TILEQT_QT_VERSION_3
-  wc->TileQt_QWidget_Widget->polish();
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
   wc->TileQt_QWidget_Widget->ensurePolished();
 #endif /* TILEQT_QT_VERSION_4 */
-#ifdef TILEQT_QT_VERSION_3
-  wc->TileQt_QSlider_Hor_Widget       = new QSlider(Qt::Horizontal,
-                                        wc->TileQt_QWidget_Widget, "hslider");
-  wc->TileQt_QSlider_Hor_Widget->polish();
-  wc->TileQt_QSlider_Ver_Widget       = new QSlider(Qt::Vertical,
-                                        wc->TileQt_QWidget_Widget, "vslider");
-  wc->TileQt_QSlider_Ver_Widget->polish();
-  wc->TileQt_QProgressBar_Hor_Widget  = new QProgressBar(100, 0);
-  wc->TileQt_QProgressBar_Hor_Widget->setCenterIndicator(false);
-  wc->TileQt_QProgressBar_Hor_Widget->setPercentageVisible(false);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
   wc->TileQt_QSlider_Hor_Widget       = new QSlider(Qt::Horizontal,
                                         wc->TileQt_QWidget_Widget);
@@ -161,16 +139,9 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp) {
   }
   wc->TileQt_QListView_Widget = new QListView(wc->TileQt_QWidget_Widget);
   wc->TileQt_QPixmap_BackgroundTile   =
-#ifdef TILEQT_QT_VERSION_3
-                     (wc->TileQt_QWidget_Widget)->paletteBackgroundPixmap();
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
                      (wc->TileQt_QWidget_Widget)->palette().window().texture();
 #endif /* TILEQT_QT_VERSION_4 */
-#ifdef TILEQT_QT_VERSION_3
-  wc->TileQt_QScrollBar_Widget->setMinValue(0);
-  wc->TileQt_QScrollBar_Widget->setMaxValue(65535);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
   wc->TileQt_QScrollBar_Widget->setRange(0, 65535);
 #endif /* TILEQT_QT_VERSION_4 */
@@ -201,9 +172,6 @@ void TileQt_DestroyQApp(void) {
     if (qApp) {
       delete qApp;
       // printf("TileQt_DestroyQApp: qApp deleted!\n"); fflush(NULL);
-#ifdef TILEQT_QT_VERSION_3
-      qApp = NULL;
-#endif /* TILEQT_QT_VERSION_3 */
       XSetErrorHandler(TileQt_TkXErrorHandler);
     }
     TileQt_qAppOwner = false;

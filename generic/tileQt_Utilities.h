@@ -39,29 +39,6 @@
 #define TILEQT_CLEAR_FOCUS(state) \
    if (state & TTK_STATE_FOCUS) {TileQt_SetFocus(false);}
 
-#ifdef TILEQT_QT_VERSION_3
-#define TILEQT_PAINT_BACKGROUND(width, height) \
-    if (wc->TileQt_QPixmap_BackgroundTile && \
-        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) { \
-        painter.fillRect(0, 0, width, height, \
-                         QBrush(QColor(255,255,255), \
-                         *(wc->TileQt_QPixmap_BackgroundTile))); \
-    } else { \
-        painter.fillRect(0, 0, width, height, \
-                         qApp->palette().active().background());\
-    }
-#define TILEQT_PAINT_BACKGROUND_BASE(width, height) \
-    if (wc->TileQt_QPixmap_BackgroundTile && \
-        !(wc->TileQt_QPixmap_BackgroundTile->isNull())) { \
-        painter.fillRect(0, 0, width, height, \
-                         QBrush(QColor(255,255,255), \
-                         *(wc->TileQt_QPixmap_BackgroundTile))); \
-    } else { \
-        painter.fillRect(0, 0, width, height, \
-                         qApp->palette().active().base());\
-    }
-#endif /* TILEQT_QT_VERSION_3 */
-
 #ifdef TILEQT_QT_VERSION_4
 #define TILEQT_PAINT_BACKGROUND(width, height) \
     if (!(wc->TileQt_QPixmap_BackgroundTile.isNull())) { \
@@ -85,9 +62,6 @@
     }
 #endif /* TILEQT_QT_VERSION_4 */
 
-#ifdef TILEQT_QT_VERSION_3
-#define PMW(pm, w) (wc->TileQt_Style->pixelMetric(QStyle::pm, w))
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
 #define PMW(pm, w) (wc->TileQt_Style->pixelMetric(QStyle::pm, 0, w))
 #endif /* TILEQT_QT_VERSION_4 */
@@ -97,9 +71,6 @@ TCL_DECLARE_MUTEX(tileqtMutex);
 /* Global Symbols */
 
 /* Helper Functions */
-#ifdef TILEQT_QT_VERSION_3
-extern void TileQt_QtStateInfo(QStyle::SFlags, Tk_Window);
-#endif /* TILEQT_QT_VERSION_3 */
 extern void TileQt_StateInfo(int, Tk_Window);
 extern void TileQt_CopyQtPixmapOnToDrawable(QPixmap&, Drawable, Tk_Window,
                                             int, int, int, int, int, int);

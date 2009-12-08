@@ -22,10 +22,6 @@
  */
 static Ttk_StateTable labelframe_statemap[] =
 {
-#ifdef TILEQT_QT_VERSION_3
-    {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0 },
-    {QStyle::Style_Enabled,                         0, 0 }
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     {QStyle::State_None,                            TTK_STATE_DISABLED, 0 },
     {QStyle::State_Enabled,                         0, 0 }
@@ -58,14 +54,6 @@ static void LabelframeBorderElementDraw(
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
-#ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = TileQt_StateTableLookup(labelframe_statemap, state);
-    sflags |= QStyle::Style_Sunken;
-    wc->TileQt_Style->drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
-          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
-          QStyleOption(/*lineWidth*/1, /*midLineWidth*/0
-                       /*frameShape*//*frameShadow*/));
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionFrame option;
     option.rect = QRect(0, 0, b.width, b.height);

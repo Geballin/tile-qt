@@ -22,16 +22,6 @@
  */
 static Ttk_StateTable pushbutton_statemap[] =
 {
-#ifdef TILEQT_QT_VERSION_3
-    {QStyle::Style_Default                          , TTK_STATE_DISABLED, 0},
-    {QStyle::Style_Enabled | QStyle::Style_Down     , TTK_STATE_PRESSED, 0},
-    {QStyle::Style_Enabled | QStyle::Style_MouseOver, TTK_STATE_ACTIVE, 0},
-    {QStyle::Style_Enabled | QStyle::Style_HasFocus |
-     QStyle::Style_FocusAtBorder                    , TTK_STATE_FOCUS, 0},
-    {QStyle::Style_Enabled | QStyle::Style_ButtonDefault
-                                                    , TTK_STATE_ALTERNATE, 0},
-    {QStyle::Style_Enabled, 0, 0 }
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     {QStyle::State_None                             , TTK_STATE_DISABLED, 0},
     {QStyle::State_Enabled | QStyle::State_Sunken   , TTK_STATE_PRESSED, 0},
@@ -71,9 +61,6 @@ static void ButtonElementDraw(
     QPixmap     pixmap(b.width, b.height);
     QPainter    painter(&pixmap);
     QPushButton button(wc->TileQt_QWidget_Widget);
-#ifdef TILEQT_QT_VERSION_3
-    button.setBackgroundOrigin(QWidget::ParentOrigin);
-#endif /* TILEQT_QT_VERSION_3 */
     button.setGeometry(b.x, b.y, b.width, b.height);
     //if (state & TTK_STATE_ALTERNATE) {
     //    button.setDefault(true);
@@ -87,13 +74,6 @@ static void ButtonElementDraw(
     //}
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
     TILEQT_SET_FOCUS(state);
-#ifdef TILEQT_QT_VERSION_3
-    // TileQt_StateInfo(state, tkwin);
-    QStyle::SFlags sflags = TileQt_StateTableLookup(pushbutton_statemap, state);
-    wc->TileQt_Style->drawControl(QStyle::CE_PushButton, &painter, &button,
-          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
-    // TileQt_QtStateInfo(sflags, tkwin);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionButton option;
     option.initFrom(&button); option.state |= 

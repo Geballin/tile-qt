@@ -22,13 +22,6 @@
  */
 static Ttk_StateTable paned_statemap[] =
 {
-#ifdef TILEQT_QT_VERSION_3
-    {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0},
-    {QStyle::Style_Enabled|QStyle::Style_Down,      TTK_STATE_PRESSED, 0},
-    {QStyle::Style_Enabled|QStyle::Style_HasFocus,  TTK_STATE_FOCUS, 0},
-    {QStyle::Style_Enabled|QStyle::Style_MouseOver, TK_STATE_ACTIVE, 0},
-    {QStyle::Style_Enabled,                         0, 0}
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     {QStyle::State_None,                            TTK_STATE_DISABLED, 0},
     {QStyle::State_Enabled|QStyle::State_Sunken,    TTK_STATE_PRESSED, 0},
@@ -70,15 +63,6 @@ static void PanedSashGripElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
     TILEQT_SET_FOCUS(state);
-#ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = TileQt_StateTableLookup(paned_statemap, state);
-    if (orient == TTK_ORIENT_HORIZONTAL) {
-    } else {
-      sflags |= QStyle::Style_Horizontal;
-    }
-    wc->TileQt_Style->drawPrimitive(QStyle::PE_Splitter, &painter,
-          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOption option;
     option.state |= 

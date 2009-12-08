@@ -1,3 +1,4 @@
+
 /*
  *  tileQt_TreeView.cpp
  * ---------------------
@@ -31,11 +32,6 @@
  */
 static Ttk_StateTable treeview_field_statemap[] =
 {
-#ifdef TILEQT_QT_VERSION_3
-    {QStyle::Style_Enabled|QStyle::Style_Down,      TTK_STATE_PRESSED, 0},
-    {QStyle::Style_Enabled,                         TTK_STATE_ACTIVE, 0},
-    {QStyle::Style_Enabled,                         0, 0}
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     {QStyle::State_Enabled|QStyle::State_Sunken,    TTK_STATE_PRESSED, 0},
     {QStyle::State_Enabled,                         TTK_STATE_ACTIVE, 0},
@@ -70,18 +66,6 @@ static void TreeViewFieldElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND_BASE(b.width, b.height);
     TILEQT_SET_FOCUS(state);
-#ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags =TileQt_StateTableLookup(treeview_field_statemap, state);
-    sflags |= QStyle::Style_Horizontal;
-    wc->TileQt_Style->drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
-          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
-          QStyleOption(/*lineWidth*/1, /*midLineWidth*/0,
-                       /*frameShape*/QFrame::StyledPanel,
-                       /*frameShadow*/QFrame::Sunken));
-    wc->TileQt_Style->drawPrimitive(QStyle::PE_PanelLineEdit, &painter,
-          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
-          QStyleOption(1,1));
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionFrame option;
     option.rect = QRect(0, 0, b.width, b.height);
@@ -115,11 +99,6 @@ static Ttk_ElementSpec TreeViewFieldElementSpec = {
  */
 static Ttk_StateTable treeview_client_statemap[] =
 {
-#ifdef TILEQT_QT_VERSION_3
-    {QStyle::Style_Enabled|QStyle::Style_Down,      TTK_STATE_PRESSED, 0},
-    {QStyle::Style_Enabled,                         TTK_STATE_ACTIVE, 0},
-    {QStyle::Style_Enabled,                         0, 0}
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     {QStyle::State_Enabled|QStyle::State_Sunken,    TTK_STATE_PRESSED, 0},
     {QStyle::State_Enabled,                         TTK_STATE_ACTIVE, 0},
@@ -154,16 +133,6 @@ static void TreeViewClientElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND_BASE(b.width, b.height);
 #if 0
-#ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags =
-                   TileQt_StateTableLookup(treeview_client_statemap, state);
-    sflags |= QStyle::Style_Horizontal;
-    wc->TileQt_Style->drawPrimitive(QStyle::PE_GroupBoxFrame, &painter,
-          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags,
-          QStyleOption(/*lineWidth*/1, /*midLineWidth*/0,
-                       /*frameShape*/QFrame::StyledPanel,
-                       /*frameShadow*/QFrame::Sunken));
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionFrame option;
     option.rect = QRect(0, 0, b.width, b.height);
@@ -197,11 +166,6 @@ static Ttk_ElementSpec TreeViewClientElementSpec = {
  */
 static Ttk_StateTable treeheading_border_statemap[] =
 {
-#ifdef TILEQT_QT_VERSION_3
-    {QStyle::Style_Enabled|QStyle::Style_Down,      TTK_STATE_PRESSED, 0},
-    {QStyle::Style_Enabled,                         TTK_STATE_ACTIVE, 0},
-    {QStyle::Style_Enabled,                         0, 0}
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     {QStyle::State_Enabled|QStyle::State_Sunken,    TTK_STATE_PRESSED, 0},
     {QStyle::State_Enabled,                         TTK_STATE_ACTIVE, 0},
@@ -235,13 +199,6 @@ static void TreeHeadingBorderElementDraw(
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
-#ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = TileQt_StateTableLookup(treeheading_border_statemap,
-                                                 state);
-    sflags |= QStyle::Style_Horizontal;
-    wc->TileQt_Style->drawPrimitive(QStyle::PE_HeaderSection, &painter,
-          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionHeader option;
     option.rect = QRect(0, 0, b.width, b.height);

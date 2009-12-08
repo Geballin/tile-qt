@@ -22,10 +22,6 @@
  */
 static Ttk_StateTable size_grip_statemap[] =
 {
-#ifdef TILEQT_QT_VERSION_3
-    {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0},
-    {QStyle::Style_Enabled,                         0, 0}
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     {QStyle::State_None,                            TTK_STATE_DISABLED, 0},
     {QStyle::State_Enabled,                         0, 0}
@@ -63,11 +59,6 @@ static void SizeGripElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
     TILEQT_SET_FOCUS(state);
-#ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = TileQt_StateTableLookup(size_grip_statemap, state);
-    wc->TileQt_Style->drawPrimitive(QStyle::PE_SizeGrip, &painter,
-          QRect(0, 0, b.width, b.height), qApp->palette().active(), sflags);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOption option;
     option.state |= 

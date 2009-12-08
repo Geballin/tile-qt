@@ -20,35 +20,7 @@
 #include "qglobal.h"
 
 #if QT_VERSION >= 0x030000 && QT_VERSION < 0x040000
-#define TILEQT_QT_VERSION_3 
-/* Header Files for Qt 3.x */
-#include <qt.h>
-#include <qapplication.h>
-#include <qwidget.h>
-#include <qobject.h>
-#include <qobjcoll.h>
-#include <qwidcoll.h>
-#include <qsize.h>
-#include <qstyle.h>
-#include <qstylefactory.h>
-#include <qstyleplugin.h>
-#include <qcdestyle.h>
-#include <qcommonstyle.h>
-#include <qcompactstyle.h>
-#include <qinterlacestyle.h>
-#include <qmotifplusstyle.h>
-#include <qmotifstyle.h>
-#include <qplatinumstyle.h>
-#include <qsgistyle.h>
-#include <qwindowsstyle.h>
-#include <qtabwidget.h>
-#include <qtooltip.h>
-#include <qdatetime.h>
-#include <qlistview.h>
-#include <qtextstream.h>
-#include <qdeepcopy.h>
-#include <qstringlist.h> 
-#include <qcolor.h>
+#error "Qt3 support was remove"
 #endif /* QT_VERSION >= 0x030000 && QT_VERSION < 0x040000 */
 
 #if QT_VERSION >= 0x040000 && QT_VERSION < 0x050000
@@ -83,9 +55,6 @@ typedef struct TileQt_WidgetCache {
   QTabWidget*    TileQt_QTabWidget_Widget;
   QTabBar*       TileQt_QTabBar_Widget;
   QListView*     TileQt_QListView_Widget;
-#ifdef TILEQT_QT_VERSION_3
-  const QPixmap* TileQt_QPixmap_BackgroundTile;
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
   QPixmap        TileQt_QPixmap_BackgroundTile;
 #endif /* TILEQT_QT_VERSION_4 */
@@ -97,10 +66,6 @@ typedef struct TileQt_WidgetCache {
 
 class TileQt_Widget : protected QWidget {
   public:
-#ifdef TILEQT_QT_VERSION_3
-    void set_visible(void)   {QWidget::setWState(WState_Visible);}
-    void clear_visible(void) {QWidget::clearWState(WState_Visible);}
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     void set_visible(void)   {}
     void clear_visible(void) {}

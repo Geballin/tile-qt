@@ -22,13 +22,6 @@
  */
 static Ttk_StateTable notebook_statemap[] =
 {
-#ifdef TILEQT_QT_VERSION_3
-    {QStyle::Style_Default,                         TTK_STATE_DISABLED, 0},
-    {QStyle::Style_Enabled|QStyle::Style_Selected,  TTK_STATE_SELECTED, 0},
-    {QStyle::Style_Enabled|QStyle::Style_MouseOver, TTK_STATE_ACTIVE,   0},
-    {QStyle::Style_Enabled|QStyle::Style_HasFocus,  TTK_STATE_FOCUS,    0},
-    {QStyle::Style_Enabled,                         0,                  0},
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     {QStyle::State_None,                            TTK_STATE_DISABLED, 0},
     {QStyle::State_Enabled|QStyle::State_Selected,  TTK_STATE_SELECTED, 0},
@@ -38,10 +31,6 @@ static Ttk_StateTable notebook_statemap[] =
 #endif /* TILEQT_QT_VERSION_4 */
 };
 
-#ifdef TILEQT_QT_VERSION_3
-#define PM(pm) (wc->TileQt_Style->pixelMetric(QStyle::pm, \
-                                              wc->TileQt_QTabBar_Widget))
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
 #ifndef QStyleOptionTabV2
 #define QStyleOptionTabV2 QStyleOptionTab
@@ -74,11 +63,6 @@ static void NotebookTabElementGeometry(
     Tcl_MutexUnlock(&tileqtMutex);
     *paddingPtr = Ttk_MakePadding(
            PM_TabBarTabHSpace/2,
-#ifdef TILEQT_QT_VERSION_3
-           PM_TabBarTabVSpace/2,
-           PM_TabBarTabHSpace/2,
-           PM_TabBarTabVSpace/2
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
            PM_TabBarTabVSpace,
            PM_TabBarTabHSpace/2,
@@ -98,10 +82,6 @@ static void NotebookTabElementDraw(
     int PM_DefaultFrameWidth = 0, PM_TabBarBaseOverlap = 0;
 
     // TileQt_StateInfo(state, tkwin);
-#ifdef TILEQT_QT_VERSION_3
-    QTab* tab = new QTab;
-    QTab* tab1 = NULL, *tab2 = NULL;
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionTab::TabPosition position;
     int position_int;
@@ -121,9 +101,6 @@ static void NotebookTabElementDraw(
 
     if ((state & TTK_STATE_USER1) && (state & TTK_STATE_USER2)) {
       /* Only tab */
-#ifdef TILEQT_QT_VERSION_3
-      wc->TileQt_QTabBar_Widget->addTab(tab);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
       wc->TileQt_QTabBar_Widget->addTab("");
       position = QStyleOptionTab::OnlyOneTab;
@@ -131,11 +108,6 @@ static void NotebookTabElementDraw(
 #endif /* TILEQT_QT_VERSION_4 */
     } else if (state & TTK_STATE_USER1) {
       /* Left-most tab */
-#ifdef TILEQT_QT_VERSION_3
-      wc->TileQt_QTabBar_Widget->addTab(tab);
-      tab1 = new QTab;
-      wc->TileQt_QTabBar_Widget->addTab(tab1);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
       wc->TileQt_QTabBar_Widget->addTab("");
       wc->TileQt_QTabBar_Widget->addTab("");
@@ -144,11 +116,6 @@ static void NotebookTabElementDraw(
 #endif /* TILEQT_QT_VERSION_4 */
     } else if (state & TTK_STATE_USER2) {
       /* Right-most tab */
-#ifdef TILEQT_QT_VERSION_3
-      tab1 = new QTab;
-      wc->TileQt_QTabBar_Widget->addTab(tab1);
-      wc->TileQt_QTabBar_Widget->addTab(tab);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
       wc->TileQt_QTabBar_Widget->addTab("");
       wc->TileQt_QTabBar_Widget->addTab("");
@@ -157,13 +124,6 @@ static void NotebookTabElementDraw(
 #endif /* TILEQT_QT_VERSION_4 */
     } else {
       /* A regular tab, in the middle of tab bar */
-#ifdef TILEQT_QT_VERSION_3
-      tab1 = new QTab;
-      wc->TileQt_QTabBar_Widget->addTab(tab1);
-      wc->TileQt_QTabBar_Widget->addTab(tab);
-      tab2 = new QTab;
-      wc->TileQt_QTabBar_Widget->addTab(tab2);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
       wc->TileQt_QTabBar_Widget->addTab("");
       wc->TileQt_QTabBar_Widget->addTab("");
@@ -172,10 +132,6 @@ static void NotebookTabElementDraw(
       position_int = 1;
 #endif /* TILEQT_QT_VERSION_4 */
     }
-#ifdef TILEQT_QT_VERSION_3
-    if (state & TTK_STATE_DISABLED) tab->setEnabled(false);
-    else tab->setEnabled(true);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     if (state & TTK_STATE_DISABLED) {
       wc->TileQt_QTabBar_Widget->setTabEnabled(position_int, false);
@@ -186,12 +142,6 @@ static void NotebookTabElementDraw(
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(width, height);
     TILEQT_SET_FOCUS(state);
-#ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = TileQt_StateTableLookup(notebook_statemap, state);
-    wc->TileQt_Style->drawControl(QStyle::CE_TabBarTab, &painter,
-          wc->TileQt_QTabBar_Widget, QRect(0, 0, width, height),
-          qApp->palette().active(), sflags, QStyleOption(tab));
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     option.rect = QRect(0, 0, width, height);
     option.position = position;
@@ -202,21 +152,6 @@ static void NotebookTabElementDraw(
     TILEQT_CLEAR_FOCUS(state);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
            0, 0, width, height, b.x, b.y + PM_DefaultFrameWidth);
-#ifdef TILEQT_QT_VERSION_3
-    if ((state & TTK_STATE_USER1) && (state & TTK_STATE_USER2)) {
-      wc->TileQt_QTabBar_Widget->removeTab(tab);
-    } else if (state & TTK_STATE_USER1) {
-      wc->TileQt_QTabBar_Widget->removeTab(tab);
-      wc->TileQt_QTabBar_Widget->removeTab(tab1);
-    } else if (state & TTK_STATE_USER2) {
-      wc->TileQt_QTabBar_Widget->removeTab(tab1);
-      wc->TileQt_QTabBar_Widget->removeTab(tab);
-    } else {
-      wc->TileQt_QTabBar_Widget->removeTab(tab1);
-      wc->TileQt_QTabBar_Widget->removeTab(tab);
-      wc->TileQt_QTabBar_Widget->removeTab(tab2);
-    }
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     for (int i = 0; i < wc->TileQt_QTabBar_Widget->count(); ++i) {
       wc->TileQt_QTabBar_Widget->removeTab(i);
@@ -268,12 +203,6 @@ static void NotebookClientElementDraw(
     QPixmap      pixmap(b.width, b.height);
     QPainter     painter(&pixmap);
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
-#ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = TileQt_StateTableLookup(notebook_statemap, state);
-    wc->TileQt_Style->drawPrimitive(QStyle::PE_PanelTabWidget, &painter,
-            QRect(0, 0, b.width, b.height),
-            qApp->palette().active(), sflags);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionTabWidgetFrame option;
     option.initFrom(wc->TileQt_QTabBar_Widget);
@@ -291,11 +220,6 @@ static void NotebookClientElementDraw(
                                       wc->TileQt_QTabWidget_Widget);
     if (tabBarBaseHeight) {
       TILEQT_PAINT_BACKGROUND(b.width, tabBarBaseHeight);
-#ifdef TILEQT_QT_VERSION_3
-      wc->TileQt_Style->drawPrimitive(QStyle::PE_TabBarBase, &painter,
-              QRect(0, 0, b.width, tabBarBaseHeight),
-              qApp->palette().active(), sflags);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
       QStyleOptionTabBarBase optTabBase;
       optTabBase.initFrom(wc->TileQt_QTabBar_Widget);

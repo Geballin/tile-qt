@@ -22,15 +22,6 @@
  */
 static Ttk_StateTable toolbutton_statemap[] =
 {
-#ifdef TILEQT_QT_VERSION_3
-    {QStyle::Style_Default                          , TTK_STATE_DISABLED, 0},
-    {QStyle::Style_Enabled | QStyle::Style_Down     , TTK_STATE_SELECTED, 0},
-    {QStyle::Style_Enabled | QStyle::Style_Down     , TTK_STATE_PRESSED, 0},
-    {QStyle::Style_Enabled | QStyle::Style_Raised   , TTK_STATE_ACTIVE, 0},
-    {QStyle::Style_Enabled | QStyle::Style_HasFocus , TTK_STATE_FOCUS, 0},
-    {QStyle::Style_Enabled | QStyle::Style_Active   , TTK_STATE_ALTERNATE, 0},
-    {QStyle::Style_Enabled, 0, 0 }
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     {QStyle::State_None                             , TTK_STATE_DISABLED, 0},
     {QStyle::State_Enabled | QStyle::State_Sunken   , TTK_STATE_SELECTED, 0},
@@ -70,9 +61,6 @@ static void ToolButtonElementDraw(
     QPixmap     pixmap(b.width, b.height);
     QPainter    painter(&pixmap);
     QToolButton button(wc->TileQt_QWidget_Widget);	
-#ifdef TILEQT_QT_VERSION_3
-    button.setBackgroundOrigin(QWidget::ParentOrigin);
-#endif /* TILEQT_QT_VERSION_3 */
     button.setGeometry(b.x, b.y, b.width, b.height);
     // TileQt_StateInfo(state, tkwin);
     /* Handle buggy styles, that do not check flags but check widget states. */
@@ -88,15 +76,6 @@ static void ToolButtonElementDraw(
     }
     TILEQT_PAINT_BACKGROUND(b.width, b.height);
     TILEQT_SET_FOCUS(state);
-#ifdef TILEQT_QT_VERSION_3
-    QStyle::SFlags sflags = TileQt_StateTableLookup(toolbutton_statemap, state);
-    QStyle::SCFlags scflags = QStyle::SC_ToolButton;
-    QStyle::SCFlags activeflags = QStyle::SC_None;
-    if (state & TTK_STATE_PRESSED) activeflags |= QStyle::SC_ToolButton;
-    wc->TileQt_Style->drawComplexControl(QStyle::CC_ToolButton, &painter,
-          &button, QRect(0, 0, b.width, b.height), button.colorGroup(), sflags,
-          scflags, activeflags);
-#endif /* TILEQT_QT_VERSION_3 */
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionToolButton option;
     option.initFrom(&button); option.state |= 
