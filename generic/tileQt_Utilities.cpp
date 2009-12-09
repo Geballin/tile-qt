@@ -114,9 +114,9 @@ void TileQt_StateInfo(int state, Tk_Window tkwin)
     if (state & TTK_STATE_USER6) {
       printf("TTK_STATE_USER6 %d ", TTK_STATE_USER6);
     } 
-    if (state & TTK_STATE_USER7) {
-      printf("TTK_STATE_USER7 %d ", TTK_STATE_USER7);
-    }
+//     if (state & TTK_STATE_USER7) {
+//       printf("TTK_STATE_USER7 %d ", TTK_STATE_USER7);
+//     }
     printf(" state=%d\n", state);
 }; /* TileQt_StateInfo */
 

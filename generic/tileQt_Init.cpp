@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id: tileQt_Init.cpp,v 1.2 2008/08/20 12:22:52 petasis Exp $
  *
  * Copyright (C) 2004-2008 Georgios Petasis
  *
@@ -709,6 +709,8 @@ Tileqt_Init(Tcl_Interp *interp)
     if (Tcl_InitStubs(interp, TCL_VERSION, 0) == NULL)
         return TCL_ERROR;
     if (Tk_InitStubs(interp,  TK_VERSION,  0) == NULL)
+        return TCL_ERROR;
+    if (Ttk_InitStubs(interp) == NULL)
         return TCL_ERROR;
 
     /* The first thing we must do, is to retrieve a valid display. */
