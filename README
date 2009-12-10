@@ -6,12 +6,11 @@ Requirements
 
 You'll need the Qt4 development headers.
 
-Copy Ttk headers
-----------------
+Ttk headers
+-----------
 
 tile-qt needs the 'ttkTheme.h' and 'ttkDecls.h' headers. These are not copied during
-install of Tk. Look for the files in the Tk sources and copy them to the
-directory containing the other Tk/ttk include files.
+install of Tk, so you need to build against the Tk build directory.
 
 Configure
 ---------
@@ -24,8 +23,7 @@ or specify one or more of the configure options:
 
 $ ./configure --prefix=... --with-tcl=... --with-tk=... --with-qt-inc=... --with-qt-lib=...
 
-Default value for qt-inc: /usr/include/qt4
-Default value for qt-lib: /usr/lib
+Check 'configure --help' for default values of the different options.
 
 Build
 -----
