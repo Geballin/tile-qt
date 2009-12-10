@@ -272,6 +272,8 @@ $(PKG_STUB_LIB_FILE): $(PKG_STUB_OBJECTS)
 
 VPATH = $(srcdir):$(srcdir)/generic:$(srcdir)/unix:$(srcdir)/win
 
+.SUFFIXES: .cpp .$(OBJEXT)
+
 .cpp.@OBJEXT@:
 	$(COMPILE) -c `@CYGPATH@ $<` -o $@
 
@@ -401,8 +403,6 @@ install-bin-binaries: binaries
 	    $(INSTALL_PROGRAM) $$p $(DESTDIR)$(bindir)/$$p; \
 	  fi; \
 	done
-
-.SUFFIXES: .c .$(OBJEXT)
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) \
