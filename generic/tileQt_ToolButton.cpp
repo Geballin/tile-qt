@@ -78,13 +78,18 @@ static void ToolButtonElementDraw(
     TILEQT_SET_FOCUS(state);
 #ifdef TILEQT_QT_VERSION_4
     QStyleOptionToolButton option;
-    option.initFrom(&button); option.state |= 
-      (QStyle::StateFlag) TileQt_StateTableLookup(toolbutton_statemap, state);
+    option.initFrom(&button);
+    option.state |= (QStyle::StateFlag) TileQt_StateTableLookup(toolbutton_statemap, state);
+    option.subControls = QStyle::SC_ToolButton;
+    option.activeSubControls = QStyle::SC_ToolButton;
+    option.features = 0;
+    option.arrowType = Qt::NoArrow;
+
     wc->TileQt_Style->drawComplexControl(QStyle::CC_ToolButton, &option,
                                   &painter, &button);
 #endif /* TILEQT_QT_VERSION_4 */
     // printf("state=%d, qt style=%d\n", state,
-    //        TileQt_StateTableLookup(toolbutton_statemap, state));
+    //	       TileQt_StateTableLookup(toolbutton_statemap, state));
     TILEQT_CLEAR_FOCUS(state);
     TileQt_CopyQtPixmapOnToDrawable(pixmap, d, tkwin,
                                     0, 0, b.width, b.height, b.x, b.y);
