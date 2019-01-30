@@ -88,6 +88,7 @@ TileQt_WidgetCache **TileQt_CreateQApp(Tcl_Interp *interp) {
     /* Set an error event handler that ignores QueryTree failures */
     TileQt_TkXErrorHandler = XSetErrorHandler(TileQt_XErrorHandler);
     // XSynchronize(wc->TileQt_MainDisplay, true);
+    QApplication::setGraphicsSystem("native");
     new QApplication(wc->TileQt_MainDisplay);
     TileQt_qAppOwner = true;
     /* As Qt registers also its own XError handler, reset our own... */
